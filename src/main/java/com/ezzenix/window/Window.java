@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryStack.*;
@@ -40,6 +41,12 @@ public class Window {
         GLFWErrorCallback.createPrint(System.err).set();
         System.setProperty("org.lwjgl.util.Debug", "true");
 
+        Configuration.DEBUG.set(true);
+        Configuration.DEBUG_FUNCTIONS.set(true);
+        Configuration.DEBUG_LOADER.set(true);
+        Configuration.DEBUG_MEMORY_ALLOCATOR.set(true);
+        Configuration.DEBUG_MEMORY_ALLOCATOR_FAST.set(true);
+        Configuration.DEBUG_STACK.set(true);
 
         if ( !glfwInit() )
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -59,7 +66,7 @@ public class Window {
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             this.width = width;
             this.height = height;
-            Game.getInstance().getRenderer().updateProjection(width, height);
+            //Game.getInstance().getRenderer().updateProjection(width, height);
             glViewport(0, 0, width, height);
         });
 
@@ -95,22 +102,28 @@ public class Window {
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
-        // Enable v-sync
-        glfwSwapInterval(1);
-        // Make the window visible
+        createCapabilities();
+        glfwSwapInterval(1); // v-sync
         glfwShowWindow(window);
 
-        // Compile shaders
+        // Enable OpenGL debug output
+        if (GL.getCapabilities().OpenGL43) {
+            glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, (int[]) null, true);
+            glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
+                System.err.println("\nOpenGL debug message:");
+                System.err.println("\tType: " + type);
+                System.err.println("\tSeverity: " + severity);
+                System.err.println("\tMessage: " + memUTF8(message));
+            }, 0);
+            System.out.print("OpenGL debug was set up sucessfully");
+        } else {
+            System.err.println("OpenGL 4.3 or higher is required for debug output.");
+        }
     }
 
     private void loop() {
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the GLCapabilities instance and makes the OpenGL
-        // bindings available for use.
-        GL.createCapabilities();
-
         // Load shaders
         String vertexShaderSource;
         try {
@@ -140,40 +153,61 @@ public class Window {
             System.err.println(GL33.glGetShaderInfoLog(fragmentShader));
         }
 
-        // Enable OpenGL debug output
-        if (GL.getCapabilities().OpenGL43) {
-            glEnable(GL_DEBUG_OUTPUT);
-            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, (int[]) null, true);
-            glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
-                System.err.println("OpenGL debug message:");
-                System.err.println("\tType: " + type);
-                System.err.println("\tSeverity: " + severity);
-                System.err.println("\tMessage: " + memUTF8(message));
-            }, 0);
-            System.out.print("OpenGL debug was set up sucessfully");
-        } else {
-            System.err.println("OpenGL 4.3 or higher is required for debug output.");
+        int shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+
+        glDetachShader(shaderProgram, vertexShader);
+        glDetachShader(shaderProgram, fragmentShader);
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+
+        int vbo;
+        try (MemoryStack stack = stackPush()) {
+            FloatBuffer buffer = stackMallocFloat(3 * 2);
+            buffer.put(-0.5f).put(-0.5f);
+            buffer.put(+0.5f).put(-0.5f);
+            buffer.put(+0.0f).put(+0.5f);
+            buffer.flip();
+
+            vbo = glGenBuffers();
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         }
 
-        // Set the clear color
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_FLOAT, 0, 0L);
 
+        // Set defaults
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         //glEnable(GL_LIGHTING);
 
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while ( !glfwWindowShouldClose(window) ) {
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents();
+
             if (Game.getInstance() != null) {
                 Game.getInstance().getInputHandler().handleInput(window);
             }
 
-            if (Game.getInstance() != null) {
-                Game.getInstance().getRenderer().render();
-            }
+            //if (Game.getInstance() != null) {
+            //    Game.getInstance().getRenderer().render();
+            //}
 
-            glfwPollEvents();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+
+            glUseProgram(shaderProgram);
+
+            glColor3f(0f, 0.3f, 0.7f);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            glfwSwapBuffers(window); // swap the color buffers
+
+            int error = glGetError();
+            if (error != GL_NO_ERROR) {
+                System.err.println("OpenGL Error: " + error);
+            }
         }
     }
 
