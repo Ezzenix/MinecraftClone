@@ -1,9 +1,11 @@
 package com.ezzenix.utilities;
 
+import org.joml.Vector3f;
+
 public class BlockPos {
-    private final int x;
-    private final int y;
-    private final int z;
+    public final int x;
+    public final int y;
+    public final int z;
 
     public BlockPos(int x, int y, int z) {
         this.x = x;
@@ -12,22 +14,18 @@ public class BlockPos {
     }
 
     public BlockPos add(BlockPos v) {
-        return new BlockPos(x + v.getX(), y + v.getY(), z + v.getZ());
+        return new BlockPos(x + v.x, y + v.y, z + v.z);
     }
 
-    public int getX() {
-        return this.x;
+    public Vector3f toVector3f(BlockPos v) {
+        return new Vector3f(v.x+0.5f, v.y+0.5f, v.z+0.5f);
     }
 
-    public int getY() {
-        return this.y;
-    }
-
-    public int getZ() {
-        return this.z;
-    }
-
-    public Vector3 toVector3(BlockPos v) {
-        return new Vector3(v.getX()+0.5f, v.getY()+0.5f, v.getZ()+0.5f);
+    public BlockPos fromVector3f(Vector3f vec) {
+        return new BlockPos(
+                (int)Math.round(vec.x+0.5),
+                (int)Math.round(vec.y+0.5),
+                (int)Math.round(vec.z+0.5)
+        );
     }
 }

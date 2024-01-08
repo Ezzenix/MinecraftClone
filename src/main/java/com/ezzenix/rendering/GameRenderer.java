@@ -3,10 +3,7 @@ package com.ezzenix.rendering;
 import com.ezzenix.Block;
 import com.ezzenix.Game;
 import com.ezzenix.utilities.BlockPos;
-import com.ezzenix.utilities.Vector3;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 import java.util.HashMap;
 
@@ -28,25 +25,6 @@ public class GameRenderer {
 
     public Camera getCamera() { return this.camera; }
 
-    public void updateProjection(int width, int height) {
-        float fov = 45.0f;
-        float aspectRatio = (float)width / (float)height;
-        float near = 0.1f;
-        float far = 100.0f;
-
-        glMatrixMode(GL11.GL_PROJECTION);
-        glLoadIdentity();
-
-        float yScale = (float) (1.0 / Math.tan(Math.toRadians(fov / 2.0)));
-        float xScale = yScale / aspectRatio;
-
-        glFrustum(-near * xScale, near * xScale, -near * yScale, near * yScale, near, far);
-
-        glMatrixMode(GL11.GL_MODELVIEW);
-
-        System.out.println("Projection updated!");
-    }
-
     public void render() {
         long window = Game.getInstance().getWindow().getHandle();
 
@@ -60,8 +38,8 @@ public class GameRenderer {
         //glRotatef(-camera.getPitch(), 1, 0, 0);
         //glRotatef(-camera.getYaw(), 0, 1, 0);
 
-        float[] viewMatrix = camera.getViewMatrix();
-        GL11.glMultMatrixf(viewMatrix);
+        //float[] viewMatrix = camera.getViewMatrix();
+        //GL11.glMultMatrixf(viewMatrix);
 
         drawCube();
 

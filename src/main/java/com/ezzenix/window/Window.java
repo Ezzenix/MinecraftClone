@@ -1,21 +1,19 @@
 package com.ezzenix.window;
 
 import com.ezzenix.Game;
+import com.ezzenix.rendering.Camera;
+import com.ezzenix.rendering.Shader;
 import com.ezzenix.utilities.ImageParser;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.text.DecimalFormat;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL.createCapabilities;
+import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryStack.*;
@@ -56,6 +54,9 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         // Create the window
         window = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -86,6 +87,10 @@ public class Window {
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             //if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
             //    glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+            if (key == GLFW_KEY_H) {
+                Camera camera = Game.getInstance().getRenderer().getCamera();
+                System.out.println("LookVector " + camera.getLookVector().toString(new DecimalFormat("#.###")));
+            }
         });
 
         glfwSetWindowIconifyCallback(window, (window, iconified) -> {
@@ -117,92 +122,105 @@ public class Window {
                 System.err.println("\tSeverity: " + severity);
                 System.err.println("\tMessage: " + memUTF8(message));
             }, 0);
-            System.out.print("OpenGL debug was set up sucessfully");
+            System.out.println("OpenGL debug was set up sucessfully");
         } else {
             System.err.println("OpenGL 4.3 or higher is required for debug output.");
         }
+
+        System.out.println("OpenGL Version: " + glGetString(GL_VERSION));
     }
 
     private void loop() {
-        // Load shaders
-        String vertexShaderSource;
-        try {
-            vertexShaderSource = new String(Files.readAllBytes(Paths.get("src/main/resources/shaders/vertexShader.glsl")));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-        int vertexShader = GL33.glCreateShader(GL33.GL_VERTEX_SHADER);
-        GL33.glShaderSource(vertexShader, vertexShaderSource);
-        GL33.glCompileShader(vertexShader);
-        if (GL33.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == GL_FALSE) {
-            System.err.println(GL33.glGetShaderInfoLog(vertexShader));
+        int shaderProgram = Shader.makeProgram("vertexShader.glsl", "fragmentShader.glsl");
+        if (shaderProgram == -1) {
+            System.err.println("Shader program failed to load!");
+            System.exit(-1);
         }
 
-        String fragmentShaderSource;
-        try {
-            fragmentShaderSource = new String(Files.readAllBytes(Paths.get("src/main/resources/shaders/fragmentShader.glsl")));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-        int fragmentShader = GL33.glCreateShader(GL33.GL_FRAGMENT_SHADER);
-        GL33.glShaderSource(fragmentShader, fragmentShaderSource);
-        GL33.glCompileShader(fragmentShader);
-        if (GL33.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == GL_FALSE) {
-            System.err.println(GL33.glGetShaderInfoLog(fragmentShader));
-        }
-
-        int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
-
-        glDetachShader(shaderProgram, vertexShader);
-        glDetachShader(shaderProgram, fragmentShader);
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-
+        int vao;
         int vbo;
         try (MemoryStack stack = stackPush()) {
-            FloatBuffer buffer = stackMallocFloat(3 * 2);
-            buffer.put(-0.5f).put(-0.5f);
-            buffer.put(+0.5f).put(-0.5f);
-            buffer.put(+0.0f).put(+0.5f);
+            FloatBuffer buffer = stackMallocFloat(3 * 24);
+            // Front face
+            buffer.put(-0.5f).put(-0.5f).put(0.5f);   // Vertex 1 (front-bottom-left)
+            buffer.put(0.5f).put(-0.5f).put(0.5f);    // Vertex 2 (front-bottom-right)
+            buffer.put(0.5f).put(0.5f).put(0.5f);     // Vertex 3 (front-top-right)
+            buffer.put(-0.5f).put(0.5f).put(0.5f);    // Vertex 4 (front-top-left)
+
+// Back face
+            buffer.put(-0.5f).put(-0.5f).put(-0.5f);  // Vertex 5 (back-bottom-left)
+            buffer.put(0.5f).put(-0.5f).put(-0.5f);   // Vertex 6 (back-bottom-right)
+            buffer.put(0.5f).put(0.5f).put(-0.5f);    // Vertex 7 (back-top-right)
+            buffer.put(-0.5f).put(0.5f).put(-0.5f);   // Vertex 8 (back-top-left)
+
+// Left face
+            buffer.put(-0.5f).put(-0.5f).put(-0.5f);  // Vertex 9 (left-bottom-back)
+            buffer.put(-0.5f).put(-0.5f).put(0.5f);   // Vertex 10 (left-bottom-front)
+            buffer.put(-0.5f).put(0.5f).put(0.5f);    // Vertex 11 (left-top-front)
+            buffer.put(-0.5f).put(0.5f).put(-0.5f);   // Vertex 12 (left-top-back)
+
+// Right face
+            buffer.put(0.5f).put(-0.5f).put(-0.5f);   // Vertex 13 (right-bottom-back)
+            buffer.put(0.5f).put(-0.5f).put(0.5f);    // Vertex 14 (right-bottom-front)
+            buffer.put(0.5f).put(0.5f).put(0.5f);     // Vertex 15 (right-top-front)
+            buffer.put(0.5f).put(0.5f).put(-0.5f);    // Vertex 16 (right-top-back)
+
+// Top face
+            buffer.put(-0.5f).put(0.5f).put(0.5f);    // Vertex 17 (top-front-left)
+            buffer.put(0.5f).put(0.5f).put(0.5f);     // Vertex 18 (top-front-right)
+            buffer.put(0.5f).put(0.5f).put(-0.5f);    // Vertex 19 (top-back-right)
+            buffer.put(-0.5f).put(0.5f).put(-0.5f);   // Vertex 20 (top-back-left)
+
+// Bottom face
+            buffer.put(-0.5f).put(-0.5f).put(0.5f);   // Vertex 21 (bottom-front-left)
+            buffer.put(0.5f).put(-0.5f).put(0.5f);    // Vertex 22 (bottom-front-right)
+            buffer.put(0.5f).put(-0.5f).put(-0.5f);   // Vertex 23 (bottom-back-right)
+            buffer.put(-0.5f).put(-0.5f).put(-0.5f);  // Vertex 24 (bottom-back-left)
             buffer.flip();
+
+            vao = glGenVertexArrays();
+            glBindVertexArray(vao);
 
             vbo = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         }
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(2, GL_FLOAT, 0, 0L);
+        glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 3 * Float.BYTES, 0);
+        glEnableVertexAttribArray(0);
+
+        glBindVertexArray(0);
+        glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+
+        glUseProgram(shaderProgram);
+
+
 
         // Set defaults
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glEnable(GL_DEPTH_TEST);
+        glClearColor(1.0f, 0.4f, 0.4f, 0.0f);
+        //glEnable(GL_DEPTH_TEST);
         //glEnable(GL_LIGHTING);
 
         while (!glfwWindowShouldClose(window)) {
-            glfwPollEvents();
-
             if (Game.getInstance() != null) {
                 Game.getInstance().getInputHandler().handleInput(window);
             }
 
-            //if (Game.getInstance() != null) {
-            //    Game.getInstance().getRenderer().render();
-            //}
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             glUseProgram(shaderProgram);
 
-            glColor3f(0f, 0.3f, 0.7f);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            int projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projectionMatrix");
+            glUniformMatrix4fv(projectionMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getProjectionMatrix().get(new float[16]));
+            int viewMatrixLocation = glGetUniformLocation(shaderProgram, "viewMatrix");
+            glUniformMatrix4fv(viewMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getViewMatrix().get(new float[16]));
+
+            glBindVertexArray(vao);
+            glDrawArrays(GL_TRIANGLES, 0, 24);
+            glBindVertexArray(0);
 
             glfwSwapBuffers(window); // swap the color buffers
+            glfwPollEvents();
 
             int error = glGetError();
             if (error != GL_NO_ERROR) {

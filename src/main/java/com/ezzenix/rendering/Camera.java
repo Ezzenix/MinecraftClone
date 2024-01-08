@@ -1,57 +1,75 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.utilities.Vector3;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class Camera {
-    private Vector3 position;
+    private Vector3f position;
     private float yaw;
     private float pitch;
 
     public Camera() {
-        position = new Vector3(0, 0, 0);
+        position = new Vector3f(0, 0, 0);
         yaw = 0;
         pitch = 0;
     }
 
-    public Vector3 getPosition() { return this.position; }
+    public Vector3f getPosition() { return this.position; }
     public float getYaw() { return this.yaw; }
     public float getPitch() { return this.pitch; }
 
-    public void setPosition(Vector3 pos) { this.position = pos; }
-    public void setYaw(float yaw) { this.yaw = yaw; }
-    public void setPitch(float pitch) { this.pitch = pitch; }
+    public void setPosition(Vector3f pos) { this.position = pos; }
+    public void setYaw(float yaw) {
+        while (yaw > 180) yaw -= 360;
+        while (yaw < 180) yaw += 360;
+        this.yaw = (yaw + 180.0f) % 360.0f - 180.0f;
+    }
+    public void setPitch(float pitch) {
+        float min = -90;
+        float max = 90;
+        this.pitch = Math.max(min, Math.min(max, pitch));
+    }
 
-    public void addPosition(Vector3 offset) { this.position = this.position.add(offset); }
-    public void addYaw(float offset) { this.yaw += offset; }
-    public void addPitch(float offset) { this.pitch += offset; }
+    public void addPosition(Vector3f offset) { this.position = this.position.add(offset); }
+    public void addYaw(float offset) { this.setYaw(this.yaw + offset); }
+    public void addPitch(float offset) { this.setPitch(this.pitch + offset); }
 
-    public float[] getViewMatrix() {
-        float[] viewMatrix = new float[16];
-        float cosPitch = (float) Math.cos(Math.toRadians(pitch));
-        float sinPitch = (float) Math.sin(Math.toRadians(pitch));
-        float cosYaw = (float) Math.cos(Math.toRadians(yaw));
-        float sinYaw = (float) Math.sin(Math.toRadians(yaw));
+    public Vector3f getLookVector() {
+        double x = Math.cos(pitch) * Math.sin(yaw);
+        double y = Math.sin(pitch);
+        double z = -Math.cos(pitch) * Math.cos(yaw);
 
-        viewMatrix[0] = cosYaw;
-        viewMatrix[1] = sinYaw * sinPitch;
-        viewMatrix[2] = sinYaw * cosPitch;
-        viewMatrix[3] = 0;
+        double magnitude = Math.sqrt(x * x + y * y + z * z);
+        x /= magnitude;
+        y /= magnitude;
+        z /= magnitude;
 
-        viewMatrix[4] = 0;
-        viewMatrix[5] = cosPitch;
-        viewMatrix[6] = -sinPitch;
-        viewMatrix[7] = 0;
+        return new Vector3f((float)x, (float)y, (float)z);
+    }
 
-        viewMatrix[8] = -sinYaw;
-        viewMatrix[9] = cosYaw * sinPitch;
-        viewMatrix[10] = cosYaw * cosPitch;
-        viewMatrix[11] = 0;
+    public Matrix4f getProjectionMatrix() {
+        // Example parameters
+        float fov = 70.0f;
+        float aspectRatio = 16.0f / 9.0f;
+        float near = 0.1f;
+        float far = 200.0f;
 
-        viewMatrix[12] = -position.getX();
-        viewMatrix[13] = -position.getY();
-        viewMatrix[14] = -position.getZ();
-        viewMatrix[15] = 1;
+        // Create a perspective projection matrix
+        Matrix4f projectionMatrix = new Matrix4f();
+        projectionMatrix.perspective(fov, aspectRatio, near, far);
 
-        return viewMatrix;
+        return projectionMatrix;
+    }
+
+    public Matrix4f getViewMatrix() {
+        return new Matrix4f().setLookAt(
+                position,
+                new Vector3f(
+                        (float) (position.x + Math.cos(Math.toRadians(yaw+180)) * Math.cos(Math.toRadians(pitch))),
+                        (float) (position.y + Math.sin(Math.toRadians(pitch))),
+                        (float) (position.z + Math.sin(Math.toRadians(yaw+180)) * Math.cos(Math.toRadians(pitch)))
+                ),
+                new Vector3f(0.0f, 1.0f, 0.0f)
+        );
     }
 }

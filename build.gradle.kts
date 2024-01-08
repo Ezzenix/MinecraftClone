@@ -1,4 +1,5 @@
 val lwjglVersion = "3.3.3"
+val jomlVersion = "1.10.5"
 val lwjglNatives = "natives-windows"
 
 plugins {
@@ -27,6 +28,7 @@ tasks.withType<Jar> {
 dependencies {
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
+    implementation("org.joml", "joml", jomlVersion)
     implementation("org.lwjgl", "lwjgl")
     implementation("org.lwjgl", "lwjgl-assimp")
     implementation("org.lwjgl", "lwjgl-bgfx")

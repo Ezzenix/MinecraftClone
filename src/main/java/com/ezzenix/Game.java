@@ -1,9 +1,13 @@
 package com.ezzenix;
 
 import com.ezzenix.rendering.GameRenderer;
+import com.ezzenix.utilities.TextureAtlas;
 import com.ezzenix.window.InputHandler;
 import com.ezzenix.window.Window;
+import org.joml.Vector2f;
 import org.lwjgl.Version;
+
+import java.util.List;
 
 public class Game {
     private final GameRenderer gameRenderer;
@@ -12,6 +16,10 @@ public class Game {
 
     public Game() {
         INSTANCE = this;
+
+        TextureAtlas atlas = new TextureAtlas("src/main/resources/textures");
+        //List<Vector2f> uvs = atlas.getTextureUVs("oak_planks");
+        //System.out.println(uvs);
 
         this.gameRenderer = new GameRenderer();
         this.window = new Window();
