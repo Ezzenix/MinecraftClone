@@ -18,11 +18,10 @@ public class InputHandler {
     private boolean isFirstUpdate = true;
 
     public InputHandler() {
-
+        handleMouse(Game.getInstance().getWindow().getHandle());
     }
 
     public void handleInput(long window) {
-        handleMouse(window);
         handleKeyboard(window);
     }
 
@@ -30,28 +29,28 @@ public class InputHandler {
         GameRenderer renderer = Game.getInstance().getRenderer();
         Camera camera = renderer.getCamera();
 
-        DoubleBuffer x = BufferUtils.createDoubleBuffer(1);
-        DoubleBuffer y = BufferUtils.createDoubleBuffer(1);
-        glfwGetCursorPos(window, x, y);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-        int mouseX = (int) Math.round(x.get());
-        int mouseY = (int) Math.round(y.get());
+        glfwSetCursorPosCallback(window, (windowHandle, xpos, ypos) -> {
+            int mouseX = (int) Math.round(xpos);
+            int mouseY = (int) Math.round(ypos);
 
-        if (isFirstUpdate) {
+            if (isFirstUpdate) {
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+                isFirstUpdate = false;
+            }
+
+            int deltaX = mouseX - lastMouseX;
+            int deltaY = mouseY - lastMouseY;
+
             lastMouseX = mouseX;
             lastMouseY = mouseY;
-            isFirstUpdate = false;
-        }
 
-        int deltaX = mouseX - lastMouseX;
-        int deltaY = mouseY - lastMouseY;
-
-        lastMouseX = mouseX;
-        lastMouseY = mouseY;
-
-        float sensitivity = 0.45f;
-        camera.addYaw(deltaX * sensitivity);
-        camera.addPitch(deltaY * sensitivity * -1);
+            float sensitivity = 0.35f;
+            camera.addYaw(deltaX * sensitivity);
+            camera.addPitch(deltaY * sensitivity * -1);
+        });
     }
 
     private long lastPrint = 0;
@@ -67,7 +66,7 @@ public class InputHandler {
         GameRenderer renderer = Game.getInstance().getRenderer();
         Camera camera = renderer.getCamera();
 
-        float speed = 0.1f;
+        float speed = 0.03f * Game.getInstance().deltaTime;
 
         //Vector3f lookVector = camera.getLookVector();
         //System.out.println(lookVector.toString(new DecimalFormat("#.##")));
@@ -78,7 +77,7 @@ public class InputHandler {
         Vector3f upVector = new Vector3f(0.0f, 1.0f, 0.0f);
         Quaternionf orientation = new Quaternionf()
                 .rotateAxis((float) Math.toRadians(camera.getYaw()), upVector)
-                .rotateAxis((float) Math.toRadians(camera.getPitch()), new Vector3f(1.0f, 0.0f, 0.0f));
+                .rotateAxis((float) Math.toRadians(0), new Vector3f(1.0f, 0.0f, 0.0f));
         lookVector.set(0.0f, 0.0f, -1.0f).rotate(orientation);
         upVector.set(0.0f, 1.0f, 0.0f).rotate(orientation);
         Vector3f rightVector = new Vector3f();

@@ -9,7 +9,7 @@ public class Camera {
     private float pitch;
 
     public Camera() {
-        position = new Vector3f(0, 0, 0);
+        position = new Vector3f(0, 40, 0);
         yaw = 0;
         pitch = 0;
     }
@@ -25,8 +25,8 @@ public class Camera {
         this.yaw = (yaw + 180.0f) % 360.0f - 180.0f;
     }
     public void setPitch(float pitch) {
-        float min = -90;
-        float max = 90;
+        float min = -85;
+        float max = 85;
         this.pitch = Math.max(min, Math.min(max, pitch));
     }
 
@@ -52,7 +52,7 @@ public class Camera {
         float fov = 70.0f;
         float aspectRatio = 16.0f / 9.0f;
         float near = 0.1f;
-        float far = 200.0f;
+        float far = 500.0f;
 
         // Create a perspective projection matrix
         Matrix4f projectionMatrix = new Matrix4f();

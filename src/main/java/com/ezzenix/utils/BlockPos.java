@@ -28,4 +28,12 @@ public class BlockPos {
                 (int)Math.round(vec.z+0.5)
         );
     }
+
+    public String toString() {
+        return "X: "+this.x + " Y: " + this.x + " Z: " + this.z;
+    }
+
+    public boolean equals(BlockPos v) {
+        return (this.x == v.x) && (this.y == v.y) && (this.z == v.z);
+    }
 }

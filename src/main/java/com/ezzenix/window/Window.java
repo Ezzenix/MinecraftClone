@@ -13,6 +13,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -42,7 +43,6 @@ public class Window {
         Configuration.DEBUG_MEMORY_ALLOCATOR.set(true);
         Configuration.DEBUG_MEMORY_ALLOCATOR_FAST.set(true);
         Configuration.DEBUG_STACK.set(true);
-        //Configuration.STACK_SIZE.set(10 * 1024);
 
         if ( !glfwInit() )
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -81,13 +81,24 @@ public class Window {
             System.out.println("Icon failed to load.");
         }
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
+        AtomicBoolean wireframeMode = new AtomicBoolean(false);
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            //if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-            //    glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
             if (key == GLFW_KEY_H) {
                 Camera camera = Game.getInstance().getRenderer().getCamera();
                 System.out.println("LookVector " + camera.getLookVector().toString(new DecimalFormat("#.###")));
+            }
+
+            if (key == GLFW_KEY_Z && action == GLFW_RELEASE) {
+                wireframeMode.set(!wireframeMode.get());
+                if (wireframeMode.get()) {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                    glDisable(GL_DEPTH_TEST);
+                    glDisable(GL_CULL_FACE);
+                } else {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                    glEnable(GL_DEPTH_TEST);
+                    glEnable(GL_CULL_FACE);
+                }
             }
         });
 
@@ -140,7 +151,7 @@ public class Window {
 
 
         // Set defaults
-        glClearColor(0.8f, 0.4f, 0.4f, 0.0f);
+        glClearColor(0.20f, 0.72f, 0.92f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
 
@@ -148,7 +159,11 @@ public class Window {
 
         World world = Game.getInstance().getWorld();
 
+        long lastFrame = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window)) {
+            Game.getInstance().deltaTime = (float)(System.currentTimeMillis() - lastFrame);
+            lastFrame = System.currentTimeMillis();
+
             if (Game.getInstance() != null) {
                 Game.getInstance().getInputHandler().handleInput(window);
             }

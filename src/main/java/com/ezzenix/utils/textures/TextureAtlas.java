@@ -1,4 +1,4 @@
-package com.ezzenix.utils;
+package com.ezzenix.utils.textures;
 
 import org.joml.Vector2f;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class TextureAtlas {
-    private Map<String, List<Vector2f>> nameToUVs;
+    private Map<String, TextureUV> nameToUVs;
     private BufferedImage atlasImage;
 
     public TextureAtlas(String directoryPath) {
@@ -37,7 +37,7 @@ public class TextureAtlas {
         }
     }
 
-    public List<Vector2f> getTextureUVs(String name) {
+    public TextureUV getTextureUVs(String name) {
         return nameToUVs.getOrDefault(name, null);
     }
 
@@ -80,12 +80,12 @@ public class TextureAtlas {
         for (String imageName : imageMap.keySet()) {
             BufferedImage image = imageMap.get(imageName);
 
-            List<Vector2f> uvCoords = new ArrayList<>();
-            uvCoords.add(new Vector2f((float)currentX/(float)atlasWidth, 0));
-            uvCoords.add(new Vector2f((float)currentX/(float)atlasWidth, (float)image.getHeight()/(float)atlasHeight));
-            uvCoords.add(new Vector2f((float)(currentX+image.getWidth())/(float)atlasWidth, (float)image.getHeight()/(float)atlasHeight));
-            uvCoords.add(new Vector2f((float)(currentX+image.getWidth())/(float)atlasWidth, 0));
-            this.nameToUVs.put(imageName, uvCoords);
+            this.nameToUVs.put(imageName, new TextureUV(
+                    new Vector2f((float) currentX / (float) atlasWidth, 0),
+                    new Vector2f((float) currentX / (float) atlasWidth, (float) image.getHeight() / (float) atlasHeight),
+                    new Vector2f((float) (currentX + image.getWidth()) / (float) atlasWidth, (float) image.getHeight() / (float) atlasHeight),
+                    new Vector2f((float) (currentX + image.getWidth()) / (float) atlasWidth, 0)
+            ));
 
             System.out.println("Registered texture " + imageName);
 

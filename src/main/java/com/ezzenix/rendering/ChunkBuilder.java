@@ -5,16 +5,20 @@ import com.ezzenix.game.BlockType;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.utils.BlockPos;
 import com.ezzenix.utils.Face;
+import com.ezzenix.utils.textures.TextureUV;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.lwjgl.BufferUtils.createFloatBuffer;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -22,55 +26,80 @@ import static org.lwjgl.system.MemoryStack.stackMallocFloat;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class ChunkBuilder {
+    private Map<Integer, Map<Integer, Chunk>> chunks;
+
+    private static boolean isNeighborSolid(Chunk chunk, BlockPos blockPos, Vector3f face) {
+        BlockPos blockPosOffset = new BlockPos((int)face.x, (int)face.y, (int)face.z);
+        BlockType neighborType = chunk.getWorld().getBlockTypeAt(blockPos.add(blockPosOffset));
+        return neighborType != null;
+    }
+
+    public static TextureUV getBlockTextureUV(BlockType blockType, Vector3f face) {
+        if (face == Face.TOP) return blockType.textureUVTop;
+        if (face == Face.BOTTOM) return blockType.textureUVBottom;
+        return blockType.textureUVSides;
+    }
+
+    private static final List<Vector3f> faces = new ArrayList<>();
+    static {
+        faces.add(Face.TOP);
+        faces.add(Face.BACK);
+        faces.add(Face.BOTTOM);
+        faces.add(Face.RIGHT);
+        faces.add(Face.LEFT);
+        faces.add(Face.FRONT);
+    }
+
     public static Mesh createMesh(Chunk chunk) {
+        long startTime = System.currentTimeMillis();
+
         Map<BlockPos, BlockType> blocks = chunk.getBlocks();
 
-        FloatBuffer vertexBuffer;
-        try (MemoryStack stack = stackPush()) {
-            vertexBuffer = stackMallocFloat(5 * 6 * 6 * blocks.size());
+        List<Float> vertexList = new ArrayList<>();
 
-            List<Vector3f> faces = new ArrayList<>();
-            faces.add(Face.UP);
-            faces.add(Face.BACK);
-            faces.add(Face.DOWN);
-            faces.add(Face.RIGHT);
-            faces.add(Face.LEFT);
-            faces.add(Face.FRONT);
+        for (BlockPos blockPos : blocks.keySet()) {
+            BlockType blockType = blocks.get(blockPos);
 
-            for (BlockPos blockPos : blocks.keySet()) {
-                BlockType blockType = blocks.get(blockPos);
+            Vector3f offset = new Vector3f(
+                    blockPos.x,// - chunk.getChunkX()*16,
+                    blockPos.y,
+                    blockPos.z// - chunk.getChunkZ()*16
+            );
 
-                Vector3f offset = new Vector3f(
-                        blockPos.x - chunk.getChunkX()*16,
-                        blockPos.y,
-                        blockPos.z - chunk.getChunkZ()*16
-                );
+            for (Vector3f face : faces) {
+                if (isNeighborSolid(chunk, blockPos, face)) {
+                    continue;
+                };
 
-                for (Vector3f face : faces) {
-                    List<Vector3f> unitCubeFace = Face.faceUnitCube(face);
+                List<Vector3f> unitCubeFace = Face.faceUnitCube(face);
 
-                    Vector3f vert1 = unitCubeFace.get(0).add(offset);
-                    Vector3f vert2 = unitCubeFace.get(1).add(offset);
-                    Vector3f vert3 = unitCubeFace.get(2).add(offset);
-                    Vector3f vert4 = unitCubeFace.get(3).add(offset);
+                Vector3f vert1 = unitCubeFace.get(0).add(offset);
+                Vector3f vert2 = unitCubeFace.get(1).add(offset);
+                Vector3f vert3 = unitCubeFace.get(2).add(offset);
+                Vector3f vert4 = unitCubeFace.get(3).add(offset);
 
-                    String textureName = (face.equals(Face.FRONT)) ? "oak_planks" : "stone";
-                    List<Vector2f> uvCoords = Game.getInstance().blockTextures.getTextureUVs(textureName);
+                TextureUV textureUV = getBlockTextureUV(blockType, face);
 
-                    vertexBuffer.put(vert1.x).put(vert1.y).put(vert1.z).put(uvCoords.get(0).x).put(uvCoords.get(0).y);
-                    vertexBuffer.put(vert2.x).put(vert2.y).put(vert2.z).put(uvCoords.get(1).x).put(uvCoords.get(1).y);
-                    vertexBuffer.put(vert3.x).put(vert3.y).put(vert3.z).put(uvCoords.get(2).x).put(uvCoords.get(2).y);
+                addVertex(vertexList, vert1, textureUV.uv1.x, textureUV.uv1.y);
+                addVertex(vertexList, vert2, textureUV.uv2.x, textureUV.uv2.y);
+                addVertex(vertexList, vert3, textureUV.uv3.x, textureUV.uv3.y);
 
-                    vertexBuffer.put(vert3.x).put(vert3.y).put(vert3.z).put(uvCoords.get(2).x).put(uvCoords.get(2).y);
-                    vertexBuffer.put(vert4.x).put(vert4.y).put(vert4.z).put(uvCoords.get(3).x).put(uvCoords.get(3).y);
-                    vertexBuffer.put(vert1.x).put(vert1.y).put(vert1.z).put(uvCoords.get(0).x).put(uvCoords.get(0).y);
-                }
+                addVertex(vertexList, vert3, textureUV.uv3.x, textureUV.uv3.y);
+                addVertex(vertexList, vert4, textureUV.uv4.x, textureUV.uv4.y);
+                addVertex(vertexList, vert1, textureUV.uv1.x, textureUV.uv1.y);
             }
-
-            vertexBuffer.flip();
         }
 
-        Mesh mesh = new Mesh(vertexBuffer, 6 * 6 * blocks.size());
+        float[] vertexArray = new float[vertexList.size()];
+        for (int i = 0; i < vertexList.size(); i++) {
+            vertexArray[i] = vertexList.get(i);
+        }
+
+        FloatBuffer vertexBuffer = createFloatBuffer(vertexArray.length);
+        vertexBuffer.put(vertexArray);
+        vertexBuffer.flip();
+
+        Mesh mesh = new Mesh(vertexBuffer, vertexList.size());
 
         glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 5 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
@@ -80,6 +109,16 @@ public class ChunkBuilder {
 
         mesh.unbind();
 
+        System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
+
         return mesh;
+    }
+
+    private static void addVertex(List<Float> vertexList, Vector3f pos, float uvX, float uvY) {
+        vertexList.add(pos.x);
+        vertexList.add(pos.y);
+        vertexList.add(pos.z);
+        vertexList.add(uvX);
+        vertexList.add(uvY);
     }
 }

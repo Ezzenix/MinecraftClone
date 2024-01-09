@@ -5,6 +5,7 @@ import com.ezzenix.rendering.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
 import com.ezzenix.utils.BlockPos;
 
+import javax.sound.midi.SysexMessage;
 import java.util.HashMap;
 
 public class Chunk {
@@ -12,23 +13,30 @@ public class Chunk {
     private Mesh mesh;
     private final int x;
     private final int z;
+    private final World world;
 
-    public Chunk(int x, int z) {
+    public Chunk(int x, int z, World world) {
         this.x = x;
         this.z = z;
-
-        //setBlock(new BlockPos(0, 0, 0), BlockTypes.STONE);
-        //setBlock(new BlockPos(1, 0, 0), BlockTypes.STONE);
-        //setBlock(new BlockPos(0, 0, 1), BlockTypes.STONE);
-        //setBlock(new BlockPos(0, 1, 0), BlockTypes.STONE);
-
-        WorldGenerator.generateChunk(this);
-
-        this.updateMesh();
+        this.world = world;
     }
 
     public void setBlock(BlockPos blockPos, BlockType blockType) {
         blocks.put(blockPos, blockType);
+    }
+
+    public BlockType getBlockTypeAt(BlockPos blockPos) {
+        for (BlockPos pos : blocks.keySet()) {
+            if (blockPos.equals(pos)) {
+                return blocks.get(pos);
+            }
+        }
+        return null;
+    }
+
+    public void generate() {
+        WorldGenerator.generateChunk(this);
+        this.updateMesh();
     }
 
     public HashMap<BlockPos, BlockType> getBlocks() {
@@ -42,6 +50,8 @@ public class Chunk {
     public int getChunkZ() {
         return this.z;
     }
+
+    public World getWorld() { return this.world; }
 
     public void updateMesh() {
         if (this.mesh != null) {
