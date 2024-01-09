@@ -18,17 +18,13 @@ public class Mesh {
 
     public Mesh(FloatBuffer buffer, int vertexCount) {
         this.vertexCount = vertexCount;
-        try (MemoryStack stack = stackPush()) {
-            this.vao = glGenVertexArrays();
-            glBindVertexArray(this.vao);
 
-            this.vbo = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-            glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        }
+        this.vao = glGenVertexArrays();
+        glBindVertexArray(this.vao);
 
-        glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 3 * Float.BYTES, 0);
-        glEnableVertexAttribArray(0);
+        this.vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
+        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
     }
 
     public void render() {

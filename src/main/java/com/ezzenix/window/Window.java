@@ -1,10 +1,13 @@
 package com.ezzenix.window;
 
 import com.ezzenix.Game;
+import com.ezzenix.game.Chunk;
+import com.ezzenix.game.World;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Mesh;
 import com.ezzenix.rendering.Shader;
 import com.ezzenix.utilities.ImageParser;
+import com.ezzenix.utilities.ImageUtil;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -30,8 +33,9 @@ public class Window {
     //InputStream vertexShaderStream = getClass().getResourceAsStream("/shaders/vertexShader.glsl");
     //InputStream fragmentShaderStream = getClass().getResourceAsStream("/shaders/fragmentShader.glsl");
 
-    public void initialize() {
+    public void initialize(Runnable postInitCallback) {
         init();
+        postInitCallback.run();
         loop();
         cleanup();
     }
@@ -138,58 +142,18 @@ public class Window {
             System.exit(-1);
         }
 
-        FloatBuffer buffer;
-        try (MemoryStack stack = stackPush()) {
-            buffer = stackMallocFloat(3 * 24);
-            // Front face
-            buffer.put(-0.5f).put(-0.5f).put(0.5f);   // Vertex 1 (front-bottom-left)
-            buffer.put(0.5f).put(-0.5f).put(0.5f);    // Vertex 2 (front-bottom-right)
-            buffer.put(0.5f).put(0.5f).put(0.5f);     // Vertex 3 (front-top-right)
-            buffer.put(-0.5f).put(0.5f).put(0.5f);    // Vertex 4 (front-top-left)
-
-// Back face
-            buffer.put(-0.5f).put(-0.5f).put(-0.5f);  // Vertex 5 (back-bottom-left)
-            buffer.put(0.5f).put(-0.5f).put(-0.5f);   // Vertex 6 (back-bottom-right)
-            buffer.put(0.5f).put(0.5f).put(-0.5f);    // Vertex 7 (back-top-right)
-            buffer.put(-0.5f).put(0.5f).put(-0.5f);   // Vertex 8 (back-top-left)
-
-// Left face
-            buffer.put(-0.5f).put(-0.5f).put(-0.5f);  // Vertex 9 (left-bottom-back)
-            buffer.put(-0.5f).put(-0.5f).put(0.5f);   // Vertex 10 (left-bottom-front)
-            buffer.put(-0.5f).put(0.5f).put(0.5f);    // Vertex 11 (left-top-front)
-            buffer.put(-0.5f).put(0.5f).put(-0.5f);   // Vertex 12 (left-top-back)
-
-// Right face
-            buffer.put(0.5f).put(-0.5f).put(-0.5f);   // Vertex 13 (right-bottom-back)
-            buffer.put(0.5f).put(-0.5f).put(0.5f);    // Vertex 14 (right-bottom-front)
-            buffer.put(0.5f).put(0.5f).put(0.5f);     // Vertex 15 (right-top-front)
-            buffer.put(0.5f).put(0.5f).put(-0.5f);    // Vertex 16 (right-top-back)
-
-// Top face
-            buffer.put(-0.5f).put(0.5f).put(0.5f);    // Vertex 17 (top-front-left)
-            buffer.put(0.5f).put(0.5f).put(0.5f);     // Vertex 18 (top-front-right)
-            buffer.put(0.5f).put(0.5f).put(-0.5f);    // Vertex 19 (top-back-right)
-            buffer.put(-0.5f).put(0.5f).put(-0.5f);   // Vertex 20 (top-back-left)
-
-// Bottom face
-            buffer.put(-0.5f).put(-0.5f).put(0.5f);   // Vertex 21 (bottom-front-left)
-            buffer.put(0.5f).put(-0.5f).put(0.5f);    // Vertex 22 (bottom-front-right)
-            buffer.put(0.5f).put(-0.5f).put(-0.5f);   // Vertex 23 (bottom-back-right)
-            buffer.put(-0.5f).put(-0.5f).put(-0.5f);  // Vertex 24 (bottom-back-left)
-            buffer.flip();
-        }
-
-        Mesh mesh = new Mesh(buffer, 24);
-        mesh.unbind();
-
         glUseProgram(shaderProgram);
 
 
 
         // Set defaults
-        glClearColor(1.0f, 0.4f, 0.4f, 0.0f);
+        glClearColor(0.8f, 0.4f, 0.4f, 0.0f);
         //glEnable(GL_DEPTH_TEST);
         //glEnable(GL_LIGHTING);
+
+        int blockTexture = ImageUtil.loadTexture(Game.getInstance().blockTextures.getAtlasImage());
+
+        World world = Game.getInstance().getWorld();
 
         while (!glfwWindowShouldClose(window)) {
             if (Game.getInstance() != null) {
@@ -197,15 +161,23 @@ public class Window {
             }
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glBindTexture(GL_TEXTURE_2D, blockTexture);
 
-            glUseProgram(shaderProgram);
+            if (world != null) {
+                glUseProgram(shaderProgram);
 
-            int projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projectionMatrix");
-            glUniformMatrix4fv(projectionMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getProjectionMatrix().get(new float[16]));
-            int viewMatrixLocation = glGetUniformLocation(shaderProgram, "viewMatrix");
-            glUniformMatrix4fv(viewMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getViewMatrix().get(new float[16]));
+                int projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projectionMatrix");
+                glUniformMatrix4fv(projectionMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getProjectionMatrix().get(new float[16]));
+                int viewMatrixLocation = glGetUniformLocation(shaderProgram, "viewMatrix");
+                glUniformMatrix4fv(viewMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getViewMatrix().get(new float[16]));
 
-            mesh.render();
+                for (Chunk chunk : world.getChunks().values()) {
+                    Mesh mesh = chunk.getMesh();
+                    if (mesh != null) {
+                        mesh.render();
+                    }
+                }
+            }
 
             glfwSwapBuffers(window); // swap the color buffers
             glfwPollEvents();

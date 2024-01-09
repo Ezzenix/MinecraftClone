@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class TextureAtlas {
     private Map<String, List<Vector2f>> nameToUVs;
+    private BufferedImage atlasImage;
 
     public TextureAtlas(String directoryPath) {
         nameToUVs = new HashMap<>();
@@ -23,6 +24,7 @@ public class TextureAtlas {
             Map<String, BufferedImage> imageMap = loadImageMap(directoryPath);
             if (imageMap == null) return;
             BufferedImage atlas = createTextureAtlas(imageMap);
+            this.atlasImage = atlas;
 
             // Save the atlas to disk
             try {
@@ -38,6 +40,10 @@ public class TextureAtlas {
 
     public List<Vector2f> getTextureUVs(String name) {
         return nameToUVs.getOrDefault(name, null);
+    }
+
+    public BufferedImage getAtlasImage() {
+        return this.atlasImage;
     }
 
     private Map<String, BufferedImage> loadImageMap(String directoryPath) throws IOException {

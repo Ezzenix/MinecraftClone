@@ -1,31 +1,38 @@
 package com.ezzenix;
 
+import com.ezzenix.game.World;
 import com.ezzenix.rendering.GameRenderer;
+import com.ezzenix.utilities.Face;
 import com.ezzenix.utilities.TextureAtlas;
 import com.ezzenix.window.InputHandler;
 import com.ezzenix.window.Window;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.Version;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class Game {
     private final GameRenderer gameRenderer;
     private final Window window;
     private final InputHandler inputHandler;
+    private World world;
+
+    public TextureAtlas blockTextures;
 
     public Game() {
         INSTANCE = this;
 
-        TextureAtlas atlas = new TextureAtlas("src/main/resources/textures");
-        //List<Vector2f> uvs = atlas.getTextureUVs("oak_planks");
-        //System.out.println(uvs);
+        this.blockTextures = new TextureAtlas("src/main/resources/textures");
 
         this.gameRenderer = new GameRenderer();
         this.window = new Window();
         this.inputHandler = new InputHandler();
 
-        this.window.initialize();
+        this.window.initialize(() -> {
+            this.world = new World();
+        });
     }
 
     public Window getWindow() {
@@ -38,6 +45,9 @@ public class Game {
 
     public InputHandler getInputHandler() {
         return this.inputHandler;
+    }
+    public World getWorld() {
+        return this.world;
     }
 
 
