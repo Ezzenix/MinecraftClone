@@ -33,14 +33,8 @@ public class Window {
     //InputStream vertexShaderStream = getClass().getResourceAsStream("/shaders/vertexShader.glsl");
     //InputStream fragmentShaderStream = getClass().getResourceAsStream("/shaders/fragmentShader.glsl");
 
-    public void initialize(Runnable postInitCallback) {
-        init();
-        postInitCallback.run();
-        loop();
-        cleanup();
-    }
 
-    private void init() {
+    public void init() {
         GLFWErrorCallback.createPrint(System.err).set();
         System.setProperty("org.lwjgl.util.Debug", "true");
 
@@ -50,6 +44,7 @@ public class Window {
         Configuration.DEBUG_MEMORY_ALLOCATOR.set(true);
         Configuration.DEBUG_MEMORY_ALLOCATOR_FAST.set(true);
         Configuration.DEBUG_STACK.set(true);
+        //Configuration.STACK_SIZE.set(10 * 1024);
 
         if ( !glfwInit() )
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -135,7 +130,7 @@ public class Window {
         System.out.println("OpenGL Version: " + glGetString(GL_VERSION));
     }
 
-    private void loop() {
+    public void loop() {
         int shaderProgram = Shader.makeProgram("vertexShader.glsl", "fragmentShader.glsl");
         if (shaderProgram == -1) {
             System.err.println("Shader program failed to load!");
@@ -148,7 +143,7 @@ public class Window {
 
         // Set defaults
         glClearColor(0.8f, 0.4f, 0.4f, 0.0f);
-        //glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
         //glEnable(GL_LIGHTING);
 
         int blockTexture = ImageUtil.loadTexture(Game.getInstance().blockTextures.getAtlasImage());
@@ -162,6 +157,7 @@ public class Window {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glBindTexture(GL_TEXTURE_2D, blockTexture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
             if (world != null) {
                 glUseProgram(shaderProgram);
@@ -200,7 +196,7 @@ public class Window {
         return window;
     }
 
-    private void cleanup() {
+    public void cleanup() {
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);

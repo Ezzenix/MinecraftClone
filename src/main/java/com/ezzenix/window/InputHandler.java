@@ -49,7 +49,7 @@ public class InputHandler {
         lastMouseX = mouseX;
         lastMouseY = mouseY;
 
-        float sensitivity = 0.5f;
+        float sensitivity = 0.45f;
         camera.addYaw(deltaX * sensitivity);
         camera.addPitch(deltaY * sensitivity * -1);
     }

@@ -1,5 +1,6 @@
 package com.ezzenix.game;
 
+import com.ezzenix.game.worldgenerator.WorldGenerator;
 import com.ezzenix.rendering.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
 import com.ezzenix.utilities.BlockPos;
@@ -17,10 +18,12 @@ public class Chunk {
         this.x = x;
         this.z = z;
 
-        setBlock(new BlockPos(0, 0, 0), BlockTypes.STONE);
-        setBlock(new BlockPos(1, 0, 0), BlockTypes.STONE);
-        setBlock(new BlockPos(0, 0, 1), BlockTypes.STONE);
-        setBlock(new BlockPos(0, 1, 0), BlockTypes.STONE);
+        //setBlock(new BlockPos(0, 0, 0), BlockTypes.STONE);
+        //setBlock(new BlockPos(1, 0, 0), BlockTypes.STONE);
+        //setBlock(new BlockPos(0, 0, 1), BlockTypes.STONE);
+        //setBlock(new BlockPos(0, 1, 0), BlockTypes.STONE);
+
+        WorldGenerator.generateChunk(this);
 
         this.updateMesh();
     }

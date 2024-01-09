@@ -9,6 +9,7 @@ import com.ezzenix.window.Window;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.Version;
+import org.lwjgl.system.Configuration;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -24,15 +25,17 @@ public class Game {
     public Game() {
         INSTANCE = this;
 
+        this.window = new Window();
+        this.window.init();
+
         this.blockTextures = new TextureAtlas("src/main/resources/textures");
 
         this.gameRenderer = new GameRenderer();
-        this.window = new Window();
         this.inputHandler = new InputHandler();
+        this.world = new World();
 
-        this.window.initialize(() -> {
-            this.world = new World();
-        });
+        this.window.loop();
+        this.window.cleanup();
     }
 
     public Window getWindow() {

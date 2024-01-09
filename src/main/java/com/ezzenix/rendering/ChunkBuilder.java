@@ -55,7 +55,8 @@ public class ChunkBuilder {
                     Vector3f vert3 = unitCubeFace.get(2).add(offset);
                     Vector3f vert4 = unitCubeFace.get(3).add(offset);
 
-                    List<Vector2f> uvCoords = Game.getInstance().blockTextures.getTextureUVs("stone");
+                    String textureName = (face.equals(Face.FRONT)) ? "oak_planks" : "stone";
+                    List<Vector2f> uvCoords = Game.getInstance().blockTextures.getTextureUVs(textureName);
 
                     vertexBuffer.put(vert1.x).put(vert1.y).put(vert1.z).put(uvCoords.get(0).x).put(uvCoords.get(0).y);
                     vertexBuffer.put(vert2.x).put(vert2.y).put(vert2.z).put(uvCoords.get(1).x).put(uvCoords.get(1).y);

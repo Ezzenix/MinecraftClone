@@ -82,11 +82,13 @@ public class TextureAtlas {
             BufferedImage image = imageMap.get(imageName);
 
             List<Vector2f> uvCoords = new ArrayList<>();
-            uvCoords.add(new Vector2f(currentX, 0));
-            uvCoords.add(new Vector2f(currentX, image.getHeight()));
-            uvCoords.add(new Vector2f(currentX+image.getWidth(), image.getHeight()));
-            uvCoords.add(new Vector2f(currentX+image.getWidth(), 0));
+            uvCoords.add(new Vector2f((float)currentX/(float)atlasWidth, 0));
+            uvCoords.add(new Vector2f((float)currentX/(float)atlasWidth, (float)image.getHeight()/(float)atlasHeight));
+            uvCoords.add(new Vector2f((float)(currentX+image.getWidth())/(float)atlasWidth, (float)image.getHeight()/(float)atlasHeight));
+            uvCoords.add(new Vector2f((float)(currentX+image.getWidth())/(float)atlasWidth, 0));
             this.nameToUVs.put(imageName, uvCoords);
+
+            System.out.println("Registered texture " + imageName);
 
             g.drawImage(image, currentX, 0, null);
             currentX += image.getWidth();

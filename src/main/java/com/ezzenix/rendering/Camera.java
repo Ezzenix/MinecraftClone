@@ -62,12 +62,14 @@ public class Camera {
     }
 
     public Matrix4f getViewMatrix() {
+        float fakeYaw = ((yaw+180))%360;
+
         return new Matrix4f().setLookAt(
                 position,
                 new Vector3f(
-                        (float) (position.x + Math.cos(Math.toRadians(yaw+180)) * Math.cos(Math.toRadians(pitch))),
+                        (float) (position.x + Math.cos(Math.toRadians(fakeYaw)) * Math.cos(Math.toRadians(pitch))),
                         (float) (position.y + Math.sin(Math.toRadians(pitch))),
-                        (float) (position.z + Math.sin(Math.toRadians(yaw+180)) * Math.cos(Math.toRadians(pitch)))
+                        (float) (position.z + Math.sin(Math.toRadians(fakeYaw)) * Math.cos(Math.toRadians(pitch)))
                 ),
                 new Vector3f(0.0f, 1.0f, 0.0f)
         );
