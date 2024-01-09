@@ -2,7 +2,7 @@ package com.ezzenix.game.worldgenerator;
 
 import com.ezzenix.game.BlockTypes;
 import com.ezzenix.game.Chunk;
-import com.ezzenix.utilities.BlockPos;
+import com.ezzenix.utils.BlockPos;
 
 public class WorldGenerator {
     public static void generateChunk(Chunk chunk) {

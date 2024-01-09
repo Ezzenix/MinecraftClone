@@ -1,4 +1,4 @@
-package com.ezzenix.utilities;
+package com.ezzenix.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

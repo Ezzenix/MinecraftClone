@@ -2,17 +2,10 @@ package com.ezzenix;
 
 import com.ezzenix.game.World;
 import com.ezzenix.rendering.GameRenderer;
-import com.ezzenix.utilities.Face;
-import com.ezzenix.utilities.TextureAtlas;
+import com.ezzenix.utils.TextureAtlas;
 import com.ezzenix.window.InputHandler;
 import com.ezzenix.window.Window;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.lwjgl.Version;
-import org.lwjgl.system.Configuration;
-
-import java.text.DecimalFormat;
-import java.util.List;
 
 public class Game {
     private final GameRenderer gameRenderer;

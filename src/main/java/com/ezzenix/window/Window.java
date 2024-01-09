@@ -6,13 +6,12 @@ import com.ezzenix.game.World;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Mesh;
 import com.ezzenix.rendering.Shader;
-import com.ezzenix.utilities.ImageParser;
-import com.ezzenix.utilities.ImageUtil;
+import com.ezzenix.utils.ImageParser;
+import com.ezzenix.utils.ImageUtil;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
-import java.nio.*;
 import java.text.DecimalFormat;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -20,7 +19,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.*;
-import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
@@ -144,7 +142,7 @@ public class Window {
         // Set defaults
         glClearColor(0.8f, 0.4f, 0.4f, 0.0f);
         glEnable(GL_DEPTH_TEST);
-        //glEnable(GL_LIGHTING);
+        glEnable(GL_CULL_FACE);
 
         int blockTexture = ImageUtil.loadTexture(Game.getInstance().blockTextures.getAtlasImage());
 

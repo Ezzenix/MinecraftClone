@@ -1,9 +1,7 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.Game;
-import com.ezzenix.utilities.BlockPos;
-
-import java.util.HashMap;
+import com.ezzenix.utils.BlockPos;
 
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.opengl.GL11.*;

@@ -1,9 +1,8 @@
-package com.ezzenix.utilities;
+package com.ezzenix.utils;
 
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Face {

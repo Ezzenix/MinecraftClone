@@ -3,8 +3,7 @@ package com.ezzenix.game;
 import com.ezzenix.game.worldgenerator.WorldGenerator;
 import com.ezzenix.rendering.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
-import com.ezzenix.utilities.BlockPos;
-import org.joml.Vector2i;
+import com.ezzenix.utils.BlockPos;
 
 import java.util.HashMap;
 

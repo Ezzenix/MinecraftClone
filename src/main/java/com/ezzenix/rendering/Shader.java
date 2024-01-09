@@ -1,6 +1,6 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.utilities.FileUtil;
+import com.ezzenix.utils.FileUtil;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL33;
 

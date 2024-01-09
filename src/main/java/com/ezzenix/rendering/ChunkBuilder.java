@@ -3,15 +3,14 @@ package com.ezzenix.rendering;
 import com.ezzenix.Game;
 import com.ezzenix.game.BlockType;
 import com.ezzenix.game.Chunk;
-import com.ezzenix.utilities.BlockPos;
-import com.ezzenix.utilities.Face;
+import com.ezzenix.utils.BlockPos;
+import com.ezzenix.utils.Face;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

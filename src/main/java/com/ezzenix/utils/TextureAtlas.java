@@ -1,7 +1,6 @@
-package com.ezzenix.utilities;
+package com.ezzenix.utils;
 
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
