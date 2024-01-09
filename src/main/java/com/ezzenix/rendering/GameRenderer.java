@@ -1,9 +1,7 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.Block;
 import com.ezzenix.Game;
 import com.ezzenix.utilities.BlockPos;
-import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 
@@ -11,9 +9,9 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GameRenderer {
-    private final HashMap<BlockPos, Block> blocks = new HashMap<>();
+    //private final HashMap<BlockPos, Block> blocks = new HashMap<>();
     void addBlock(BlockPos position) {
-        blocks.put(position, new Block(position));
+        //blocks.put(position, new Block(position));
     }
 
     private final Camera camera;
@@ -41,8 +39,6 @@ public class GameRenderer {
         //float[] viewMatrix = camera.getViewMatrix();
         //GL11.glMultMatrixf(viewMatrix);
 
-        drawCube();
-
         glPopMatrix();
 
         glfwSwapBuffers(window); // swap the color buffers
@@ -51,61 +47,5 @@ public class GameRenderer {
         if (error != GL_NO_ERROR) {
             System.err.println("OpenGL Error: " + error);
         }
-    }
-
-    private void drawCube() {
-        // Front face
-        glBegin(GL_QUADS);
-        glColor3f(1f, 1f, 1f);
-        glVertex3f(-0.5f, -0.5f, 0.5f); // Bottom-left
-        glVertex3f(0.5f, -0.5f, 0.5f);  // Bottom-right
-        glVertex3f(0.5f, 0.5f, 0.5f);   // Top-right
-        glVertex3f(-0.5f, 0.5f, 0.5f);  // Top-left
-        glEnd();
-
-        // Back face
-        glBegin(GL_QUADS);
-        glColor3f(0.5f, 0f, 1f);
-        glVertex3f(-0.5f, -0.5f, -0.5f); // Bottom-left
-        glVertex3f(0.5f, -0.5f, -0.5f);  // Bottom-right
-        glVertex3f(0.5f, 0.5f, -0.5f);   // Top-right
-        glVertex3f(-0.5f, 0.5f, -0.5f);  // Top-left
-        glEnd();
-
-        // Left face
-        glBegin(GL_QUADS);
-        glColor3f(0.5f, 0.5f, 0f);
-        glVertex3f(-0.5f, -0.5f, 0.5f);  // Bottom-front
-        glVertex3f(-0.5f, -0.5f, -0.5f); // Bottom-back
-        glVertex3f(-0.5f, 0.5f, -0.5f);  // Top-back
-        glVertex3f(-0.5f, 0.5f, 0.5f);   // Top-front
-        glEnd();
-
-        // Right face
-        glBegin(GL_QUADS);
-        glColor3f(0f, 0.5f, 0.5f);
-        glVertex3f(0.5f, -0.5f, 0.5f);  // Bottom-front
-        glVertex3f(0.5f, -0.5f, -0.5f); // Bottom-back
-        glVertex3f(0.5f, 0.5f, -0.5f);  // Top-back
-        glVertex3f(0.5f, 0.5f, 0.5f);   // Top-front
-        glEnd();
-
-        // Top face
-        glBegin(GL_QUADS);
-        glColor3f(0f, 1f, 0f);
-        glVertex3f(-0.5f, 0.5f, 0.5f);  // Front-left
-        glVertex3f(0.5f, 0.5f, 0.5f);   // Front-right
-        glVertex3f(0.5f, 0.5f, -0.5f);  // Back-right
-        glVertex3f(-0.5f, 0.5f, -0.5f); // Back-left
-        glEnd();
-
-        // Bottom face
-        glBegin(GL_QUADS);
-        glColor3f(0.5f, 0f, 0f);
-        glVertex3f(-0.5f, -0.5f, 0.5f);  // Front-left
-        glVertex3f(0.5f, -0.5f, 0.5f);   // Front-right
-        glVertex3f(0.5f, -0.5f, -0.5f);  // Back-right
-        glVertex3f(-0.5f, -0.5f, -0.5f); // Back-left
-        glEnd();
     }
 }

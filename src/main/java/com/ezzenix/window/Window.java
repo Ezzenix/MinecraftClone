@@ -2,6 +2,7 @@ package com.ezzenix.window;
 
 import com.ezzenix.Game;
 import com.ezzenix.rendering.Camera;
+import com.ezzenix.rendering.Mesh;
 import com.ezzenix.rendering.Shader;
 import com.ezzenix.utilities.ImageParser;
 import org.lwjgl.glfw.*;
@@ -137,10 +138,9 @@ public class Window {
             System.exit(-1);
         }
 
-        int vao;
-        int vbo;
+        FloatBuffer buffer;
         try (MemoryStack stack = stackPush()) {
-            FloatBuffer buffer = stackMallocFloat(3 * 24);
+            buffer = stackMallocFloat(3 * 24);
             // Front face
             buffer.put(-0.5f).put(-0.5f).put(0.5f);   // Vertex 1 (front-bottom-left)
             buffer.put(0.5f).put(-0.5f).put(0.5f);    // Vertex 2 (front-bottom-right)
@@ -177,20 +177,10 @@ public class Window {
             buffer.put(0.5f).put(-0.5f).put(-0.5f);   // Vertex 23 (bottom-back-right)
             buffer.put(-0.5f).put(-0.5f).put(-0.5f);  // Vertex 24 (bottom-back-left)
             buffer.flip();
-
-            vao = glGenVertexArrays();
-            glBindVertexArray(vao);
-
-            vbo = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         }
 
-        glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 3 * Float.BYTES, 0);
-        glEnableVertexAttribArray(0);
-
-        glBindVertexArray(0);
-        glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        Mesh mesh = new Mesh(buffer, 24);
+        mesh.unbind();
 
         glUseProgram(shaderProgram);
 
@@ -215,9 +205,7 @@ public class Window {
             int viewMatrixLocation = glGetUniformLocation(shaderProgram, "viewMatrix");
             glUniformMatrix4fv(viewMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getViewMatrix().get(new float[16]));
 
-            glBindVertexArray(vao);
-            glDrawArrays(GL_TRIANGLES, 0, 24);
-            glBindVertexArray(0);
+            mesh.render();
 
             glfwSwapBuffers(window); // swap the color buffers
             glfwPollEvents();
