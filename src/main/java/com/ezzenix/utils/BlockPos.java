@@ -35,8 +35,11 @@ public class BlockPos {
         return "X: " + this.x + " Y: " + this.x + " Z: " + this.z;
     }
 
-    public boolean equals(BlockPos v) {
-        return (this.x == v.x) && (this.y == v.y) && (this.z == v.z);
+    public boolean equals(Object v) {
+        if (this == v) return true;
+        if (v == null || this.getClass() != v.getClass()) return false;
+        BlockPos other = (BlockPos) v;
+        return this.x == other.x && this.y == other.y && this.z == other.z;
     }
 
     public int hashCode() {
