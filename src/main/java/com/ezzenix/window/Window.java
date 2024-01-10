@@ -152,23 +152,10 @@ public class Window {
     }
 
     public void loop() {
-        int shaderProgram = Shader.makeProgram("vertexShader.glsl", "fragmentShader.glsl");
-        if (shaderProgram == -1) {
-            System.err.println("Shader program failed to load!");
-            System.exit(-1);
-        }
-
-        glUseProgram(shaderProgram);
-
-
         // Set defaults
         glClearColor(0.20f, 0.72f, 0.92f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-
-        int blockTexture = ImageUtil.loadTexture(Game.getInstance().blockTextures.getAtlasImage());
-
-        World world = Game.getInstance().getWorld();
 
         long lastFrame = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window)) {
@@ -180,24 +167,8 @@ public class Window {
             }
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glBindTexture(GL_TEXTURE_2D, blockTexture);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-            if (world != null) {
-                glUseProgram(shaderProgram);
-
-                int projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projectionMatrix");
-                glUniformMatrix4fv(projectionMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getProjectionMatrix().get(new float[16]));
-                int viewMatrixLocation = glGetUniformLocation(shaderProgram, "viewMatrix");
-                glUniformMatrix4fv(viewMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getViewMatrix().get(new float[16]));
-
-                for (Chunk chunk : world.getChunks().values()) {
-                    Mesh mesh = chunk.getMesh();
-                    if (mesh != null) {
-                        mesh.render();
-                    }
-                }
-            }
+            Game.getInstance().getRenderer().render(window);
 
             glfwSwapBuffers(window); // swap the color buffers
             glfwPollEvents();
