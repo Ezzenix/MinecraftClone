@@ -54,19 +54,6 @@ public class Camera {
         this.setPitch(this.pitch + offset);
     }
 
-    public Vector3f getLookVector() {
-        double x = Math.cos(pitch) * Math.sin(yaw);
-        double y = Math.sin(pitch);
-        double z = -Math.cos(pitch) * Math.cos(yaw);
-
-        double magnitude = Math.sqrt(x * x + y * y + z * z);
-        x /= magnitude;
-        y /= magnitude;
-        z /= magnitude;
-
-        return new Vector3f((float) x, (float) y, (float) z);
-    }
-
     public Matrix4f getProjectionMatrix() {
         // Example parameters
         float fov = 70.0f;

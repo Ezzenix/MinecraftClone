@@ -89,11 +89,6 @@ public class Window {
 
         AtomicBoolean wireframeMode = new AtomicBoolean(false);
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_H) {
-                Camera camera = Game.getInstance().getRenderer().getCamera();
-                System.out.println("LookVector " + camera.getLookVector().toString(new DecimalFormat("#.###")));
-            }
-
             if (key == GLFW_KEY_Z && action == GLFW_RELEASE) {
                 wireframeMode.set(!wireframeMode.get());
                 if (wireframeMode.get()) {
@@ -159,7 +154,8 @@ public class Window {
 
         long lastFrame = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window)) {
-            Game.getInstance().deltaTime = (float) (System.currentTimeMillis() - lastFrame);
+            Game.getInstance().deltaTime = (float)(System.currentTimeMillis() - lastFrame);
+            Game.getInstance().fps = Math.round(1/ (float)(System.currentTimeMillis() - lastFrame));
             lastFrame = System.currentTimeMillis();
 
             if (Game.getInstance() != null) {
@@ -169,6 +165,7 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             Game.getInstance().getRenderer().render(window);
+            Game.getInstance().getHud().render(window);
 
             glfwSwapBuffers(window); // swap the color buffers
             glfwPollEvents();

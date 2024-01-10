@@ -1,6 +1,5 @@
 package com.ezzenix;
 
-import com.ezzenix.game.BlockDataStructure;
 import com.ezzenix.game.World;
 import com.ezzenix.hud.Hud;
 import com.ezzenix.rendering.GameRenderer;
@@ -19,6 +18,7 @@ public class Game {
     public final TextureAtlas blockTextures;
 
     public float deltaTime = (float) 1 / 60;
+    public float fps = 0;
 
     public Game() {
         INSTANCE = this;
@@ -32,16 +32,6 @@ public class Game {
         this.gameRenderer = new GameRenderer();
         this.inputHandler = new InputHandler();
         this.world = new World();
-
-        /*
-        HashMap<Vector3f, String> map = new HashMap<>();
-        map.put(new Vector3f(1, 1, 1), "HELLO");
-        System.out.println("VALUE: " + map.get(new Vector3f(1, 1, 1)));
-        */
-        BlockDataStructure blockDataStructure = new BlockDataStructure();
-        blockDataStructure.set((byte) 1, (byte) 2, (byte) 3, (short) 10);
-        short id = blockDataStructure.get(1, 2, 3);
-        System.out.println("id is " + id);
 
         this.window.loop();
         this.window.cleanup();

@@ -11,8 +11,10 @@ public class Mesh {
     public final int vao;
     public final int vbo;
     public final int vertexCount;
+    private final int primitive;
 
-    public Mesh(FloatBuffer buffer, int vertexCount) {
+    public Mesh(FloatBuffer buffer, int vertexCount, int primitive) {
+        this.primitive = primitive;
         this.vertexCount = vertexCount;
 
         this.vao = glGenVertexArrays();
@@ -23,9 +25,13 @@ public class Mesh {
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
     }
 
+    public Mesh(FloatBuffer buffer, int vertexCount) {
+        this(buffer, vertexCount, GL_TRIANGLES);
+    }
+
     public void render() {
         glBindVertexArray(this.vao);
-        glDrawArrays(GL_TRIANGLES, 0, this.vertexCount);
+        glDrawArrays(primitive, 0, this.vertexCount);
         glBindVertexArray(0);
     }
 

@@ -5,6 +5,7 @@ import org.lwjgl.system.MemoryStack;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
+import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
 import static org.lwjgl.system.MemoryUtil.memFree;
@@ -44,7 +45,7 @@ public class ImageUtil {
         image.getRGB(0, 0, width, height, pixels, 0, width);
 
         // Convert ARGB to RGBA
-        ByteBuffer buffer = MemoryStack.stackMalloc(width * height * 4);
+        ByteBuffer buffer = createByteBuffer(width * height * 4);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int pixel = pixels[y * width + x];
@@ -54,7 +55,6 @@ public class ImageUtil {
                 buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
             }
         }
-
         buffer.flip(); // Flip the buffer to prepare for reading
 
         return buffer;
