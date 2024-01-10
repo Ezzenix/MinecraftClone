@@ -19,7 +19,7 @@ public class ImageParser {
         return height;
     }
 
-    private ByteBuffer image;
+    private final ByteBuffer image;
     private final int width;
     private final int height;
 

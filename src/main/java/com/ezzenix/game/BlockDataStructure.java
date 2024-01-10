@@ -3,7 +3,7 @@ package com.ezzenix.game;
 import java.util.HashMap;
 
 public class BlockDataStructure {
-    private HashMap<Byte, HashMap<Byte, HashMap<Byte, Short>>> blocks;
+    private final HashMap<Byte, HashMap<Byte, HashMap<Byte, Short>>> blocks;
 
     public BlockDataStructure() {
         blocks = new HashMap<>();
@@ -18,7 +18,7 @@ public class BlockDataStructure {
     }
 
     public short get(float x, float y, float z) {
-        return get((byte)x, (byte)y, (byte)z);
+        return get((byte) x, (byte) y, (byte) z);
     }
 
     public void set(byte x, byte y, byte z, short id) {
@@ -26,6 +26,6 @@ public class BlockDataStructure {
     }
 
     public void set(float x, float y, float z, short id) {
-        set((byte)x, (byte)y, (byte)z, id);
+        set((byte) x, (byte) y, (byte) z, id);
     }
 }

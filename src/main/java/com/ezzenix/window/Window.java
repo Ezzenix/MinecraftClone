@@ -8,9 +8,11 @@ import com.ezzenix.rendering.Mesh;
 import com.ezzenix.rendering.Shader;
 import com.ezzenix.utils.ImageParser;
 import com.ezzenix.utils.ImageUtil;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.Configuration;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -18,12 +20,13 @@ import java.lang.management.MemoryUsage;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL.*;
+import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public class Window {
     private final String title = "Minecraft";
@@ -47,7 +50,7 @@ public class Window {
         Configuration.DEBUG_MEMORY_ALLOCATOR_FAST.set(true);
         Configuration.DEBUG_STACK.set(true);
 
-        if ( !glfwInit() )
+        if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
         // Configure GLFW
@@ -61,7 +64,7 @@ public class Window {
 
         // Create the window
         window = glfwCreateWindow(width, height, title, NULL, NULL);
-        if ( window == NULL )
+        if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
         // Detect window size changes
@@ -158,7 +161,6 @@ public class Window {
         glUseProgram(shaderProgram);
 
 
-
         // Set defaults
         glClearColor(0.20f, 0.72f, 0.92f, 0.0f);
         glEnable(GL_DEPTH_TEST);
@@ -170,7 +172,7 @@ public class Window {
 
         long lastFrame = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window)) {
-            Game.getInstance().deltaTime = (float)(System.currentTimeMillis() - lastFrame);
+            Game.getInstance().deltaTime = (float) (System.currentTimeMillis() - lastFrame);
             lastFrame = System.currentTimeMillis();
 
             if (Game.getInstance() != null) {
@@ -210,6 +212,7 @@ public class Window {
     public int getWindowWidth() {
         return width;
     }
+
     public int getWindowHeight() {
         return height;
     }

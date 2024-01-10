@@ -14,25 +14,45 @@ public class Camera {
         pitch = 0;
     }
 
-    public Vector3f getPosition() { return this.position; }
-    public float getYaw() { return this.yaw; }
-    public float getPitch() { return this.pitch; }
+    public Vector3f getPosition() {
+        return this.position;
+    }
 
-    public void setPosition(Vector3f pos) { this.position = pos; }
+    public float getYaw() {
+        return this.yaw;
+    }
+
+    public float getPitch() {
+        return this.pitch;
+    }
+
+    public void setPosition(Vector3f pos) {
+        this.position = pos;
+    }
+
     public void setYaw(float yaw) {
         while (yaw > 180) yaw -= 360;
         while (yaw < 180) yaw += 360;
         this.yaw = (yaw + 180.0f) % 360.0f - 180.0f;
     }
+
     public void setPitch(float pitch) {
         float min = -85;
         float max = 85;
         this.pitch = Math.max(min, Math.min(max, pitch));
     }
 
-    public void addPosition(Vector3f offset) { this.position = this.position.add(offset); }
-    public void addYaw(float offset) { this.setYaw(this.yaw + offset); }
-    public void addPitch(float offset) { this.setPitch(this.pitch + offset); }
+    public void addPosition(Vector3f offset) {
+        this.position = this.position.add(offset);
+    }
+
+    public void addYaw(float offset) {
+        this.setYaw(this.yaw + offset);
+    }
+
+    public void addPitch(float offset) {
+        this.setPitch(this.pitch + offset);
+    }
 
     public Vector3f getLookVector() {
         double x = Math.cos(pitch) * Math.sin(yaw);
@@ -44,7 +64,7 @@ public class Camera {
         y /= magnitude;
         z /= magnitude;
 
-        return new Vector3f((float)x, (float)y, (float)z);
+        return new Vector3f((float) x, (float) y, (float) z);
     }
 
     public Matrix4f getProjectionMatrix() {
@@ -62,7 +82,7 @@ public class Camera {
     }
 
     public Matrix4f getViewMatrix() {
-        float fakeYaw = ((yaw+180))%360;
+        float fakeYaw = ((yaw + 180)) % 360;
 
         return new Matrix4f().setLookAt(
                 position,

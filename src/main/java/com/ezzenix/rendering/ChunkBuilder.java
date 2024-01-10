@@ -1,20 +1,15 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.Game;
 import com.ezzenix.game.BlockType;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.utils.BlockPos;
 import com.ezzenix.utils.Face;
 import com.ezzenix.utils.textures.TextureUV;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +17,12 @@ import static org.lwjgl.BufferUtils.createFloatBuffer;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.system.MemoryStack.stackMallocFloat;
-import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class ChunkBuilder {
     private Map<Integer, Map<Integer, Chunk>> chunks;
 
     private static boolean isNeighborSolid(Chunk chunk, BlockPos blockPos, Vector3f face) {
-        BlockPos blockPosOffset = new BlockPos((int)face.x, (int)face.y, (int)face.z);
+        BlockPos blockPosOffset = new BlockPos((int) face.x, (int) face.y, (int) face.z);
         BlockType neighborType = chunk.getWorld().getBlockTypeAt(blockPos.add(blockPosOffset));
         return neighborType != null;
     }
@@ -41,6 +34,7 @@ public class ChunkBuilder {
     }
 
     private static final List<Vector3f> faces = new ArrayList<>();
+
     static {
         faces.add(Face.TOP);
         faces.add(Face.BACK);
@@ -69,7 +63,7 @@ public class ChunkBuilder {
             for (Vector3f face : faces) {
                 if (isNeighborSolid(chunk, blockPos, face)) {
                     continue;
-                };
+                }
 
                 List<Vector3f> unitCubeFace = Face.faceUnitCube(face);
 

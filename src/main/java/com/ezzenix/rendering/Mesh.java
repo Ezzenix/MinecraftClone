@@ -1,20 +1,16 @@
 package com.ezzenix.rendering;
 
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
-import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.system.MemoryStack.stackMallocFloat;
-import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Mesh {
-    public int vao;
-    public int vbo;
-    public int vertexCount;
+    public final int vao;
+    public final int vbo;
+    public final int vertexCount;
 
     public Mesh(FloatBuffer buffer, int vertexCount) {
         this.vertexCount = vertexCount;

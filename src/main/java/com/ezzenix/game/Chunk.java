@@ -5,7 +5,6 @@ import com.ezzenix.rendering.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
 import com.ezzenix.utils.BlockPos;
 
-import javax.sound.midi.SysexMessage;
 import java.util.HashMap;
 
 public class Chunk {
@@ -51,7 +50,9 @@ public class Chunk {
         return this.z;
     }
 
-    public World getWorld() { return this.world; }
+    public World getWorld() {
+        return this.world;
+    }
 
     public void updateMesh() {
         if (this.mesh != null) {

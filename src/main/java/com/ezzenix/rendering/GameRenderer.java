@@ -1,25 +1,21 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.Game;
-import com.ezzenix.utils.BlockPos;
 
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GameRenderer {
-    //private final HashMap<BlockPos, Block> blocks = new HashMap<>();
-    void addBlock(BlockPos position) {
-        //blocks.put(position, new Block(position));
-    }
 
     private final Camera camera;
 
     public GameRenderer() {
         camera = new Camera();
-        addBlock(new BlockPos(0, 0, 0));
     }
 
-    public Camera getCamera() { return this.camera; }
+    public Camera getCamera() {
+        return this.camera;
+    }
 
     public void render() {
         long window = Game.getInstance().getWindow().getHandle();

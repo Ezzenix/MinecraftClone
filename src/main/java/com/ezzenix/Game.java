@@ -7,21 +7,18 @@ import com.ezzenix.rendering.GameRenderer;
 import com.ezzenix.utils.textures.TextureAtlas;
 import com.ezzenix.window.InputHandler;
 import com.ezzenix.window.Window;
-import org.joml.Vector3f;
 import org.lwjgl.Version;
-
-import java.util.HashMap;
 
 public class Game {
     private final GameRenderer gameRenderer;
     private final Window window;
     private final InputHandler inputHandler;
-    private Hud hud;
-    private World world;
+    private final Hud hud;
+    private final World world;
 
-    public TextureAtlas blockTextures;
+    public final TextureAtlas blockTextures;
 
-    public float deltaTime = (float) 1 /60;
+    public float deltaTime = (float) 1 / 60;
 
     public Game() {
         INSTANCE = this;
@@ -42,7 +39,7 @@ public class Game {
         System.out.println("VALUE: " + map.get(new Vector3f(1, 1, 1)));
         */
         BlockDataStructure blockDataStructure = new BlockDataStructure();
-        blockDataStructure.set((byte)1, (byte)2, (byte)3, (short)10);
+        blockDataStructure.set((byte) 1, (byte) 2, (byte) 3, (short) 10);
         short id = blockDataStructure.get(1, 2, 3);
         System.out.println("id is " + id);
 
@@ -53,16 +50,22 @@ public class Game {
     public Window getWindow() {
         return this.window;
     }
+
     public GameRenderer getRenderer() {
         return this.gameRenderer;
     }
+
     public InputHandler getInputHandler() {
         return this.inputHandler;
     }
+
     public World getWorld() {
         return this.world;
     }
-    public Hud getHud() { return this.hud; }
+
+    public Hud getHud() {
+        return this.hud;
+    }
 
 
     // Main entry

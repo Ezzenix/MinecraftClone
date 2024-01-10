@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
     public static int load(String path, int type) {
-        String shaderSource = FileUtil.readResourceSource("shaders/"+path);
+        String shaderSource = FileUtil.readResourceSource("shaders/" + path);
         if (shaderSource == null) return -1;
         int shader = glCreateShader(type);
         GL33.glShaderSource(shader, shaderSource);
@@ -33,18 +33,16 @@ public class Shader {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
-        if(GL20.glGetProgrami(shaderProgram, GL20.GL_LINK_STATUS) == GL_FALSE)
-        {
+        if (GL20.glGetProgrami(shaderProgram, GL20.GL_LINK_STATUS) == GL_FALSE) {
             int infoLogSize = GL20.glGetProgrami(shaderProgram, GL20.GL_INFO_LOG_LENGTH);
             System.err.println(GL20.glGetProgramInfoLog(shaderProgram, infoLogSize));
             System.err.println("Failed to link shader program!");
             return -1;
         }
         GL20.glValidateProgram(shaderProgram);
-        if (GL20.glGetProgrami(shaderProgram, GL20.GL_VALIDATE_STATUS) == GL_FALSE)
-        {
-            int infoLogSize=GL20.glGetProgrami(shaderProgram,GL20.GL_INFO_LOG_LENGTH);
-            System.err.println(GL20.glGetProgramInfoLog(shaderProgram,infoLogSize));
+        if (GL20.glGetProgrami(shaderProgram, GL20.GL_VALIDATE_STATUS) == GL_FALSE) {
+            int infoLogSize = GL20.glGetProgrami(shaderProgram, GL20.GL_INFO_LOG_LENGTH);
+            System.err.println(GL20.glGetProgramInfoLog(shaderProgram, infoLogSize));
             System.err.println("Failed to validate shader program!");
             return -1;
         }

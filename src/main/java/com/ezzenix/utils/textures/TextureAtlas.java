@@ -4,16 +4,14 @@ import org.joml.Vector2f;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TextureAtlas {
-    private Map<String, TextureUV> nameToUVs;
+    private final Map<String, TextureUV> nameToUVs;
     private BufferedImage atlasImage;
 
     public TextureAtlas(String directoryPath) {

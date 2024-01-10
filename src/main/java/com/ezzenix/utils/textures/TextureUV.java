@@ -3,10 +3,10 @@ package com.ezzenix.utils.textures;
 import org.joml.Vector2f;
 
 public class TextureUV {
-    public Vector2f uv1;
-    public Vector2f uv2;
-    public Vector2f uv3;
-    public Vector2f uv4;
+    public final Vector2f uv1;
+    public final Vector2f uv2;
+    public final Vector2f uv3;
+    public final Vector2f uv4;
 
     public TextureUV(Vector2f uv1, Vector2f uv2, Vector2f uv3, Vector2f uv4) {
         this.uv1 = uv1;

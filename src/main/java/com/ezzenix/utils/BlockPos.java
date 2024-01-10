@@ -2,6 +2,8 @@ package com.ezzenix.utils;
 
 import org.joml.Vector3f;
 
+import java.util.Objects;
+
 public class BlockPos {
     public final int x;
     public final int y;
@@ -18,22 +20,26 @@ public class BlockPos {
     }
 
     public Vector3f toVector3f(BlockPos v) {
-        return new Vector3f(v.x+0.5f, v.y+0.5f, v.z+0.5f);
+        return new Vector3f(v.x + 0.5f, v.y + 0.5f, v.z + 0.5f);
     }
 
     public BlockPos fromVector3f(Vector3f vec) {
         return new BlockPos(
-                (int)Math.round(vec.x+0.5),
-                (int)Math.round(vec.y+0.5),
-                (int)Math.round(vec.z+0.5)
+                (int) Math.round(vec.x + 0.5),
+                (int) Math.round(vec.y + 0.5),
+                (int) Math.round(vec.z + 0.5)
         );
     }
 
     public String toString() {
-        return "X: "+this.x + " Y: " + this.x + " Z: " + this.z;
+        return "X: " + this.x + " Y: " + this.x + " Z: " + this.z;
     }
 
     public boolean equals(BlockPos v) {
         return (this.x == v.x) && (this.y == v.y) && (this.z == v.z);
+    }
+
+    public int hashCode() {
+        return Objects.hash(x, y, z);
     }
 }

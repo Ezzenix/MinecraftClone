@@ -5,11 +5,6 @@ import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.GameRenderer;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
-
-import javax.swing.text.NumberFormatter;
-import java.nio.*;
-import java.text.DecimalFormat;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -54,6 +49,7 @@ public class InputHandler {
     }
 
     private long lastPrint = 0;
+
     public void printWithCooldown(String str) {
         if (System.currentTimeMillis() > lastPrint + 1000) {
             lastPrint = System.currentTimeMillis();
