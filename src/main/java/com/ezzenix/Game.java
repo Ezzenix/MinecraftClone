@@ -1,12 +1,16 @@
 package com.ezzenix;
 
+import com.ezzenix.game.BlockDataStructure;
 import com.ezzenix.game.World;
 import com.ezzenix.hud.Hud;
 import com.ezzenix.rendering.GameRenderer;
 import com.ezzenix.utils.textures.TextureAtlas;
 import com.ezzenix.window.InputHandler;
 import com.ezzenix.window.Window;
+import org.joml.Vector3f;
 import org.lwjgl.Version;
+
+import java.util.HashMap;
 
 public class Game {
     private final GameRenderer gameRenderer;
@@ -31,6 +35,16 @@ public class Game {
         this.gameRenderer = new GameRenderer();
         this.inputHandler = new InputHandler();
         this.world = new World();
+
+        /*
+        HashMap<Vector3f, String> map = new HashMap<>();
+        map.put(new Vector3f(1, 1, 1), "HELLO");
+        System.out.println("VALUE: " + map.get(new Vector3f(1, 1, 1)));
+        */
+        BlockDataStructure blockDataStructure = new BlockDataStructure();
+        blockDataStructure.set((byte)1, (byte)2, (byte)3, (short)10);
+        short id = blockDataStructure.get(1, 2, 3);
+        System.out.println("id is " + id);
 
         this.window.loop();
         this.window.cleanup();

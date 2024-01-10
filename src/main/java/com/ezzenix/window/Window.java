@@ -12,6 +12,9 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -99,6 +102,12 @@ public class Window {
                     glEnable(GL_DEPTH_TEST);
                     glEnable(GL_CULL_FACE);
                 }
+            }
+
+            if (key == GLFW_KEY_G && action == GLFW_RELEASE) {
+                MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+                MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+                System.out.println("Memory: " + heapMemoryUsage.getUsed() / (1024 * 1024) + "/" + heapMemoryUsage.getMax() / (1024 * 1024) + " MB");
             }
         });
 
