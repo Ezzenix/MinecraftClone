@@ -18,7 +18,7 @@ public class GameRenderer {
     public GameRenderer() {
         camera = new Camera();
 
-        this.worldShader = Shader.makeProgram("vertexShader.glsl", "fragmentShader.glsl");
+        this.worldShader = Shader.makeProgram("world.vert", "world.frag");
         if (worldShader == -1) {
             System.err.println("World shader program failed to load!");
             System.exit(-1);

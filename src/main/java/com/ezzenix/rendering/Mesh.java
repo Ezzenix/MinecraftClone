@@ -23,6 +23,10 @@ public class Mesh {
         this.vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+
+        if (this.vao == -1 || this.vbo == -1) {
+            System.err.println("Mesh failed to generate VAO or VBO");
+        }
     }
 
     public Mesh(FloatBuffer buffer, int vertexCount) {

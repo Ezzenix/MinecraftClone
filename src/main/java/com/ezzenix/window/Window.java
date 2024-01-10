@@ -35,8 +35,8 @@ public class Window {
     private long window; // window handle
     private boolean isMinimized = false;
 
-    //InputStream vertexShaderStream = getClass().getResourceAsStream("/shaders/vertexShader.glsl");
-    //InputStream fragmentShaderStream = getClass().getResourceAsStream("/shaders/fragmentShader.glsl");
+    //InputStream vertexShaderStream = getClass().getResourceAsStream("/shaders/world.vert");
+    //InputStream fragmentShaderStream = getClass().getResourceAsStream("/shaders/world.frag");
 
 
     public void init() {
@@ -150,6 +150,7 @@ public class Window {
         // Set defaults
         glClearColor(0.20f, 0.72f, 0.92f, 0.0f);
         glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
         glEnable(GL_CULL_FACE);
 
         long lastFrame = System.currentTimeMillis();
