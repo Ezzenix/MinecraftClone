@@ -1,8 +1,6 @@
 package com.ezzenix.hud;
 
 import com.ezzenix.rendering.Mesh;
-import com.ezzenix.utils.textures.TextureUV;
-import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
 
@@ -36,7 +34,7 @@ public class TextComponent {
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
-            Glyph glyph = this.fontRenderer.getGlyph(c);
+            CharInfo glyph = this.fontRenderer.getGlyph(c);
 
             // top-left
             buffer.put(offsetX + this.x).put(this.y);//.put(glyph.textureUV.uv1.x).put(glyph.textureUV.uv1.y);
