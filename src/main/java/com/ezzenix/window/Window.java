@@ -1,13 +1,7 @@
 package com.ezzenix.window;
 
 import com.ezzenix.Game;
-import com.ezzenix.game.Chunk;
-import com.ezzenix.game.World;
-import com.ezzenix.rendering.Camera;
-import com.ezzenix.rendering.Mesh;
-import com.ezzenix.rendering.Shader;
 import com.ezzenix.utils.ImageParser;
-import com.ezzenix.utils.ImageUtil;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -17,7 +11,6 @@ import org.lwjgl.system.Configuration;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
-import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -166,7 +159,7 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             Game.getInstance().getRenderer().render(window);
-            Game.getInstance().getHud().render(window);
+            //Game.getInstance().getHud().render(window);
 
             glfwSwapBuffers(window); // swap the color buffers
             glfwPollEvents();

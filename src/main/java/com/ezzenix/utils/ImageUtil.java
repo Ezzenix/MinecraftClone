@@ -1,7 +1,5 @@
 package com.ezzenix.utils;
 
-import org.lwjgl.system.MemoryStack;
-
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 

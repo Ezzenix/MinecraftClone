@@ -1,6 +1,8 @@
 package com.ezzenix.utils;
 
+import com.ezzenix.game.Chunk;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import java.util.Objects;
 
@@ -32,7 +34,7 @@ public class BlockPos {
     }
 
     public String toString() {
-        return "X: " + this.x + " Y: " + this.x + " Z: " + this.z;
+        return "X:" + this.x + " Y:" + this.x + " Z:" + this.z;
     }
 
     public boolean equals(Object v) {

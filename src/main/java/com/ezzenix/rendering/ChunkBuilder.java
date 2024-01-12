@@ -1,11 +1,13 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.game.BlockType;
 import com.ezzenix.game.Chunk;
+import com.ezzenix.game.blocks.BlockRegistry;
+import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.utils.BlockPos;
 import com.ezzenix.utils.Face;
 import com.ezzenix.utils.textures.TextureUV;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
@@ -21,9 +23,8 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 public class ChunkBuilder {
     private Map<Integer, Map<Integer, Chunk>> chunks;
 
-    private static boolean isNeighborSolid(Chunk chunk, BlockPos blockPos, Vector3f face) {
-        BlockPos blockPosOffset = new BlockPos((int) face.x, (int) face.y, (int) face.z);
-        BlockType neighborType = chunk.getWorld().getBlockTypeAt(blockPos.add(blockPosOffset));
+    private static boolean isBlockSolid(Chunk chunk, BlockPos blockPos) {
+        BlockType neighborType = chunk.getWorld().getBlockTypeAt(blockPos);
         return neighborType != null;
     }
 
@@ -47,30 +48,32 @@ public class ChunkBuilder {
     public static Mesh createMesh(Chunk chunk) {
         long startTime = System.currentTimeMillis();
 
-        Map<BlockPos, BlockType> blocks = chunk.getBlocks();
+
+        Byte[] blockArray = chunk.getBlockArray();
 
         List<Float> vertexList = new ArrayList<>();
 
-        for (BlockPos blockPos : blocks.keySet()) {
-            BlockType blockType = blocks.get(blockPos);
-
-            Vector3f offset = new Vector3f(
-                    blockPos.x,// - chunk.getChunkX()*16,
-                    blockPos.y,
-                    blockPos.z// - chunk.getChunkZ()*16
-            );
+        for (int index = 0; index < blockArray.length; index++) {
+            byte blockId = blockArray[index];
+            if (blockId == 0) continue;
+            BlockType blockType = BlockRegistry.getBlockFromId(blockId);
+            Vector3i localPosition = chunk.getLocalPositionFromIndex(index);
+            Vector3f localPositionf = new Vector3f(localPosition.x, localPosition.y, localPosition.z);
 
             for (Vector3f face : faces) {
-                if (isNeighborSolid(chunk, blockPos, face)) {
-                    continue;
-                }
+                BlockPos neighborPos = new BlockPos(
+                        (int) (chunk.x * 16 + localPosition.x + face.x),
+                        (int) (chunk.y * 16 + localPosition.y + face.y),
+                        (int) (chunk.z * 16 + localPosition.z + face.z)
+                );
+                if (isBlockSolid(chunk, neighborPos)) continue;
 
                 List<Vector3f> unitCubeFace = Face.faceUnitCube(face);
 
-                Vector3f vert1 = unitCubeFace.get(0).add(offset);
-                Vector3f vert2 = unitCubeFace.get(1).add(offset);
-                Vector3f vert3 = unitCubeFace.get(2).add(offset);
-                Vector3f vert4 = unitCubeFace.get(3).add(offset);
+                Vector3f vert1 = unitCubeFace.get(0).add(localPositionf);
+                Vector3f vert2 = unitCubeFace.get(1).add(localPositionf);
+                Vector3f vert3 = unitCubeFace.get(2).add(localPositionf);
+                Vector3f vert4 = unitCubeFace.get(3).add(localPositionf);
 
                 TextureUV textureUV = getBlockTextureUV(blockType, face);
 
@@ -102,8 +105,8 @@ public class ChunkBuilder {
 
         mesh.unbind();
 
-        System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
 
+        System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
         return mesh;
     }
 

@@ -34,9 +34,9 @@ public class TextComponent {
 
         List<Float> vertexList = new ArrayList<>();
 
-        addVertex(vertexList, new Vector2f(150f, 140f));
-        addVertex(vertexList, new Vector2f(200f, 100f));
-        addVertex(vertexList, new Vector2f(250f, 140f));
+        addVertex(vertexList, new Vector2f(-1f, -1f));
+        addVertex(vertexList, new Vector2f(-1f, 0f));
+        addVertex(vertexList, new Vector2f(1f, 0f));
 
         int offsetX = 0;
         for (int i = 0; i < text.length(); i++) {
@@ -93,9 +93,9 @@ public class TextComponent {
         vertexBuffer.put(vertexArray);
         vertexBuffer.flip();
 
-        this.mesh = new Mesh(vertexBuffer, vertexArray.length);
+        this.mesh = new Mesh(vertexBuffer, vertexList.size()/2);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
 
         //glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);

@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static org.lwjgl.opengl.GL11.*;
+
 public class FontRenderer {
     private final int fontSize;
     private final String fontPath;
@@ -84,6 +86,12 @@ public class FontRenderer {
             ImageIO.write(img, "PNG", new File("fontAtlas.png"));
         } catch (IOException ignored) {}
 
-        return ImageUtil.loadTexture(img);
+        int textureId = ImageUtil.loadTexture(img);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        return textureId;
     }
 }

@@ -13,7 +13,7 @@ public class Face {
     public static final Vector3f LEFT = new Vector3f(-1, 0, 0);
     public static final Vector3f RIGHT = new Vector3f(1, 0, 0);
 
-    private static final List<Vector3f> ALL = new ArrayList<>();
+    public static final List<Vector3f> ALL = new ArrayList<>();
 
     static {
         ALL.add(Face.TOP);

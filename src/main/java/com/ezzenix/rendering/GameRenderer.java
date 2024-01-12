@@ -3,33 +3,31 @@ package com.ezzenix.rendering;
 import com.ezzenix.Game;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.World;
+import com.ezzenix.opengl.Shader;
 import com.ezzenix.utils.ImageUtil;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL45.glGenerateTextureMipmap;
 
 public class GameRenderer {
-
     private final Camera camera;
-
-    private final int worldShader;
+    private final Shader worldShader = new Shader("world.vert", "world.frag");
+    private final int blockTexture;
 
     public GameRenderer() {
         camera = new Camera();
 
-        this.worldShader = Shader.makeProgram("world.vert", "world.frag");
-        if (worldShader == -1) {
-            System.err.println("World shader program failed to load!");
-            System.exit(-1);
-        }
+        blockTexture = ImageUtil.loadTexture(Game.getInstance().blockTextures.getAtlasImage());
+        glGenerateTextureMipmap(blockTexture);
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
 
     public Camera getCamera() {
         return this.camera;
     }
-
-    private static int blockTexture = ImageUtil.loadTexture(Game.getInstance().blockTextures.getAtlasImage());
 
     public void render(long window) {
         World world = Game.getInstance().getWorld();
@@ -38,16 +36,17 @@ public class GameRenderer {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         if (world != null) {
-            glUseProgram(worldShader);
+            worldShader.use();
 
-            int projectionMatrixLocation = glGetUniformLocation(worldShader, "projectionMatrix");
-            glUniformMatrix4fv(projectionMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getProjectionMatrix().get(new float[16]));
-            int viewMatrixLocation = glGetUniformLocation(worldShader, "viewMatrix");
-            glUniformMatrix4fv(viewMatrixLocation, false, Game.getInstance().getRenderer().getCamera().getViewMatrix().get(new float[16]));
+            worldShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
+            worldShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
 
             for (Chunk chunk : world.getChunks().values()) {
                 Mesh mesh = chunk.getMesh();
                 if (mesh != null) {
+                    Matrix4f translationMatrix = new Matrix4f();
+                    translationMatrix.translate(new Vector3f(chunk.x * 16, chunk.y * 16, chunk.z * 16));
+                    worldShader.uploadMat4f("chunkPosition", translationMatrix);
                     mesh.render();
                 }
             }

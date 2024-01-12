@@ -7,8 +7,9 @@ out vec2 fragTextureCoord;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
+uniform mat4 chunkPosition;
 
 void main() {
-    gl_Position = projectionMatrix * viewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * viewMatrix * chunkPosition * vec4(position, 1.0);
     fragTextureCoord = textureCoord;
 }

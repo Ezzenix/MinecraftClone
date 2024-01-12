@@ -8,11 +8,14 @@ import com.ezzenix.window.InputHandler;
 import com.ezzenix.window.Window;
 import org.lwjgl.Version;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Game {
     private final GameRenderer gameRenderer;
     private final Window window;
     private final InputHandler inputHandler;
-    private final Hud hud;
+    //private final Hud hud;
     private final World world;
 
     public final TextureAtlas blockTextures;
@@ -28,7 +31,7 @@ public class Game {
 
         this.blockTextures = new TextureAtlas("src/main/resources/textures");
 
-        this.hud = new Hud();
+        //this.hud = new Hud();
         this.gameRenderer = new GameRenderer();
         this.inputHandler = new InputHandler();
         this.world = new World();
@@ -53,14 +56,13 @@ public class Game {
         return this.world;
     }
 
-    public Hud getHud() {
-        return this.hud;
-    }
+    //public Hud getHud() {
+    //    return this.hud;
+    //}
 
 
     // Main entry
     public static void main(String[] args) {
-        System.out.println("LWJGL version: " + Version.getVersion());
         new Game();
     }
 

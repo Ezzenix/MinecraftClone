@@ -28,6 +28,7 @@ public class Mesh {
     }
 
     public void render() {
+        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
         glBindVertexArray(this.vao);
         glDrawArrays(GL_TRIANGLES, 0, this.vertexCount);
         glBindVertexArray(0);

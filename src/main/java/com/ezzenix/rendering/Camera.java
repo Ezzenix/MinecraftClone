@@ -37,8 +37,8 @@ public class Camera {
     }
 
     public void setPitch(float pitch) {
-        float min = -85;
-        float max = 85;
+        float min = -89.99f;
+        float max = 89.99f;
         this.pitch = Math.max(min, Math.min(max, pitch));
     }
 

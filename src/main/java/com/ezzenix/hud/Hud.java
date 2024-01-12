@@ -1,9 +1,8 @@
 package com.ezzenix.hud;
 
 import com.ezzenix.Game;
-import com.ezzenix.rendering.Shader;
+import com.ezzenix.opengl.Shader;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import java.awt.*;
 
@@ -14,10 +13,12 @@ public class Hud {
     TextComponent fpsText;
     TextComponent positionText;
 
-    int textShader;
+    Shader textShader;
+
+    public Matrix4f hudProjectionMatrix = new Matrix4f().setOrtho2D(0, 500, 0, 500);
 
     public Hud() {
-        this.textShader = Shader.makeProgram("text.vert", "text.frag");
+        this.textShader = new Shader("text.vert", "text.frag");
 
 
         this.fontRenderer = new FontRenderer(new Font(Font.SANS_SERIF, Font.BOLD, 22));
@@ -33,7 +34,7 @@ public class Hud {
         positionText.text = "X: " + (Math.round(position.x * 10) / 10) + " Y: " + (Math.round(position.y * 10) / 10) + " Z: " + (Math.round(position.z * 10) / 10);
         */
 
-        glUseProgram(this.textShader);
+        this.textShader.use();
 
         fpsText.render();
         //positionText.render();
