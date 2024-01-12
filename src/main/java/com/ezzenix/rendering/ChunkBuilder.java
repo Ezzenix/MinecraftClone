@@ -88,7 +88,6 @@ public class ChunkBuilder {
         for (int i = 0; i < vertexList.size(); i++) {
             vertexArray[i] = vertexList.get(i);
         }
-
         FloatBuffer vertexBuffer = createFloatBuffer(vertexArray.length);
         vertexBuffer.put(vertexArray);
         vertexBuffer.flip();

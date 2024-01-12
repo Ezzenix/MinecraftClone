@@ -1,8 +1,13 @@
 package com.ezzenix.hud;
 
 import com.ezzenix.rendering.Mesh;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
 import static org.lwjgl.opengl.GL11.*;
@@ -27,8 +32,11 @@ public class TextComponent {
         if (this.text != null && this.text.equals(text)) return;
         this.text = text;
 
-        int vertexCount = text.length() * 4;
-        FloatBuffer buffer = createFloatBuffer(vertexCount * 4);
+        List<Float> vertexList = new ArrayList<>();
+
+        addVertex(vertexList, new Vector2f(150f, 140f));
+        addVertex(vertexList, new Vector2f(200f, 100f));
+        addVertex(vertexList, new Vector2f(250f, 140f));
 
         int offsetX = 0;
         for (int i = 0; i < text.length(); i++) {
@@ -36,45 +44,77 @@ public class TextComponent {
 
             CharInfo glyph = this.fontRenderer.getGlyph(c);
 
+            Vector2f vertTopLeft = new Vector2f(offsetX + this.x, this.y);
+            Vector2f vertBottomLeft = new Vector2f(offsetX + this.x, this.y + glyph.height);
+            Vector2f vertBottomRight = new Vector2f(offsetX + this.x + glyph.width, this.y + glyph.height);
+            Vector2f vertTopRight = new Vector2f(offsetX + this.x + glyph.width, this.y);
+
+            /*
+            addVertex(vertexList, vertTopLeft);
+            addVertex(vertexList, vertBottomLeft);
+            addVertex(vertexList, vertBottomRight);
+            addVertex(vertexList, vertTopRight);
+            addVertex(vertexList, vertTopLeft);
+            addVertex(vertexList, vertBottomRight);
+            */
+
             // top-left
-            buffer.put(offsetX + this.x).put(this.y);//.put(glyph.textureUV.uv1.x).put(glyph.textureUV.uv1.y);
+            //addVertex(vertexList, new Vector2f(offsetX + this.x, this.y));
+           // buffer.put(offsetX + this.x).put(this.y);//.put(glyph.textureUV.uv1.x).put(glyph.textureUV.uv1.y);
             //glTexCoord2f(glyph.textureUV.uv1.x, glyph.textureUV.uv1.y);
             //glVertex2f(offsetX + this.x, this.y);
 
             // bottom-left
-            buffer.put(offsetX + this.x).put(this.y + glyph.height * scale);//.put(glyph.textureUV.uv2.x).put(glyph.textureUV.uv2.y);
+            //addVertex(vertexList, new Vector2f(offsetX + this.x, this.y + glyph.height));
+            //buffer.put(offsetX + this.x).put(this.y + glyph.height * scale);//.put(glyph.textureUV.uv2.x).put(glyph.textureUV.uv2.y);
             //glTexCoord2f(glyph.textureUV.uv2.x, glyph.textureUV.uv2.y);
             //glVertex2f(offsetX + this.x, this.y + glyph.height*scale);
 
             // bottom-right
-            buffer.put(offsetX + this.x + glyph.width * scale).put(this.y + glyph.height*scale);//.put(glyph.textureUV.uv3.x).put(glyph.textureUV.uv3.y);
+            //addVertex(vertexList, new Vector2f(offsetX + this.x + glyph.width, this.y + glyph.height));
+            //buffer.put(offsetX + this.x + glyph.width * scale).put(this.y + glyph.height*scale);//.put(glyph.textureUV.uv3.x).put(glyph.textureUV.uv3.y);
             //glTexCoord2f(glyph.textureUV.uv3.x, glyph.textureUV.uv3.y);
             //glVertex2f(offsetX + this.x + glyph.width*scale, this.y + glyph.height*scale);
 
             // top-right
-            buffer.put(offsetX + this.x + glyph.width * scale).put(this.y);//.put(glyph.textureUV.uv4.x).put(glyph.textureUV.uv4.y);
+            //addVertex(vertexList, new Vector2f(offsetX + this.x + glyph.width, this.y));
+            //buffer.put(offsetX + this.x + glyph.width * scale).put(this.y);//.put(glyph.textureUV.uv4.x).put(glyph.textureUV.uv4.y);
             //glTexCoord2f(glyph.textureUV.uv4.x, glyph.textureUV.uv4.y);
             //glVertex2f(offsetX + this.x + glyph.width*scale, this.y);
 
-            offsetX += (int) (glyph.width * scale);
+            offsetX += glyph.width;
         }
-        buffer.flip();
 
-        this.mesh = new Mesh(buffer, vertexCount, GL_QUADS);
+        float[] vertexArray = new float[vertexList.size()];
+        for (int i = 0; i < vertexList.size(); i++) {
+            vertexArray[i] = vertexList.get(i);
+        }
+        FloatBuffer vertexBuffer = createFloatBuffer(vertexArray.length);
+        vertexBuffer.put(vertexArray);
+        vertexBuffer.flip();
 
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * Float.BYTES, 0);
+        this.mesh = new Mesh(vertexBuffer, vertexArray.length);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
 
         //glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
         //glEnableVertexAttribArray(1);
 
         this.mesh.unbind();
+
+        System.out.println("TEXT UPDATED!");
+    }
+
+    void addVertex(List<Float> vertexList, Vector2f position) {
+        vertexList.add(position.x);
+        vertexList.add(position.y);
     }
 
     public void render() {
         if (this.mesh == null) return;
 
-        glBindTexture(GL_TEXTURE_2D, this.fontRenderer.getAtlasTextureId());
+        //glBindTexture(GL_TEXTURE_2D, this.fontRenderer.getAtlasTextureId());
         this.mesh.render();
     }
 }
