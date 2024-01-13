@@ -2,9 +2,8 @@ package com.ezzenix.game;
 
 import com.ezzenix.Game;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.rendering.Camera;
 import com.ezzenix.utils.BlockPos;
-import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.util.HashMap;
@@ -13,9 +12,9 @@ public class World {
     private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
 
     public World() {
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                for (int z = 0; z < 10; z++) {
+        for (int x = 0; x < 30; x++) {
+            for (int y = 0; y < 8; y++) {
+                for (int z = 0; z < 30; z++) {
                     loadChunk(x, y, z);
                 }
             }
@@ -23,6 +22,7 @@ public class World {
     }
 
     private void loadChunk(int x, int y, int z) {
+        if (chunks.get(new Vector3i(x, y, z)) != null) return;
         Chunk chunk = new Chunk(x, y, z, this);
         chunks.put(new Vector3i(x, y, z), chunk);
         chunk.generate();
@@ -47,5 +47,21 @@ public class World {
 
     public HashMap<Vector3i, Chunk> getChunks() {
         return this.chunks;
+    }
+
+    public void loadNewChunks() {
+        Vector3f position = Game.getInstance().getRenderer().getCamera().getPosition();
+        Chunk currentChunk = getChunkAtBlockPos(new BlockPos((int) position.x, (int) position.y, (int) position.z));
+        if (currentChunk == null) return;
+
+        int renderDistance = 3;
+
+        for (int x = currentChunk.x-renderDistance; x < currentChunk.x+renderDistance; x++) {
+            for (int y = currentChunk.y-renderDistance; y < currentChunk.y+renderDistance; y++) {
+                for (int z = currentChunk.z-renderDistance; z < currentChunk.z+renderDistance; z++) {
+                    loadChunk(x, y, z);
+                }
+            }
+        }
     }
 }

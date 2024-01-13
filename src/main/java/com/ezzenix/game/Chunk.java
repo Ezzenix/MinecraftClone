@@ -7,10 +7,15 @@ import com.ezzenix.rendering.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
 import com.ezzenix.utils.BlockPos;
 import com.ezzenix.utils.Face;
+import com.ezzenix.utils.FrustumBoundingBox;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 public class Chunk {
+    public static final int CHUNK_SIZE = 32;
+    public static final int CHUNK_SIZE_SQUARED = (int) Math.pow(CHUNK_SIZE, 2);
+    public static final int CHUNK_SIZE_CUBED = (int) Math.pow(CHUNK_SIZE, 3);
+
     private final World world;
     private Mesh mesh;
     public final int x;
@@ -19,6 +24,8 @@ public class Chunk {
 
     private final Byte[] blocks;
     private int blockCount;
+
+    public FrustumBoundingBox frustumBoundingBox;
 
     public Chunk(int x, int y, int z, World world) {
         this.x = x;
@@ -30,6 +37,11 @@ public class Chunk {
         for (int i = 0; i < Math.pow(16, 3); i++) {
             blocks[i] = (byte) 0;
         }
+
+        this.frustumBoundingBox = new FrustumBoundingBox(
+                new Vector3f(this.x, this.y, this.z),
+                new Vector3f(this.x+CHUNK_SIZE, this.y+CHUNK_SIZE, this.z+CHUNK_SIZE)
+        );
     }
 
     public Vector3i getLocalPosition(BlockPos blockPos) {

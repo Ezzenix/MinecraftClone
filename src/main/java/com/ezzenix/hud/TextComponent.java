@@ -2,16 +2,15 @@ package com.ezzenix.hud;
 
 import com.ezzenix.rendering.Mesh;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class TextComponent {
     FontRenderer fontRenderer;

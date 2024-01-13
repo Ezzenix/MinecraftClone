@@ -1,10 +1,9 @@
 package com.ezzenix.game.worldgenerator;
 
-import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.Chunk;
+import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.utils.BlockPos;
 import com.ezzenix.utils.FastNoiseLite;
-import org.joml.SimplexNoise;
 
 import java.util.Random;
 

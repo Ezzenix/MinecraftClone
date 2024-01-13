@@ -9,7 +9,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL45.glGenerateTextureMipmap;
 
 public class GameRenderer {
@@ -44,9 +43,14 @@ public class GameRenderer {
             for (Chunk chunk : world.getChunks().values()) {
                 Mesh mesh = chunk.getMesh();
                 if (mesh != null) {
+                    //if (!chunk.frustumBoundingBox.isInsideFrustum(camera.getViewProjectionMatrix())) {
+                    //    continue;
+                    //}
+
                     Matrix4f translationMatrix = new Matrix4f();
                     translationMatrix.translate(new Vector3f(chunk.x * 16, chunk.y * 16, chunk.z * 16));
                     worldShader.uploadMat4f("chunkPosition", translationMatrix);
+
                     mesh.render();
                 }
             }

@@ -1,15 +1,10 @@
 package com.ezzenix;
 
 import com.ezzenix.game.World;
-import com.ezzenix.hud.Hud;
 import com.ezzenix.rendering.GameRenderer;
 import com.ezzenix.utils.textures.TextureAtlas;
 import com.ezzenix.window.InputHandler;
 import com.ezzenix.window.Window;
-import org.lwjgl.Version;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Game {
     private final GameRenderer gameRenderer;

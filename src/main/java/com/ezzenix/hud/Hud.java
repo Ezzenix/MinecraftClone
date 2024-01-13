@@ -6,7 +6,7 @@ import org.joml.Matrix4f;
 
 import java.awt.*;
 
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 
 public class Hud {
     FontRenderer fontRenderer;

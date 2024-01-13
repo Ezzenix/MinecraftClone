@@ -81,4 +81,16 @@ public class Camera {
                 new Vector3f(0.0f, 1.0f, 0.0f)
         );
     }
+
+    public Matrix4f getViewProjectionMatrix() {
+        Matrix4f viewMatrix = getViewMatrix();
+        Matrix4f projectionMatrix = getProjectionMatrix();
+
+        // Multiply the projection matrix by the view matrix
+        Matrix4f viewProjectionMatrix = new Matrix4f();
+        viewProjectionMatrix.set(projectionMatrix);
+        viewProjectionMatrix.mul(viewMatrix);
+
+        return viewProjectionMatrix;
+    }
 }

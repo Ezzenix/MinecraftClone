@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -21,8 +20,6 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class ChunkBuilder {
-    private Map<Integer, Map<Integer, Chunk>> chunks;
-
     private static boolean isBlockSolid(Chunk chunk, BlockPos blockPos) {
         BlockType neighborType = chunk.getWorld().getBlockTypeAt(blockPos);
         return neighborType != null;
@@ -53,12 +50,16 @@ public class ChunkBuilder {
 
         List<Float> vertexList = new ArrayList<>();
 
+
+
         for (int index = 0; index < blockArray.length; index++) {
             byte blockId = blockArray[index];
-            if (blockId == 0) continue;
+            if (blockId == 0) continue; // air
             BlockType blockType = BlockRegistry.getBlockFromId(blockId);
             Vector3i localPosition = chunk.getLocalPositionFromIndex(index);
             Vector3f localPositionf = new Vector3f(localPosition.x, localPosition.y, localPosition.z);
+
+
 
             for (Vector3f face : faces) {
                 BlockPos neighborPos = new BlockPos(
@@ -95,7 +96,7 @@ public class ChunkBuilder {
         vertexBuffer.put(vertexArray);
         vertexBuffer.flip();
 
-        Mesh mesh = new Mesh(vertexBuffer, vertexList.size());
+        Mesh mesh = new Mesh(vertexBuffer, vertexList.size()/5);
 
         glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 5 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);

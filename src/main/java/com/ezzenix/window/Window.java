@@ -146,11 +146,16 @@ public class Window {
         glDepthFunc(GL_LESS);
         glEnable(GL_CULL_FACE);
 
+        long lastChunkLoad = 0;
         long lastFrame = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window)) {
             Game.getInstance().deltaTime = (float)(System.currentTimeMillis() - lastFrame);
             Game.getInstance().fps = Math.round(1/ (float)(System.currentTimeMillis() - lastFrame));
             lastFrame = System.currentTimeMillis();
+            if (System.currentTimeMillis() > (lastChunkLoad + 1000)) {
+                lastChunkLoad = System.currentTimeMillis();
+                //Game.getInstance().getWorld().loadNewChunks();
+            }
 
             if (Game.getInstance() != null) {
                 Game.getInstance().getInputHandler().handleInput(window);
