@@ -159,7 +159,7 @@ public class Window {
             lastFrame = System.currentTimeMillis();
             if (System.currentTimeMillis() > (lastChunkLoad + 1000)) {
                 lastChunkLoad = System.currentTimeMillis();
-                //Game.getInstance().getWorld().loadNewChunks();
+                Game.getInstance().getWorld().loadNewChunks();
             }
 
             if (Game.getInstance() != null) {

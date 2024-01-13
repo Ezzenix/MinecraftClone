@@ -4,10 +4,19 @@ import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.engine.opengl.utils.BlockPos;
 import com.ezzenix.engine.opengl.utils.FastNoiseLite;
+import org.joml.Vector3i;
 
+import java.util.HashMap;
 import java.util.Random;
 
 public class WorldGenerator {
+    private static FastNoiseLite noise;
+    static {
+        noise = new FastNoiseLite();
+        noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+        noise.SetFractalOctaves(25);
+    }
+
     private static BlockType getBlockTypeAtHeight(float y, float height) {
         float blocksToTop = height - y;
         if (blocksToTop > 4) return BlockType.STONE;
@@ -23,10 +32,28 @@ public class WorldGenerator {
         return BlockType.OAK_PLANKS;
     }
 
+    public static void placeTree(Chunk chunk, BlockPos blockPos) {
+        chunk.setBlock(blockPos.add(new BlockPos(0, 0, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 1, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 2, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 3, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 4, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 5, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 6, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 7, 0)), BlockType.OAK_LOG);
+
+        chunk.setBlock(blockPos.add(new BlockPos(1, 7, 0)), BlockType.OAK_LEAVES);
+        chunk.setBlock(blockPos.add(new BlockPos(-1, 7, 0)), BlockType.OAK_LEAVES);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 7, 1)), BlockType.OAK_LEAVES);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 7, -1)), BlockType.OAK_LEAVES);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 8, 0)), BlockType.OAK_LEAVES);
+
+    }
+
     public static void generateChunk(Chunk chunk) {
-        FastNoiseLite noise = new FastNoiseLite();
-        noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
-        noise.SetFractalOctaves(25);
+        long startTime = System.currentTimeMillis();
+
+        //byte[] blockArray = chunk.getBlockArray();
 
         for (int localX = 0; localX < 16; localX++) {
             for (int localY = 0; localY < 16; localY++) {
@@ -38,9 +65,16 @@ public class WorldGenerator {
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ)+1)/2;
                     float density = (float) absoluteY /(16*3);
                     if (value > density) {
-                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
+                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 20) ? BlockType.SAND : BlockType.GRASS);
+                    } else {
+                        if (absoluteY <= 20) {
+                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
+                        }
                     }
 
+                    if (localX == 6 && localY == 7 && localZ == 6) {
+                        placeTree(chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
+                    }
 
                     //BlockType blockType = new Random().nextBoolean() ? BlockType.GRASS : BlockType.STONE;
                     //chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), blockType);
@@ -56,5 +90,7 @@ public class WorldGenerator {
                 }
             }
         }
+
+        System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
     }
 }

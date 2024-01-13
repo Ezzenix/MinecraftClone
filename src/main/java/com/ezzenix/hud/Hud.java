@@ -6,6 +6,9 @@ import com.ezzenix.rendering.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import java.awt.*;
+import java.io.File;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
@@ -23,7 +26,7 @@ public class Hud {
 
     public Hud() {
         this.textShader = new Shader("text.vert", "text.frag");
-        this.fontRenderer = new FontRenderer("C:/Windows/Fonts/Arial.ttf", 18);
+        this.fontRenderer = new FontRenderer(new Font("Arial", Font.PLAIN, 18));
 
         fpsText = new TextComponent(fontRenderer, "", 10, 10);
         positionText = new TextComponent(fontRenderer, "", 10, 10+20);

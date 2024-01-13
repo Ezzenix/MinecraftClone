@@ -20,9 +20,10 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class ChunkBuilder {
-    private static boolean isBlockSolid(Chunk chunk, BlockPos blockPos) {
+    private static boolean shouldCullFace(Chunk chunk, BlockType type, BlockPos blockPos) {
         BlockType neighborType = chunk.getWorld().getBlockTypeAt(blockPos);
-        return neighborType != null;
+        if (type == neighborType) return true;
+        return neighborType != null && neighborType != BlockType.AIR && neighborType != BlockType.WATER;
     }
 
     public static Vector2f[] getBlockTextureUV(BlockType blockType, Vector3f face) {
@@ -42,11 +43,11 @@ public class ChunkBuilder {
         faces.add(Face.FRONT);
     }
 
-    public static Mesh createMesh(Chunk chunk) {
+    public static Mesh createMesh(Chunk chunk, boolean waterOnly) {
         long startTime = System.currentTimeMillis();
 
 
-        Byte[] blockArray = chunk.getBlockArray();
+        byte[] blockArray = chunk.getBlockArray();
 
         List<Float> vertexList = new ArrayList<>();
 
@@ -55,11 +56,13 @@ public class ChunkBuilder {
         for (int index = 0; index < blockArray.length; index++) {
             byte blockId = blockArray[index];
             if (blockId == 0) continue; // air
+
             BlockType blockType = BlockRegistry.getBlockFromId(blockId);
+            if (waterOnly && blockType != BlockType.WATER) continue;
+            if (!waterOnly && blockType == BlockType.WATER) continue;
+
             Vector3i localPosition = chunk.getLocalPositionFromIndex(index);
             Vector3f localPositionf = new Vector3f(localPosition.x, localPosition.y, localPosition.z);
-
-
 
             for (Vector3f face : faces) {
                 BlockPos neighborPos = new BlockPos(
@@ -67,7 +70,7 @@ public class ChunkBuilder {
                         (int) (chunk.y * 16 + localPosition.y + face.y),
                         (int) (chunk.z * 16 + localPosition.z + face.z)
                 );
-                if (isBlockSolid(chunk, neighborPos)) continue;
+                if (shouldCullFace(chunk, blockType, neighborPos)) continue;
 
                 List<Vector3f> unitCubeFace = Face.faceUnitCube(face);
 
@@ -98,14 +101,13 @@ public class ChunkBuilder {
 
         Mesh mesh = new Mesh(vertexBuffer, vertexList.size()/5);
 
-        glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 5 * Float.BYTES, 0);
+        int stride = 5 * Float.BYTES;
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
         glEnableVertexAttribArray(0);
-
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
 
         mesh.unbind();
-
 
         System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
         return mesh;

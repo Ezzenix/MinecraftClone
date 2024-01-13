@@ -12,30 +12,40 @@ import java.util.HashMap;
 import static org.lwjgl.opengl.GL11.*;
 
 public class FontRenderer {
+    private final Font font;
     private final int fontSize;
-    private final String fontPath;
     private final int textureId;
-    private HashMap<Character, CharInfo> characterMap = new HashMap<>();
+    private HashMap<Character, Glyph> characterMap = new HashMap<>();
     private int width, height, lineHeight;
 
-    public FontRenderer(String fontPath, int fontSize) {
-        this.fontPath = fontPath;
-        this.fontSize = fontSize;
-
+    public FontRenderer(Font font) {
+        this.font = font;
+        this.fontSize = font.getSize();
         this.textureId = createFontTexture();
+    }
+
+    public static FontRenderer fromFile(File fontFile, int fontSize) {
+        Font customFont = null;
+        try {
+            customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+        } catch (FontFormatException | IOException ignored) {}
+        if (customFont == null) return null;
+
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        ge.registerFont(customFont);
+        Font font = new Font(customFont.getFontName(), Font.PLAIN, fontSize);
+        return new FontRenderer(font);
     }
 
     public int getAtlasTextureId() {
         return this.textureId;
     }
 
-    public CharInfo getGlyph(char c) {
+    public Glyph getGlyph(char c) {
         return characterMap.get(c);
     }
 
     private int createFontTexture() {
-        Font font = new Font(fontPath, Font.PLAIN, fontSize);
-
         // Create fake image to get font information
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = img.createGraphics();
@@ -52,11 +62,11 @@ public class FontRenderer {
         for (int i=0; i < font.getNumGlyphs(); i++) {
             if (font.canDisplay(i)) {
                 // Get the sizes for each codepoint glyph, and update the actual image width and height
-                CharInfo charInfo = new CharInfo(x, y, fontMetrics.charWidth(i), fontMetrics.getHeight());
-                characterMap.put((char)i, charInfo);
+                Glyph glyph = new Glyph(x, y, fontMetrics.charWidth(i), fontMetrics.getHeight());
+                characterMap.put((char)i, glyph);
                 width = Math.max(x + fontMetrics.charWidth(i), width);
 
-                x += charInfo.width;
+                x += glyph.width;
                 if (x > estimatedWidth) {
                     x = 0;
                     y += (int) (fontMetrics.getHeight() * 1.4f);
@@ -75,7 +85,7 @@ public class FontRenderer {
         g2d.setColor(Color.WHITE);
         for (int i=0; i < font.getNumGlyphs(); i++) {
             if (font.canDisplay(i)) {
-                CharInfo info = characterMap.get((char)i);
+                Glyph info = characterMap.get((char)i);
                 info.calculateUVs(width, height);
                 //info.calculateTextureCoordinates(width, height);
                 g2d.drawString("" + (char)i, info.x, info.y);

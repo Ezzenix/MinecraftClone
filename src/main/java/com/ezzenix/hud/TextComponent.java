@@ -5,7 +5,6 @@ import com.ezzenix.rendering.Mesh;
 import org.joml.Vector2f;
 
 import java.nio.FloatBuffer;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +47,8 @@ public class TextComponent {
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
-            CharInfo glyph = this.fontRenderer.getGlyph(c);
+            Glyph glyph = this.fontRenderer.getGlyph(c);
+            if (glyph == null) continue;
 
             Vector2f[] uvCoords = glyph.uvCoords;
             Vector2f vertTopLeft = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x, this.y));

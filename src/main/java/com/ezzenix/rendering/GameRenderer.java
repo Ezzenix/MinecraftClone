@@ -14,6 +14,7 @@ import static org.lwjgl.opengl.GL45.glGenerateTextureMipmap;
 public class GameRenderer {
     private final Camera camera;
     private final Shader worldShader = new Shader("world.vert", "world.frag");
+    private final Shader waterShader = new Shader("water.vert", "water.frag");
     private final int blockTexture;
 
     public GameRenderer() {
@@ -36,17 +37,11 @@ public class GameRenderer {
 
         if (world != null) {
             worldShader.use();
-
             worldShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
             worldShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
-
             for (Chunk chunk : world.getChunks().values()) {
-                Mesh mesh = chunk.getMesh();
+                Mesh mesh = chunk.mesh;
                 if (mesh != null) {
-                    //if (!chunk.frustumBoundingBox.isInsideFrustum(camera.getViewProjectionMatrix())) {
-                    //    continue;
-                    //}
-
                     Matrix4f translationMatrix = new Matrix4f();
                     translationMatrix.translate(new Vector3f(chunk.x * 16, chunk.y * 16, chunk.z * 16));
                     worldShader.uploadMat4f("chunkPosition", translationMatrix);
@@ -54,6 +49,33 @@ public class GameRenderer {
                     mesh.render();
                 }
             }
+
+
+            waterShader.use();
+            waterShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
+            waterShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
+            long timestamp = System.currentTimeMillis();
+            waterShader.uploadFloat("timestamp", (float)timestamp);
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDepthMask(false);
+            for (Chunk chunk : world.getChunks().values()) {
+                Mesh waterMesh = chunk.waterMesh;
+                if (waterMesh != null) {
+                    Matrix4f translationMatrix = new Matrix4f();
+                    translationMatrix.translate(new Vector3f(chunk.x * 16, chunk.y * 16, chunk.z * 16));
+                    waterShader.uploadMat4f("chunkPosition", translationMatrix);
+
+                    waterMesh.render();
+                }
+            }
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDepthMask(true);
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);
+            glEnable(GL_CULL_FACE);
         }
     }
 }

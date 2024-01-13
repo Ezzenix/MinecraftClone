@@ -2,11 +2,11 @@ package com.ezzenix.hud;
 
 import org.joml.Vector2f;
 
-public class CharInfo {
+public class Glyph {
     public Vector2f[] uvCoords;
     public int x, y, width, height;
 
-    public CharInfo(int x, int y, int width, int height) {
+    public Glyph(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;

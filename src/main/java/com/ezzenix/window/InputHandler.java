@@ -63,6 +63,9 @@ public class InputHandler {
         Camera camera = renderer.getCamera();
 
         float speed = 0.03f * Game.getInstance().deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+            speed *= 3;
+        }
 
         //Vector3f lookVector = camera.getLookVector();
         //System.out.println(lookVector.toString(new DecimalFormat("#.##")));

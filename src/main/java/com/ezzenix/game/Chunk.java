@@ -17,12 +17,13 @@ public class Chunk {
     public static final int CHUNK_SIZE_CUBED = (int) Math.pow(CHUNK_SIZE, 3);
 
     private final World world;
-    private Mesh mesh;
+    public Mesh mesh;
+    public Mesh waterMesh;
     public final int x;
     public final int y;
     public final int z;
 
-    private final Byte[] blocks;
+    private final byte[] blocks;
     private int blockCount;
 
     public FrustumBoundingBox frustumBoundingBox;
@@ -32,7 +33,7 @@ public class Chunk {
         this.y = y;
         this.z = z;
         this.world = world;
-        this.blocks = new Byte[CHUNK_SIZE_CUBED];
+        this.blocks = new byte[CHUNK_SIZE_CUBED];
         this.blockCount = 0;
         for (int i = 0; i < CHUNK_SIZE_CUBED; i++) {
             blocks[i] = (byte) 0;
@@ -71,9 +72,7 @@ public class Chunk {
 
     public BlockType getBlockTypeAt(BlockPos blockPos) {
         int blockArrayIndex = getIndexFromLocalPosition(getLocalPosition(blockPos));
-        Byte id = blocks[blockArrayIndex];
-        if (id == null) return BlockType.AIR;
-        return BlockRegistry.getBlockFromId(id);
+        return BlockRegistry.getBlockFromId(blocks[blockArrayIndex]);
     }
 
     public void generate() {
@@ -81,7 +80,7 @@ public class Chunk {
         this.updateMesh(false);
     }
 
-    public Byte[] getBlockArray() {
+    public byte[] getBlockArray() {
         return this.blocks;
     }
 
@@ -92,9 +91,15 @@ public class Chunk {
     public void updateMesh(boolean dontTriggerUpdatesAround) {
         if (this.mesh != null) {
             this.mesh.destroy();
+            this.mesh = null;
+        }
+        if (this.waterMesh != null) {
+            this.waterMesh.destroy();
+            this.waterMesh = null;
         }
         if (blockCount > 0) {
-            this.mesh = ChunkBuilder.createMesh(this);
+            this.mesh = ChunkBuilder.createMesh(this, false);
+            this.waterMesh = ChunkBuilder.createMesh(this, true);
         }
         if (!dontTriggerUpdatesAround) {
             for (Vector3f face : Face.ALL) {
