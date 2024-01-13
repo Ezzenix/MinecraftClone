@@ -3,8 +3,8 @@ package com.ezzenix.rendering;
 import com.ezzenix.Game;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.World;
-import com.ezzenix.opengl.Shader;
-import com.ezzenix.utils.ImageUtil;
+import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.engine.opengl.utils.ImageUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

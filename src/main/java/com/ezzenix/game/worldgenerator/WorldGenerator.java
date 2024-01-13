@@ -2,8 +2,8 @@ package com.ezzenix.game.worldgenerator;
 
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.utils.BlockPos;
-import com.ezzenix.utils.FastNoiseLite;
+import com.ezzenix.engine.opengl.utils.BlockPos;
+import com.ezzenix.engine.opengl.utils.FastNoiseLite;
 
 import java.util.Random;
 
@@ -36,7 +36,7 @@ public class WorldGenerator {
                     int absoluteZ = chunk.z * 16 + localZ;
 
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ)+1)/2;
-                    float density = (float) absoluteY /(16*7);
+                    float density = (float) absoluteY /(16*3);
                     if (value > density) {
                         chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
                     }

@@ -52,7 +52,7 @@
 // /*FNLfloat*/ float
 // /*FNLfloat*/ double
 
-package com.ezzenix.utils;
+package com.ezzenix.engine.opengl.utils;
 
 public class FastNoiseLite
 {

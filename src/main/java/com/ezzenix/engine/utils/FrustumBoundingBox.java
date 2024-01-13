@@ -1,4 +1,4 @@
-package com.ezzenix.utils;
+package com.ezzenix.engine.opengl.utils;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

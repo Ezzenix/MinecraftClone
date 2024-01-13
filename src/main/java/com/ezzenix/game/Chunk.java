@@ -5,9 +5,9 @@ import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.worldgenerator.WorldGenerator;
 import com.ezzenix.rendering.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
-import com.ezzenix.utils.BlockPos;
-import com.ezzenix.utils.Face;
-import com.ezzenix.utils.FrustumBoundingBox;
+import com.ezzenix.engine.opengl.utils.BlockPos;
+import com.ezzenix.engine.opengl.utils.Face;
+import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -32,9 +32,9 @@ public class Chunk {
         this.y = y;
         this.z = z;
         this.world = world;
-        this.blocks = new Byte[(int) Math.pow(16, 3)];
+        this.blocks = new Byte[CHUNK_SIZE_CUBED];
         this.blockCount = 0;
-        for (int i = 0; i < Math.pow(16, 3); i++) {
+        for (int i = 0; i < CHUNK_SIZE_CUBED; i++) {
             blocks[i] = (byte) 0;
         }
 

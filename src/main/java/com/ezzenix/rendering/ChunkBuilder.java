@@ -3,9 +3,9 @@ package com.ezzenix.rendering;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.utils.BlockPos;
-import com.ezzenix.utils.Face;
-import com.ezzenix.utils.textures.TextureUV;
+import com.ezzenix.engine.opengl.utils.BlockPos;
+import com.ezzenix.engine.opengl.utils.Face;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.lwjgl.opengl.GL11;
@@ -25,7 +25,7 @@ public class ChunkBuilder {
         return neighborType != null;
     }
 
-    public static TextureUV getBlockTextureUV(BlockType blockType, Vector3f face) {
+    public static Vector2f[] getBlockTextureUV(BlockType blockType, Vector3f face) {
         if (face == Face.TOP) return blockType.textureUVTop;
         if (face == Face.BOTTOM) return blockType.textureUVBottom;
         return blockType.textureUVSides;
@@ -76,15 +76,15 @@ public class ChunkBuilder {
                 Vector3f vert3 = unitCubeFace.get(2).add(localPositionf);
                 Vector3f vert4 = unitCubeFace.get(3).add(localPositionf);
 
-                TextureUV textureUV = getBlockTextureUV(blockType, face);
+                Vector2f[] textureUV = getBlockTextureUV(blockType, face);
 
-                addVertex(vertexList, vert1, textureUV.uv1.x, textureUV.uv1.y);
-                addVertex(vertexList, vert2, textureUV.uv2.x, textureUV.uv2.y);
-                addVertex(vertexList, vert3, textureUV.uv3.x, textureUV.uv3.y);
+                addVertex(vertexList, vert1, textureUV[0].x, textureUV[0].y);
+                addVertex(vertexList, vert2, textureUV[1].x, textureUV[1].y);
+                addVertex(vertexList, vert3, textureUV[2].x, textureUV[2].y);
 
-                addVertex(vertexList, vert3, textureUV.uv3.x, textureUV.uv3.y);
-                addVertex(vertexList, vert4, textureUV.uv4.x, textureUV.uv4.y);
-                addVertex(vertexList, vert1, textureUV.uv1.x, textureUV.uv1.y);
+                addVertex(vertexList, vert3, textureUV[2].x, textureUV[2].y);
+                addVertex(vertexList, vert4, textureUV[3].x, textureUV[3].y);
+                addVertex(vertexList, vert1, textureUV[0].x, textureUV[0].y);
             }
         }
 

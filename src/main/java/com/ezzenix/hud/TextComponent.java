@@ -1,9 +1,11 @@
 package com.ezzenix.hud;
 
+import com.ezzenix.Game;
 import com.ezzenix.rendering.Mesh;
 import org.joml.Vector2f;
 
 import java.nio.FloatBuffer;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,26 +18,31 @@ public class TextComponent {
     FontRenderer fontRenderer;
     String text;
     int x, y;
-    float scale;
     Mesh mesh;
 
-    public TextComponent(FontRenderer fontRenderer, String text, int x, int y, float scale) {
+    public TextComponent(FontRenderer fontRenderer, String text, int x, int y) {
         this.fontRenderer = fontRenderer;
         this.x = x;
         this.y = y;
-        this.scale = scale;
         this.setText(text);
     }
 
-    private void setText(String text) {
+    private Vector2f toNormalizedDeviceCoordinates(Vector2f pixelCoordinates) {
+        int width = Game.getInstance().getWindow().getWindowWidth();
+        int height = Game.getInstance().getWindow().getWindowHeight();
+        return new Vector2f((pixelCoordinates.x/width) * 2 - 1, (pixelCoordinates.y/height) * 2 - 1);
+    }
+
+    public void setText(String text) {
         if (this.text != null && this.text.equals(text)) return;
         this.text = text;
 
-        List<Float> vertexList = new ArrayList<>();
+        if (this.mesh != null) {
+            this.mesh.destroy();
+            this.mesh = null;
+        }
 
-        addVertex(vertexList, new Vector2f(-1f, -1f));
-        addVertex(vertexList, new Vector2f(-1f, 0f));
-        addVertex(vertexList, new Vector2f(1f, 0f));
+        List<Float> vertexList = new ArrayList<>();
 
         int offsetX = 0;
         for (int i = 0; i < text.length(); i++) {
@@ -43,43 +50,18 @@ public class TextComponent {
 
             CharInfo glyph = this.fontRenderer.getGlyph(c);
 
-            Vector2f vertTopLeft = new Vector2f(offsetX + this.x, this.y);
-            Vector2f vertBottomLeft = new Vector2f(offsetX + this.x, this.y + glyph.height);
-            Vector2f vertBottomRight = new Vector2f(offsetX + this.x + glyph.width, this.y + glyph.height);
-            Vector2f vertTopRight = new Vector2f(offsetX + this.x + glyph.width, this.y);
+            Vector2f[] uvCoords = glyph.uvCoords;
+            Vector2f vertTopLeft = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x, this.y));
+            Vector2f vertBottomLeft = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x, this.y + glyph.height));
+            Vector2f vertBottomRight = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x + glyph.width, this.y + glyph.height));
+            Vector2f vertTopRight = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x + glyph.width, this.y));
 
-            /*
-            addVertex(vertexList, vertTopLeft);
-            addVertex(vertexList, vertBottomLeft);
-            addVertex(vertexList, vertBottomRight);
-            addVertex(vertexList, vertTopRight);
-            addVertex(vertexList, vertTopLeft);
-            addVertex(vertexList, vertBottomRight);
-            */
-
-            // top-left
-            //addVertex(vertexList, new Vector2f(offsetX + this.x, this.y));
-           // buffer.put(offsetX + this.x).put(this.y);//.put(glyph.textureUV.uv1.x).put(glyph.textureUV.uv1.y);
-            //glTexCoord2f(glyph.textureUV.uv1.x, glyph.textureUV.uv1.y);
-            //glVertex2f(offsetX + this.x, this.y);
-
-            // bottom-left
-            //addVertex(vertexList, new Vector2f(offsetX + this.x, this.y + glyph.height));
-            //buffer.put(offsetX + this.x).put(this.y + glyph.height * scale);//.put(glyph.textureUV.uv2.x).put(glyph.textureUV.uv2.y);
-            //glTexCoord2f(glyph.textureUV.uv2.x, glyph.textureUV.uv2.y);
-            //glVertex2f(offsetX + this.x, this.y + glyph.height*scale);
-
-            // bottom-right
-            //addVertex(vertexList, new Vector2f(offsetX + this.x + glyph.width, this.y + glyph.height));
-            //buffer.put(offsetX + this.x + glyph.width * scale).put(this.y + glyph.height*scale);//.put(glyph.textureUV.uv3.x).put(glyph.textureUV.uv3.y);
-            //glTexCoord2f(glyph.textureUV.uv3.x, glyph.textureUV.uv3.y);
-            //glVertex2f(offsetX + this.x + glyph.width*scale, this.y + glyph.height*scale);
-
-            // top-right
-            //addVertex(vertexList, new Vector2f(offsetX + this.x + glyph.width, this.y));
-            //buffer.put(offsetX + this.x + glyph.width * scale).put(this.y);//.put(glyph.textureUV.uv4.x).put(glyph.textureUV.uv4.y);
-            //glTexCoord2f(glyph.textureUV.uv4.x, glyph.textureUV.uv4.y);
-            //glVertex2f(offsetX + this.x + glyph.width*scale, this.y);
+            addVertex(vertexList, vertTopLeft, uvCoords[0]);
+            addVertex(vertexList, vertBottomLeft, uvCoords[1]);
+            addVertex(vertexList, vertBottomRight, uvCoords[2]);
+            addVertex(vertexList, vertTopRight, uvCoords[3]);
+            addVertex(vertexList, vertTopLeft, uvCoords[0]);
+            addVertex(vertexList, vertBottomRight, uvCoords[2]);
 
             offsetX += glyph.width;
         }
@@ -92,22 +74,22 @@ public class TextComponent {
         vertexBuffer.put(vertexArray);
         vertexBuffer.flip();
 
-        this.mesh = new Mesh(vertexBuffer, vertexList.size()/2);
+        this.mesh = new Mesh(vertexBuffer, vertexList.size()/4);
 
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * Float.BYTES, 0);
+        int stride = 4 * Float.BYTES;
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, stride, 0);
         glEnableVertexAttribArray(0);
-
-        //glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
-        //glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, 2 * Float.BYTES);
+        glEnableVertexAttribArray(1);
 
         this.mesh.unbind();
-
-        System.out.println("TEXT UPDATED!");
     }
 
-    void addVertex(List<Float> vertexList, Vector2f position) {
+    void addVertex(List<Float> vertexList, Vector2f position, Vector2f uvCoord) {
         vertexList.add(position.x);
         vertexList.add(position.y);
+        vertexList.add(uvCoord.x);
+        vertexList.add(uvCoord.y);
     }
 
     public void render() {

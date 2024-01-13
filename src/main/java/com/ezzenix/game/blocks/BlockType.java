@@ -1,7 +1,8 @@
 package com.ezzenix.game.blocks;
 
 import com.ezzenix.Game;
-import com.ezzenix.utils.textures.TextureUV;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public class BlockType {
     // Register blocks
@@ -15,9 +16,9 @@ public class BlockType {
     private final String name;
     private final byte id;
 
-    public TextureUV textureUVTop;
-    public TextureUV textureUVSides;
-    public TextureUV textureUVBottom;
+    public Vector2f[] textureUVTop;
+    public Vector2f[] textureUVSides;
+    public Vector2f[] textureUVBottom;
 
     public BlockType(String name) {
         this.id = BlockRegistry.registerBlock(this);
@@ -30,17 +31,17 @@ public class BlockType {
     }
 
     public BlockType setTextureTop(String textureName) {
-        this.textureUVTop = Game.getInstance().blockTextures.getTextureUVs(textureName);
+        this.textureUVTop = Game.getInstance().blockTextures.getUV(textureName);
         return this;
     }
 
     public BlockType setTextureSides(String textureName) {
-        this.textureUVSides = Game.getInstance().blockTextures.getTextureUVs(textureName);
+        this.textureUVSides = Game.getInstance().blockTextures.getUV(textureName);
         return this;
     }
 
     public BlockType setTextureBottom(String textureName) {
-        this.textureUVBottom = Game.getInstance().blockTextures.getTextureUVs(textureName);
+        this.textureUVBottom = Game.getInstance().blockTextures.getUV(textureName);
         return this;
     }
 

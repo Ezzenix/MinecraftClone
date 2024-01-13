@@ -1,6 +1,6 @@
 package com.ezzenix.hud;
 
-import com.ezzenix.utils.ImageUtil;
+import com.ezzenix.engine.opengl.utils.ImageUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,9 +18,9 @@ public class FontRenderer {
     private HashMap<Character, CharInfo> characterMap = new HashMap<>();
     private int width, height, lineHeight;
 
-    public FontRenderer(Font font) {
-        this.fontPath = "C:/Windows/Fonts/Arial.ttf";
-        this.fontSize = 64;
+    public FontRenderer(String fontPath, int fontSize) {
+        this.fontPath = fontPath;
+        this.fontSize = fontSize;
 
         this.textureId = createFontTexture();
     }
@@ -52,7 +52,7 @@ public class FontRenderer {
         for (int i=0; i < font.getNumGlyphs(); i++) {
             if (font.canDisplay(i)) {
                 // Get the sizes for each codepoint glyph, and update the actual image width and height
-                CharInfo charInfo = new CharInfo(x, y, fontMetrics.charWidth(i), fontMetrics.getHeight(), width, height);
+                CharInfo charInfo = new CharInfo(x, y, fontMetrics.charWidth(i), fontMetrics.getHeight());
                 characterMap.put((char)i, charInfo);
                 width = Math.max(x + fontMetrics.charWidth(i), width);
 
@@ -76,6 +76,7 @@ public class FontRenderer {
         for (int i=0; i < font.getNumGlyphs(); i++) {
             if (font.canDisplay(i)) {
                 CharInfo info = characterMap.get((char)i);
+                info.calculateUVs(width, height);
                 //info.calculateTextureCoordinates(width, height);
                 g2d.drawString("" + (char)i, info.x, info.y);
             }

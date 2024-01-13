@@ -2,7 +2,7 @@ package com.ezzenix.game;
 
 import com.ezzenix.Game;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.utils.BlockPos;
+import com.ezzenix.engine.opengl.utils.BlockPos;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -12,9 +12,9 @@ public class World {
     private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
 
     public World() {
-        for (int x = 0; x < 30; x++) {
-            for (int y = 0; y < 8; y++) {
-                for (int z = 0; z < 30; z++) {
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 3; y++) {
+                for (int z = 0; z < 10; z++) {
                     loadChunk(x, y, z);
                 }
             }

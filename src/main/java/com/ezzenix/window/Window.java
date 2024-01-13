@@ -1,7 +1,7 @@
 package com.ezzenix.window;
 
 import com.ezzenix.Game;
-import com.ezzenix.utils.ImageParser;
+import com.ezzenix.engine.opengl.utils.ImageParser;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -34,21 +34,23 @@ public class Window {
 
     public void init() {
         GLFWErrorCallback.createPrint(System.err).set();
-        System.setProperty("org.lwjgl.util.Debug", "true");
+        //System.setProperty("org.lwjgl.util.Debug", "true");
 
+        /*
         Configuration.DEBUG.set(true);
         Configuration.DEBUG_FUNCTIONS.set(true);
         Configuration.DEBUG_LOADER.set(true);
         Configuration.DEBUG_MEMORY_ALLOCATOR.set(true);
         Configuration.DEBUG_MEMORY_ALLOCATOR_FAST.set(true);
         Configuration.DEBUG_STACK.set(true);
+        */
 
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
         // Configure GLFW
         glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_FALSE);
         glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -121,6 +123,7 @@ public class Window {
         glfwShowWindow(window);
 
         // Enable OpenGL debug output
+        /*
         if (GL.getCapabilities().OpenGL43) {
             glEnable(GL_DEBUG_OUTPUT);
             glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -135,6 +138,7 @@ public class Window {
         } else {
             System.err.println("OpenGL 4.3 or higher is required for debug output.");
         }
+        */
 
         System.out.println("OpenGL Version: " + glGetString(GL_VERSION));
     }
@@ -149,8 +153,9 @@ public class Window {
         long lastChunkLoad = 0;
         long lastFrame = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window)) {
-            Game.getInstance().deltaTime = (float)(System.currentTimeMillis() - lastFrame);
-            Game.getInstance().fps = Math.round(1/ (float)(System.currentTimeMillis() - lastFrame));
+            long deltaTime = (System.currentTimeMillis() - lastFrame);
+            Game.getInstance().deltaTime = (float) deltaTime;
+            Game.getInstance().fps = (float)Math.round(1000f / (float)deltaTime);
             lastFrame = System.currentTimeMillis();
             if (System.currentTimeMillis() > (lastChunkLoad + 1000)) {
                 lastChunkLoad = System.currentTimeMillis();
@@ -164,7 +169,7 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             Game.getInstance().getRenderer().render(window);
-            //Game.getInstance().getHud().render(window);
+            Game.getInstance().getHud().render(window);
 
             glfwSwapBuffers(window); // swap the color buffers
             glfwPollEvents();
