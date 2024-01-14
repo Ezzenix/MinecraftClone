@@ -14,9 +14,7 @@ public class Scheduler {
     public static void update() {
         deltaTime = (System.nanoTime() - lastUpdate)/1_000_000f;
         fpsBuffer.add((float) Math.round(1000f / deltaTime));
-        if (fpsBuffer.size() > FPS_BUFFER_SIZE) {
-            fpsBuffer.remove(0);
-        }
+        if (fpsBuffer.size() > FPS_BUFFER_SIZE) fpsBuffer.remove(0);
         lastUpdate = System.nanoTime();
 
         for (SchedulerRunnable schedulerRunnable : runnables) {

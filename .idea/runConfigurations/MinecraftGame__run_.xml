@@ -13,7 +13,7 @@
           <option value="run" />
         </list>
       </option>
-      <option name="vmOptions" value="-XX:ErrorFile=error.log -XX:HeapDumpPath=heapdump.hprof -Xmx4096m" />
+      <option name="vmOptions" value="-XX:ErrorFile=error.log -XX:HeapDumpPath=heapdump.hprof -Xmx4096m -XX:+UseG1GC" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>

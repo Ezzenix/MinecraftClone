@@ -70,7 +70,10 @@ public class TextureAtlas<KeyType> {
 
         File directory = new File(directoryPath);
         File[] imageFiles = directory.listFiles();
-        if (imageFiles == null) return null;
+        if (imageFiles == null) {
+            System.err.println("TextureAtlas failed to read directory " + directoryPath);
+            return null;
+        };
 
         for (File imageFile : imageFiles) {
             try {

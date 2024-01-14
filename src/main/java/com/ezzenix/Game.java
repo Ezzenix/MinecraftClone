@@ -29,7 +29,7 @@ public class Game {
 
         // Create a window and initialize OpenGL & glfw
         window = new Window();
-        window.setTitle("Minecraft");
+        window.setTitle("Minecraft that is better than normal Minecraft");
         window.centerWindow();
         window.setVSync(true);
         window.setIcon("src/main/resources/icon.png");

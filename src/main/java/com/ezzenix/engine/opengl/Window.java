@@ -1,5 +1,8 @@
 package com.ezzenix.engine.opengl;
 
+import com.ezzenix.Game;
+import com.ezzenix.game.Chunk;
+import org.joml.Vector3i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -18,8 +21,10 @@ import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public class Window {
     private String title = "New window";
-    private int width = 1280;
-    private int height = 720;
+    //private int width = 1280;
+    //private int height = 720;
+    private int width = 1720;
+    private int height = 920;
     private long window;
     private boolean isMinimized = true;
 
