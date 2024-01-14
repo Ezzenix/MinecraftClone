@@ -5,13 +5,13 @@ import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.worldgeneration.WorldGenerator;
-import com.ezzenix.rendering.ChunkBuilder;
+import com.ezzenix.rendering.builder.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 public class Chunk {
-    public static final int CHUNK_SIZE = 32;
+    public static final int CHUNK_SIZE = 16;
     public static final int CHUNK_SIZE_SQUARED = (int) Math.pow(CHUNK_SIZE, 2);
     public static final int CHUNK_SIZE_CUBED = (int) Math.pow(CHUNK_SIZE, 3);
 
@@ -100,10 +100,10 @@ public class Chunk {
         }
         if (blockCount > 0) {
             this.mesh = ChunkBuilder.createMesh(this, false);
-            this.waterMesh = ChunkBuilder.createMesh(this, true);
+            //this.waterMesh = ChunkBuilder.createMesh(this, true);
         }
         if (!dontTriggerUpdatesAround) {
-            for (Vector3f face : com.ezzenix.engine.opengl.utils.Face.ALL) {
+            for (Vector3f face : com.ezzenix.engine.opengl.utils.OldFace.ALL) {
                 Chunk chunk = getWorld().getChunk(
                         (int) (x + face.x),
                         (int) (y + face.y),

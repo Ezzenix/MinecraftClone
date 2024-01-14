@@ -19,6 +19,10 @@ public class BlockPos {
         return new BlockPos(x + v.x, y + v.y, z + v.z);
     }
 
+    public BlockPos add(int x, int y, int z) {
+        return new BlockPos(this.x + x, this.y + y, this.z + z);
+    }
+
     public Vector3f toVector3f(BlockPos v) {
         return new Vector3f(v.x + 0.5f, v.y + 0.5f, v.z + 0.5f);
     }

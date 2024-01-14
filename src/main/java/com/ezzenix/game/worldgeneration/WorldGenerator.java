@@ -52,8 +52,26 @@ public class WorldGenerator {
     public static void generateChunk(Chunk chunk) {
         //long startTime = System.currentTimeMillis();
 
-        //byte[] blockArray = chunk.getBlockArray();
+        for (int localX = 0; localX < 16; localX++) {
+            for (int localY = 0; localY < 2; localY++) {
+                for (int localZ = 0; localZ < 16; localZ++) {
+                    int absoluteX = chunk.x * 16 + localX;
+                    int absoluteY = chunk.y * 16 + localY;
+                    int absoluteZ = chunk.z * 16 + localZ;
 
+                    if (localY == 1) {
+                        if ((localX == 0 || localX == 1) && localZ == 0) {
+                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
+                        }
+                    } else {
+                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
+                    }
+                }
+            }
+        }
+
+        //byte[] blockArray = chunk.getBlockArray();
+        /*
         for (int localX = 0; localX < 16; localX++) {
             for (int localY = 0; localY < 16; localY++) {
                 for (int localZ = 0; localZ < 16; localZ++) {
@@ -74,21 +92,10 @@ public class WorldGenerator {
                     //if (localX == 6 && localY == 7 && localZ == 6) {
                     //    placeTree(chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
                     //}
-
-                    //BlockType blockType = new Random().nextBoolean() ? BlockType.GRASS : BlockType.STONE;
-                    //chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), blockType);
-
-                    /*
-                    float height = (SimplexNoise.noise((float) x / 50f, (float) z / 50f) + 1) / 2;
-                    height = 50 + height * 20;
-                    for (int y = 0; y < height; y++) {
-                        BlockType blockType = getBlockTypeAtHeight(y, height);
-                        chunk.setBlock(new BlockPos(x, y, z), blockType);
-                    }
-                    */
                 }
             }
         }
+         */
 
         //System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
     }
