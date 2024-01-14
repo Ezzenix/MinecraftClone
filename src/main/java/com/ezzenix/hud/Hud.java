@@ -2,12 +2,16 @@ package com.ezzenix.hud;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.game.Chunk;
+import com.ezzenix.game.World;
 import com.ezzenix.rendering.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.awt.*;
-import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
@@ -17,6 +21,8 @@ public class Hud {
     TextComponent fpsText;
     TextComponent positionText;
     TextComponent cameraText;
+    TextComponent vertexText;
+    TextComponent memoryText;
 
     Shader textShader;
 
@@ -31,6 +37,8 @@ public class Hud {
         fpsText = new TextComponent(fontRenderer, "", 10, 10);
         positionText = new TextComponent(fontRenderer, "", 10, 10+20);
         cameraText = new TextComponent(fontRenderer, "", 10, 10+20*2);
+        vertexText = new TextComponent(fontRenderer, "", 10, 10+20*3);
+        memoryText = new TextComponent(fontRenderer, "", 10, 10+20*4);
     }
 
     public void render(long window) {
@@ -42,7 +50,7 @@ public class Hud {
         glBindTexture(GL_TEXTURE_2D, this.fontRenderer.getAtlasTextureId());
         this.textShader.use();
 
-        if (System.currentTimeMillis() > (lastDebugTextUpdate + 400)) {
+        if (System.currentTimeMillis() > (lastDebugTextUpdate + 250)) {
             Camera camera = Game.getInstance().getRenderer().getCamera();
             Vector3f position = camera.getPosition();
 
@@ -50,11 +58,27 @@ public class Hud {
             fpsText.setText("FPS: " + (int)Game.getInstance().fps);
             positionText.setText("XYZ: " + (int)position.x + " " + (int)position.y + " " + (int)position.z);
             cameraText.setText("Pitch: " + (int)camera.getPitch() + " Yaw: " + (int)camera.getYaw());
+
+            int vertexCount = 0;
+            World world = Game.getInstance().getWorld();
+            for (Chunk chunk : world.getChunks().values()) {
+                vertexCount += chunk.mesh.vertexCount;
+            }
+            for (Chunk chunk : world.getChunks().values()) {
+                vertexCount += chunk.waterMesh.vertexCount;
+            }
+            vertexText.setText("Vertices: " + vertexCount);
+
+            MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+            MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+            memoryText.setText("Memory: " + heapMemoryUsage.getUsed() / (1024 * 1024) + "MB");
         }
 
         fpsText.render();
         positionText.render();
         cameraText.render();
+        vertexText.render();
+        memoryText.render();
 
         glUseProgram(0);
 

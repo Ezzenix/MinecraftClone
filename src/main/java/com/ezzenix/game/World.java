@@ -60,7 +60,7 @@ public class World {
         for (int x = chunkX-renderDistance; x < chunkX+renderDistance; x++) {
             for (int y = chunkY-renderDistance; y < chunkY+renderDistance; y++) {
                 for (int z = chunkZ-renderDistance; z < chunkZ+renderDistance; z++) {
-                    loadChunk(x, y, z);
+                    //loadChunk(x, y, z);
                 }
             }
         }

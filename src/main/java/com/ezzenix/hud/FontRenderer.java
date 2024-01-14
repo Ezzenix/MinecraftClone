@@ -59,14 +59,16 @@ public class FontRenderer {
         int x = 0;
         int y = (int)(fontMetrics.getHeight() * 1.4f);
 
+        int X_SPACING = 6;
+
         for (int i=0; i < font.getNumGlyphs(); i++) {
             if (font.canDisplay(i)) {
                 // Get the sizes for each codepoint glyph, and update the actual image width and height
                 Glyph glyph = new Glyph(x, y, fontMetrics.charWidth(i), fontMetrics.getHeight());
                 characterMap.put((char)i, glyph);
-                width = Math.max(x + fontMetrics.charWidth(i), width);
+                width = Math.max(x + fontMetrics.charWidth(i) + X_SPACING, width);
 
-                x += glyph.width;
+                x += glyph.width + X_SPACING;
                 if (x > estimatedWidth) {
                     x = 0;
                     y += (int) (fontMetrics.getHeight() * 1.4f);

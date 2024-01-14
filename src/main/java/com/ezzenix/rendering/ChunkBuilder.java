@@ -74,10 +74,10 @@ public class ChunkBuilder {
 
                 List<Vector3f> unitCubeFace = Face.faceUnitCube(face);
 
-                Vector3f vert1 = unitCubeFace.get(0).add(localPositionf);
-                Vector3f vert2 = unitCubeFace.get(1).add(localPositionf);
-                Vector3f vert3 = unitCubeFace.get(2).add(localPositionf);
-                Vector3f vert4 = unitCubeFace.get(3).add(localPositionf);
+                Vector3f vert1 = unitCubeFace.get(0).add(0.5f, 0.5f, 0.5f).add(localPositionf);
+                Vector3f vert2 = unitCubeFace.get(1).add(0.5f, 0.5f, 0.5f).add(localPositionf);
+                Vector3f vert3 = unitCubeFace.get(2).add(0.5f, 0.5f, 0.5f).add(localPositionf);
+                Vector3f vert4 = unitCubeFace.get(3).add(0.5f, 0.5f, 0.5f).add(localPositionf);
 
                 Vector2f[] textureUV = getBlockTextureUV(blockType, face);
 
