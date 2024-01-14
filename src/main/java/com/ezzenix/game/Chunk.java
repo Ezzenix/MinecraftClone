@@ -5,7 +5,7 @@ import com.ezzenix.engine.opengl.utils.Face;
 import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.worldgenerator.WorldGenerator;
+import com.ezzenix.game.worldgeneration.WorldGenerator;
 import com.ezzenix.rendering.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
 import org.joml.Vector3f;

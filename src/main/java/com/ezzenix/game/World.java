@@ -3,6 +3,7 @@ package com.ezzenix.game;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.worldgeneration.WorldGeneratorThread;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -25,7 +26,8 @@ public class World {
         if (chunks.get(new Vector3i(x, y, z)) != null) return;
         Chunk chunk = new Chunk(x, y, z, this);
         chunks.put(new Vector3i(x, y, z), chunk);
-        chunk.generate();
+        //chunk.generate();
+        WorldGeneratorThread.scheduleChunkForWorldGeneration(chunk);
     }
 
     public Chunk getChunkAtBlockPos(BlockPos blockPos) {

@@ -5,14 +5,19 @@ import java.util.List;
 
 public class Scheduler {
     private static final List<SchedulerRunnable> runnables = new ArrayList<>();
-    private static float fps = 0;
     private static float deltaTime = (float) 1 / 60;
-    private static long lastUpdate = System.currentTimeMillis();
+    private static long lastUpdate = System.nanoTime();
+
+    private static final int FPS_BUFFER_SIZE = 60;
+    private static final List<Float> fpsBuffer = new ArrayList<>();
 
     public static void update() {
-        deltaTime = (System.currentTimeMillis() - lastUpdate);
-        fps = (float) Math.round(1000f / deltaTime);
-        lastUpdate = System.currentTimeMillis();
+        deltaTime = (System.nanoTime() - lastUpdate)/1_000_000f;
+        fpsBuffer.add((float) Math.round(1000f / deltaTime));
+        if (fpsBuffer.size() > FPS_BUFFER_SIZE) {
+            fpsBuffer.remove(0);
+        }
+        lastUpdate = System.nanoTime();
 
         for (SchedulerRunnable schedulerRunnable : runnables) {
             if (schedulerRunnable.canRun()) {
@@ -26,7 +31,7 @@ public class Scheduler {
     }
 
     public static float getFps() {
-        return fps;
+        return (float) fpsBuffer.stream().mapToDouble(Float::doubleValue).average().orElse(0.0);
     }
 
     public static SchedulerRunnable bindToUpdate(Runnable runnable) {
@@ -35,8 +40,8 @@ public class Scheduler {
         return schedulerRunnable;
     }
 
-    public static SchedulerRunnable runPeriodic(Runnable runnable, long delay) {
-        SchedulerRunnable schedulerRunnable = new SchedulerRunnable(runnable, delay);
+    public static SchedulerRunnable runPeriodic(Runnable runnable, long interval) {
+        SchedulerRunnable schedulerRunnable = new SchedulerRunnable(runnable, interval);
         runnables.add(schedulerRunnable);
         return schedulerRunnable;
     }

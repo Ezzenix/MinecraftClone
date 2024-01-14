@@ -29,17 +29,36 @@ public class Hud {
 
     public Matrix4f hudProjectionMatrix = new Matrix4f().setOrtho2D(0, 500, 0, 500);
 
-    private long lastDebugTextUpdate = System.currentTimeMillis();
-
     public Hud() {
         this.textShader = new Shader("text.vert", "text.frag");
         this.fontRenderer = new FontRenderer(new Font("Arial", Font.PLAIN, 18));
 
-        fpsText = new TextComponent(fontRenderer, "", 10, 10);
-        positionText = new TextComponent(fontRenderer, "", 10, 10 + 20);
-        cameraText = new TextComponent(fontRenderer, "", 10, 10 + 20 * 2);
-        vertexText = new TextComponent(fontRenderer, "", 10, 10 + 20 * 3);
-        memoryText = new TextComponent(fontRenderer, "", 10, 10 + 20 * 4);
+        fpsText = new TextComponent(fontRenderer, "", 6, 6);
+        positionText = new TextComponent(fontRenderer, "", 6, 6 + 18);
+        cameraText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 2);
+        vertexText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 3);
+        memoryText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 4);
+
+        Scheduler.runPeriodic(() -> {
+            Camera camera = Game.getInstance().getCamera();
+            Vector3f position = camera.getPosition();
+
+            fpsText.setText("FPS: " + (int) Scheduler.getFps());
+            positionText.setText("XYZ: " + (int) position.x + " " + (int) position.y + " " + (int) position.z);
+            cameraText.setText("Pitch: " + (int) camera.getPitch() + " Yaw: " + (int) camera.getYaw());
+
+            int vertexCount = 0;
+            World world = Game.getInstance().getWorld();
+            for (Chunk chunk : world.getChunks().values()) {
+                if (chunk.mesh != null) vertexCount += chunk.mesh.vertexCount;
+                if (chunk.waterMesh != null) vertexCount += chunk.waterMesh.vertexCount;
+            }
+            vertexText.setText("Vertices: " + vertexCount);
+
+            MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+            MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+            memoryText.setText("Memory: " + heapMemoryUsage.getUsed() / (1024 * 1024) + " MB");
+        }, 50);
     }
 
     public void render(long window) {
@@ -50,30 +69,6 @@ public class Hud {
 
         glBindTexture(GL_TEXTURE_2D, this.fontRenderer.getAtlasTextureId());
         this.textShader.use();
-
-        if (System.currentTimeMillis() > (lastDebugTextUpdate + 250)) {
-            Camera camera = Game.getInstance().getCamera();
-            Vector3f position = camera.getPosition();
-
-            lastDebugTextUpdate = System.currentTimeMillis();
-            fpsText.setText("FPS: " + (int) Scheduler.getFps());
-            positionText.setText("XYZ: " + (int) position.x + " " + (int) position.y + " " + (int) position.z);
-            cameraText.setText("Pitch: " + (int) camera.getPitch() + " Yaw: " + (int) camera.getYaw());
-
-            int vertexCount = 0;
-            World world = Game.getInstance().getWorld();
-            for (Chunk chunk : world.getChunks().values()) {
-                if (chunk.mesh != null) vertexCount += chunk.mesh.vertexCount;
-            }
-            for (Chunk chunk : world.getChunks().values()) {
-                if (chunk.waterMesh != null) vertexCount += chunk.waterMesh.vertexCount;
-            }
-            vertexText.setText("Vertices: " + vertexCount);
-
-            MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-            MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
-            memoryText.setText("Memory: " + heapMemoryUsage.getUsed() / (1024 * 1024) + "MB");
-        }
 
         fpsText.render();
         positionText.render();

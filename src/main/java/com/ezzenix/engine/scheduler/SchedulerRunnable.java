@@ -2,12 +2,12 @@ package com.ezzenix.engine.scheduler;
 
 public class SchedulerRunnable {
     private final Runnable runnable;
-    private final long delay;
+    private final long interval;
     private long lastRun;
 
-    public SchedulerRunnable(Runnable runnable, long delay) {
+    public SchedulerRunnable(Runnable runnable, long interval) {
         this.lastRun = 0;
-        this.delay = delay;
+        this.interval = interval * 1000000;
         this.runnable = runnable;
     }
 
@@ -16,12 +16,12 @@ public class SchedulerRunnable {
     }
 
     public void run() {
-        lastRun = System.currentTimeMillis();
+        lastRun = System.nanoTime();
         runnable.run();
     }
 
     public boolean canRun() {
-        return System.currentTimeMillis() > (this.lastRun + this.delay);
+        return System.nanoTime() > (this.lastRun + this.interval);
     }
 
     public void dispose() {

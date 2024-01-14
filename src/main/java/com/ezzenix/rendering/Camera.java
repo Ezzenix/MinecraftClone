@@ -59,7 +59,7 @@ public class Camera {
         float fov = 70.0f;
         float aspectRatio = 16.0f / 9.0f;
         float near = 0.1f;
-        float far = 500.0f;
+        float far = 2000.0f;
 
         // Create a perspective projection matrix
         Matrix4f projectionMatrix = new Matrix4f();
