@@ -67,7 +67,7 @@ public class Hud {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glBindTexture(GL_TEXTURE_2D, this.fontRenderer.getAtlasTextureId());
+        this.fontRenderer.getAtlasTexture().bind();
         this.textShader.use();
 
         fpsText.render();

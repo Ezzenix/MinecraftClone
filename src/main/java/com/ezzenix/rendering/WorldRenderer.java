@@ -2,32 +2,31 @@ package com.ezzenix.rendering;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
-import com.ezzenix.engine.opengl.utils.ImageUtil;
+import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL45.glGenerateTextureMipmap;
 
 public class WorldRenderer {
     private final Shader worldShader = new Shader("world.vert", "world.frag");
     private final Shader waterShader = new Shader("water.vert", "water.frag");
-    private final int blockTexture;
+    private final Texture blockTexture;
 
     public WorldRenderer() {
-        blockTexture = ImageUtil.loadTexture(Game.getInstance().blockTextures.getAtlasImage());
-        glGenerateTextureMipmap(blockTexture);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        blockTexture = new Texture(Game.getInstance().blockTextures.getAtlasImage());
+        blockTexture.generateMipmap();
+        blockTexture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        blockTexture.setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
     public void render(long window) {
         World world = Game.getInstance().getWorld();
         if (world == null) return;
 
-        glBindTexture(GL_TEXTURE_2D, blockTexture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        blockTexture.bind();
 
         Camera camera = Game.getInstance().getCamera();
 

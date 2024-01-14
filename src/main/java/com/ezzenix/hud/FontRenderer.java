@@ -1,6 +1,6 @@
 package com.ezzenix.hud;
 
-import com.ezzenix.engine.opengl.utils.ImageUtil;
+import com.ezzenix.engine.opengl.Texture;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,14 +14,14 @@ import static org.lwjgl.opengl.GL11.*;
 public class FontRenderer {
     private final Font font;
     private final int fontSize;
-    private final int textureId;
+    private final Texture texture;
     private HashMap<Character, Glyph> characterMap = new HashMap<>();
     private int width, height, lineHeight;
 
     public FontRenderer(Font font) {
         this.font = font;
         this.fontSize = font.getSize();
-        this.textureId = createFontTexture();
+        this.texture = createFontTexture();
     }
 
     public static FontRenderer fromFile(File fontFile, int fontSize) {
@@ -38,15 +38,15 @@ public class FontRenderer {
         return new FontRenderer(font);
     }
 
-    public int getAtlasTextureId() {
-        return this.textureId;
+    public Texture getAtlasTexture() {
+        return this.texture;
     }
 
     public Glyph getGlyph(char c) {
         return characterMap.get(c);
     }
 
-    private int createFontTexture() {
+    private Texture createFontTexture() {
         // Create fake image to get font information
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = img.createGraphics();
@@ -101,12 +101,12 @@ public class FontRenderer {
         } catch (IOException ignored) {
         }
 
-        int textureId = ImageUtil.loadTexture(img);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        Texture texture = new Texture(img);
+        texture.setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+        texture.setParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+        texture.setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        texture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        return textureId;
+        return texture;
     }
 }

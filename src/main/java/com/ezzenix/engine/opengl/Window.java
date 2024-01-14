@@ -21,10 +21,8 @@ import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public class Window {
     private String title = "New window";
-    //private int width = 1280;
-    //private int height = 720;
-    private int width = 1720;
-    private int height = 920;
+    private int width = 1280;
+    private int height = 720;
     private long window;
     private boolean isMinimized = true;
 

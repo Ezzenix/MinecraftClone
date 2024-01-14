@@ -23,6 +23,7 @@ public class World {
     }
 
     private void loadChunk(int x, int y, int z) {
+        if (y < 0) return;
         if (chunks.get(new Vector3i(x, y, z)) != null) return;
         Chunk chunk = new Chunk(x, y, z, this);
         chunks.put(new Vector3i(x, y, z), chunk);

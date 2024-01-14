@@ -1,4 +1,4 @@
-package com.ezzenix.engine.opengl.utils;
+package com.ezzenix.engine.utils;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
@@ -13,7 +13,7 @@ public class ImageUtil {
         int width = image.getWidth();
         int height = image.getHeight();
 
-        ByteBuffer imageBuffer = loadImage(image);
+        ByteBuffer imageBuffer = parseBufferedImage(image);
 
         int textureID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, textureID);
@@ -34,7 +34,7 @@ public class ImageUtil {
         return textureID;
     }
 
-    private static ByteBuffer loadImage(BufferedImage image) {
+    public static ByteBuffer parseBufferedImage(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
 
