@@ -2,6 +2,7 @@ package com.ezzenix.hud;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.World;
 import com.ezzenix.rendering.Camera;
@@ -51,21 +52,21 @@ public class Hud {
         this.textShader.use();
 
         if (System.currentTimeMillis() > (lastDebugTextUpdate + 250)) {
-            Camera camera = Game.getInstance().getRenderer().getCamera();
+            Camera camera = Game.getInstance().getCamera();
             Vector3f position = camera.getPosition();
 
             lastDebugTextUpdate = System.currentTimeMillis();
-            fpsText.setText("FPS: " + (int)Game.getInstance().fps);
+            fpsText.setText("FPS: " + (int) Scheduler.getFps());
             positionText.setText("XYZ: " + (int)position.x + " " + (int)position.y + " " + (int)position.z);
             cameraText.setText("Pitch: " + (int)camera.getPitch() + " Yaw: " + (int)camera.getYaw());
 
             int vertexCount = 0;
             World world = Game.getInstance().getWorld();
             for (Chunk chunk : world.getChunks().values()) {
-                vertexCount += chunk.mesh.vertexCount;
+                if (chunk.mesh != null) vertexCount += chunk.mesh.vertexCount;
             }
             for (Chunk chunk : world.getChunks().values()) {
-                vertexCount += chunk.waterMesh.vertexCount;
+                if (chunk.waterMesh != null) vertexCount += chunk.waterMesh.vertexCount;
             }
             vertexText.setText("Vertices: " + vertexCount);
 

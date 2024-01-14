@@ -150,8 +150,8 @@ public class OldWindow {
         long lastFrame = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window)) {
             long deltaTime = (System.currentTimeMillis() - lastFrame);
-            Game.getInstance().deltaTime = (float) deltaTime;
-            Game.getInstance().fps = (float)Math.round(1000f / (float)deltaTime);
+            //Game.getInstance().deltaTime = (float) deltaTime;
+            //Game.getInstance().fps = (float)Math.round(1000f / (float)deltaTime);
             lastFrame = System.currentTimeMillis();
             if (System.currentTimeMillis() > (lastChunkLoad + 1000)) {
                 lastChunkLoad = System.currentTimeMillis();

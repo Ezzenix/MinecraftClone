@@ -1,8 +1,9 @@
 package com.ezzenix.window;
 
 import com.ezzenix.Game;
+import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.rendering.Camera;
-import com.ezzenix.rendering.GameRenderer;
+import com.ezzenix.rendering.WorldRenderer;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -13,16 +14,16 @@ public class InputHandler {
     private boolean isFirstUpdate = true;
 
     public InputHandler() {
-        handleMouse(Game.getInstance().getWindow().getHandle());
+        handleMouse();
     }
 
     public void handleInput(long window) {
         handleKeyboard(window);
     }
 
-    public void handleMouse(long window) {
-        GameRenderer renderer = Game.getInstance().getRenderer();
-        Camera camera = renderer.getCamera();
+    public void handleMouse() {
+        long window = Game.getInstance().getWindow().getId();
+        Camera camera = Game.getInstance().getCamera();
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -48,29 +49,13 @@ public class InputHandler {
         });
     }
 
-    private long lastPrint = 0;
-
-    public void printWithCooldown(String str) {
-        if (System.currentTimeMillis() > lastPrint + 1000) {
-            lastPrint = System.currentTimeMillis();
-
-            System.out.println(str);
-        }
-    }
-
     public void handleKeyboard(long window) {
-        GameRenderer renderer = Game.getInstance().getRenderer();
-        Camera camera = renderer.getCamera();
+        Camera camera = Game.getInstance().getCamera();
 
-        float speed = 0.03f * Game.getInstance().deltaTime;
+        float speed = 0.03f * Scheduler.getDeltaTime();
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             speed *= 3;
         }
-
-        //Vector3f lookVector = camera.getLookVector();
-        //System.out.println(lookVector.toString(new DecimalFormat("#.##")));
-
-        //System.out.println(camera.getPitch());
 
         Vector3f lookVector = new Vector3f(0.0f, 0.0f, -1.0f);
         Vector3f upVector = new Vector3f(0.0f, 1.0f, 0.0f);
@@ -81,8 +66,6 @@ public class InputHandler {
         upVector.set(0.0f, 1.0f, 0.0f).rotate(orientation);
         Vector3f rightVector = new Vector3f();
         lookVector.cross(upVector, rightVector).normalize();
-
-        //printWithCooldown("LookVector: " + lookVector.toString(new DecimalFormat("#.##")) + "\nPosition: " + camera.getPosition().toString(new DecimalFormat("#.##")) + "\nDirection: " + (camera.getYaw()+180f));
 
         Vector3f movementVector = new Vector3f();
 
@@ -106,10 +89,5 @@ public class InputHandler {
         }
 
         camera.setPosition(camera.getPosition().add(movementVector));
-
-        //System.out.println(movementVector.mul(lookVector).toString(new DecimalFormat("#.##")));
-
-        //System.out.println(movementVector.mul(lookVector.mul(speed)));
-        //camera.setPosition(camera.getPosition().add(movementVector.mul(lookVector.mul(speed))));
     }
 }

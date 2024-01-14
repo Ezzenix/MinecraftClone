@@ -27,8 +27,8 @@ public class TextComponent {
     }
 
     private Vector2f toNormalizedDeviceCoordinates(Vector2f pixelCoordinates) {
-        int width = Game.getInstance().getWindow().getWindowWidth();
-        int height = Game.getInstance().getWindow().getWindowHeight();
+        int width = Game.getInstance().getWindow().getWidth();
+        int height = Game.getInstance().getWindow().getHeight();
         return new Vector2f((pixelCoordinates.x/width) * 2 - 1, (pixelCoordinates.y/height) * 2 - 1);
     }
 

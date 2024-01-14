@@ -3,46 +3,54 @@ package com.ezzenix.engine.opengl;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.system.Configuration;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryUsage;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.opengl.GL.createCapabilities;
+import static org.lwjgl.opengl.GL.getCapabilities;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.MemoryUtil.memUTF8;
 
-public class GLWindow {
+public class Window {
     private String title = "New window";
     private int width = 1280;
     private int height = 720;
     private long window;
     private boolean isMinimized = true;
 
-    private Runnable init;
-    private Runnable gameLoop;
-    private Runnable cleanup;
+    private final boolean useDebugContext;
 
-    public GLWindow() {
+    public Window(boolean useDebugContext) {
+        if (useDebugContext) {
+            System.out.println("Creating window with debug context!");
+        } else {
+            System.out.println("Creating window!");
+        }
+        this.useDebugContext = useDebugContext;
         this.initWindow();
+    }
+
+    public Window() {
+        this(false);
     }
 
     private void initWindow() {
         GLFWErrorCallback.createPrint(System.err).set();
-        //System.setProperty("org.lwjgl.util.Debug", "true");
+        if (useDebugContext) {
+            System.setProperty("org.lwjgl.util.Debug", "true");
 
-        /*
-        Configuration.DEBUG.set(true);
-        Configuration.DEBUG_FUNCTIONS.set(true);
-        Configuration.DEBUG_LOADER.set(true);
-        Configuration.DEBUG_MEMORY_ALLOCATOR.set(true);
-        Configuration.DEBUG_MEMORY_ALLOCATOR_FAST.set(true);
-        Configuration.DEBUG_STACK.set(true);
-        */
+            Configuration.DEBUG.set(true);
+            Configuration.DEBUG_FUNCTIONS.set(true);
+            Configuration.DEBUG_LOADER.set(true);
+            Configuration.DEBUG_MEMORY_ALLOCATOR.set(true);
+            Configuration.DEBUG_MEMORY_ALLOCATOR_FAST.set(true);
+            Configuration.DEBUG_STACK.set(true);
+        }
 
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -91,6 +99,24 @@ public class GLWindow {
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         createCapabilities();
+
+        if (useDebugContext) {
+            // Enable OpenGL debug output
+            if (getCapabilities().OpenGL43) {
+                glEnable(GL_DEBUG_OUTPUT);
+                glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+                glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, (int[]) null, true);
+                glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
+                    System.err.println("\nOpenGL debug message:");
+                    System.err.println("\tType: " + type);
+                    System.err.println("\tSeverity: " + severity);
+                    System.err.println("\tMessage: " + memUTF8(message));
+                }, 0);
+                System.out.println("OpenGL debug was set up sucessfully");
+            } else {
+                System.err.println("OpenGL 4.3 or higher is required for debug output.");
+            }
+        }
     }
 
     public void setTitle(String title) {
@@ -142,4 +168,7 @@ public class GLWindow {
     public boolean shouldWindowClose() {
         return glfwWindowShouldClose(window);
     }
+
+    public int getWidth() { return this.width; }
+    public int getHeight() { return this.height; }
 }

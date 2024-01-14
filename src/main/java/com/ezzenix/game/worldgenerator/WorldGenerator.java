@@ -51,7 +51,7 @@ public class WorldGenerator {
     }
 
     public static void generateChunk(Chunk chunk) {
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
 
         //byte[] blockArray = chunk.getBlockArray();
 
@@ -72,9 +72,9 @@ public class WorldGenerator {
                         }
                     }
 
-                    if (localX == 6 && localY == 7 && localZ == 6) {
-                        placeTree(chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
-                    }
+                    //if (localX == 6 && localY == 7 && localZ == 6) {
+                    //    placeTree(chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
+                    //}
 
                     //BlockType blockType = new Random().nextBoolean() ? BlockType.GRASS : BlockType.STONE;
                     //chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), blockType);
@@ -91,6 +91,6 @@ public class WorldGenerator {
             }
         }
 
-        System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
+        //System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
     }
 }

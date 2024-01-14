@@ -50,7 +50,7 @@ public class World {
     }
 
     public void loadNewChunks() {
-        Vector3f position = Game.getInstance().getRenderer().getCamera().getPosition();
+        Vector3f position = Game.getInstance().getCamera().getPosition();
         int chunkX = ((int)position.x >> 4);
         int chunkY = ((int)position.y >> 4);
         int chunkZ = ((int)position.z >> 4);
@@ -60,7 +60,7 @@ public class World {
         for (int x = chunkX-renderDistance; x < chunkX+renderDistance; x++) {
             for (int y = chunkY-renderDistance; y < chunkY+renderDistance; y++) {
                 for (int z = chunkZ-renderDistance; z < chunkZ+renderDistance; z++) {
-                    //loadChunk(x, y, z);
+                    loadChunk(x, y, z);
                 }
             }
         }

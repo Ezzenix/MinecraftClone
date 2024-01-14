@@ -1,17 +1,24 @@
 package com.ezzenix;
 
-import com.ezzenix.engine.opengl.GLWindow;
+import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.engine.utils.TextureAtlas;
 import com.ezzenix.game.World;
 import com.ezzenix.hud.Hud;
-import com.ezzenix.rendering.GameRenderer;
+import com.ezzenix.rendering.Camera;
+import com.ezzenix.rendering.WorldRenderer;
+import com.ezzenix.rendering.Renderer;
 import com.ezzenix.window.InputHandler;
 
-public class Game {
-    private final GLWindow window;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
 
-    private final GameRenderer gameRenderer;
+public class Game {
+    private final Window window;
+
+    private final Renderer renderer;
+    private final Camera camera;
     private final InputHandler inputHandler;
     private final Hud hud;
     private final World world;
@@ -22,7 +29,7 @@ public class Game {
         INSTANCE = this;
 
         // Create a window and initialize OpenGL & glfw
-        window = new GLWindow();
+        window = new Window();
         window.setTitle("Minecraft");
         window.centerWindow();
         window.setVSync(true);
@@ -30,15 +37,27 @@ public class Game {
 
         // Initialize game
         this.blockTextures = TextureAtlas.fromDirectory("src/main/resources/textures");
-        this.hud = new Hud();
-        this.gameRenderer = new GameRenderer();
-        this.inputHandler = new InputHandler();
+        this.camera = new Camera();
         this.world = new World();
+        this.hud = new Hud();
+        this.renderer = new Renderer();
+        this.inputHandler = new InputHandler();
+
+        Scheduler.runPeriodic(() -> {
+            Game.getInstance().getWorld().loadNewChunks();
+        }, 1000);
 
         // Game loop
         while (!window.shouldWindowClose()) {
             Scheduler.update();
             inputHandler.handleInput(window.getId());
+
+            this.getRenderer().render(window.getId());
+
+            glfwPollEvents();
+            int glError = glGetError();
+            if (glError != GL_NO_ERROR) System.err.println("OpenGL Error: " + glError);
+
         }
 
         // Shutdown
@@ -47,11 +66,11 @@ public class Game {
 
 
     // Getters
-    public GLWindow getWindow() {
+    public Window getWindow() {
         return this.window;
     }
-    public GameRenderer getRenderer() {
-        return this.gameRenderer;
+    public Renderer getRenderer() {
+        return this.renderer;
     }
     public InputHandler getInputHandler() {
         return this.inputHandler;
@@ -62,6 +81,7 @@ public class Game {
     public Hud getHud() {
         return this.hud;
     }
+    public Camera getCamera() { return this.camera; }
 
 
     // Main entry

@@ -44,14 +44,12 @@ public class ChunkBuilder {
     }
 
     public static Mesh createMesh(Chunk chunk, boolean waterOnly) {
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
 
 
         byte[] blockArray = chunk.getBlockArray();
 
         List<Float> vertexList = new ArrayList<>();
-
-
 
         for (int index = 0; index < blockArray.length; index++) {
             byte blockId = blockArray[index];
@@ -109,7 +107,7 @@ public class ChunkBuilder {
 
         mesh.unbind();
 
-        System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
+        //System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
         return mesh;
     }
 

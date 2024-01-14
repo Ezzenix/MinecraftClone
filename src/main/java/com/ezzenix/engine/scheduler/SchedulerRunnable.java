@@ -7,7 +7,7 @@ public class SchedulerRunnable {
 
     public SchedulerRunnable(Runnable runnable, long delay) {
         this.lastRun = 0;
-        this.delay = 0;
+        this.delay = delay;
         this.runnable = runnable;
     }
 
