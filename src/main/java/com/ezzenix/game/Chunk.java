@@ -1,7 +1,6 @@
 package com.ezzenix.game;
 
 import com.ezzenix.engine.opengl.utils.BlockPos;
-import com.ezzenix.engine.opengl.utils.Face;
 import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
@@ -25,6 +24,8 @@ public class Chunk {
 
     private final byte[] blocks;
     private int blockCount;
+
+    public boolean hasGenerated = false;
 
     public FrustumBoundingBox frustumBoundingBox;
 
@@ -102,7 +103,7 @@ public class Chunk {
             this.waterMesh = ChunkBuilder.createMesh(this, true);
         }
         if (!dontTriggerUpdatesAround) {
-            for (Vector3f face : Face.ALL) {
+            for (Vector3f face : com.ezzenix.engine.opengl.utils.Face.ALL) {
                 Chunk chunk = getWorld().getChunk(
                         (int) (x + face.x),
                         (int) (y + face.y),
@@ -117,5 +118,11 @@ public class Chunk {
 
     public Mesh getMesh() {
         return this.mesh;
+    }
+
+    public void dispose() {
+        if (this.mesh != null) this.mesh.destroy();
+        if (this.waterMesh != null) this.waterMesh.destroy();
+        this.world.getChunks().remove(new Vector3i(x, y, z));
     }
 }

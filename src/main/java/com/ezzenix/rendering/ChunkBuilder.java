@@ -1,7 +1,6 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.engine.opengl.utils.BlockPos;
-import com.ezzenix.engine.opengl.utils.Face;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
@@ -17,6 +16,7 @@ import static org.lwjgl.BufferUtils.createFloatBuffer;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class ChunkBuilder {
     private static boolean shouldCullFace(Chunk chunk, BlockType type, BlockPos blockPos) {
@@ -26,20 +26,20 @@ public class ChunkBuilder {
     }
 
     public static Vector2f[] getBlockTextureUV(BlockType blockType, Vector3f face) {
-        if (face == Face.TOP) return blockType.textureUVTop;
-        if (face == Face.BOTTOM) return blockType.textureUVBottom;
+        if (face == com.ezzenix.engine.opengl.utils.Face.TOP) return blockType.textureUVTop;
+        if (face == com.ezzenix.engine.opengl.utils.Face.BOTTOM) return blockType.textureUVBottom;
         return blockType.textureUVSides;
     }
 
     private static final List<Vector3f> faces = new ArrayList<>();
 
     static {
-        faces.add(Face.TOP);
-        faces.add(Face.BACK);
-        faces.add(Face.BOTTOM);
-        faces.add(Face.RIGHT);
-        faces.add(Face.LEFT);
-        faces.add(Face.FRONT);
+        faces.add(com.ezzenix.engine.opengl.utils.Face.TOP);
+        faces.add(com.ezzenix.engine.opengl.utils.Face.BACK);
+        faces.add(com.ezzenix.engine.opengl.utils.Face.BOTTOM);
+        faces.add(com.ezzenix.engine.opengl.utils.Face.RIGHT);
+        faces.add(com.ezzenix.engine.opengl.utils.Face.LEFT);
+        faces.add(com.ezzenix.engine.opengl.utils.Face.FRONT);
     }
 
     public static Mesh createMesh(Chunk chunk, boolean waterOnly) {
@@ -69,7 +69,7 @@ public class ChunkBuilder {
                 );
                 if (shouldCullFace(chunk, blockType, neighborPos)) continue;
 
-                List<Vector3f> unitCubeFace = Face.faceUnitCube(face);
+                List<Vector3f> unitCubeFace = com.ezzenix.engine.opengl.utils.Face.faceUnitCube(face);
 
                 Vector3f vert1 = unitCubeFace.get(0).add(0.5f, 0.5f, 0.5f).add(localPositionf);
                 Vector3f vert2 = unitCubeFace.get(1).add(0.5f, 0.5f, 0.5f).add(localPositionf);

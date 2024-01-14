@@ -16,48 +16,48 @@ public class Face {
     public static final List<Vector3f> ALL = new ArrayList<>();
 
     static {
-        ALL.add(Face.TOP);
-        ALL.add(Face.BACK);
-        ALL.add(Face.BOTTOM);
-        ALL.add(Face.RIGHT);
-        ALL.add(Face.LEFT);
-        ALL.add(Face.FRONT);
+        ALL.add(com.ezzenix.engine.opengl.utils.Face.TOP);
+        ALL.add(com.ezzenix.engine.opengl.utils.Face.BACK);
+        ALL.add(com.ezzenix.engine.opengl.utils.Face.BOTTOM);
+        ALL.add(com.ezzenix.engine.opengl.utils.Face.RIGHT);
+        ALL.add(com.ezzenix.engine.opengl.utils.Face.LEFT);
+        ALL.add(com.ezzenix.engine.opengl.utils.Face.FRONT);
     }
 
     public static List<Vector3f> faceUnitCube(Vector3f face) {
         List<Vector3f> list = new ArrayList<>();
 
-        if (face.equals(Face.TOP)) {
+        if (face.equals(com.ezzenix.engine.opengl.utils.Face.TOP)) {
             // Top face
             list.add(new Vector3f(-0.5f, 0.5f, -0.5f));
             list.add(new Vector3f(-0.5f, 0.5f, 0.5f));
             list.add(new Vector3f(0.5f, 0.5f, 0.5f));
             list.add(new Vector3f(0.5f, 0.5f, -0.5f));
-        } else if (face.equals(Face.BOTTOM)) {
+        } else if (face.equals(com.ezzenix.engine.opengl.utils.Face.BOTTOM)) {
             // Bottom face
             list.add(new Vector3f(-0.5f, -0.5f, 0.5f));
             list.add(new Vector3f(-0.5f, -0.5f, -0.5f));
             list.add(new Vector3f(0.5f, -0.5f, -0.5f));
             list.add(new Vector3f(0.5f, -0.5f, 0.5f));
-        } else if (face.equals(Face.FRONT)) {
+        } else if (face.equals(com.ezzenix.engine.opengl.utils.Face.FRONT)) {
             // Front face
             list.add(new Vector3f(-0.5f, 0.5f, 0.5f));
             list.add(new Vector3f(-0.5f, -0.5f, 0.5f));
             list.add(new Vector3f(0.5f, -0.5f, 0.5f));
             list.add(new Vector3f(0.5f, 0.5f, 0.5f));
-        } else if (face.equals(Face.BACK)) {
+        } else if (face.equals(com.ezzenix.engine.opengl.utils.Face.BACK)) {
             // Back face
             list.add(new Vector3f(0.5f, 0.5f, -0.5f));
             list.add(new Vector3f(0.5f, -0.5f, -0.5f));
             list.add(new Vector3f(-0.5f, -0.5f, -0.5f));
             list.add(new Vector3f(-0.5f, 0.5f, -0.5f));
-        } else if (face.equals(Face.LEFT)) {
+        } else if (face.equals(com.ezzenix.engine.opengl.utils.Face.LEFT)) {
             // Left face
             list.add(new Vector3f(-0.5f, 0.5f, -0.5f));
             list.add(new Vector3f(-0.5f, -0.5f, -0.5f));
             list.add(new Vector3f(-0.5f, -0.5f, 0.5f));
             list.add(new Vector3f(-0.5f, 0.5f, 0.5f));
-        } else if (face.equals(Face.RIGHT)) {
+        } else if (face.equals(com.ezzenix.engine.opengl.utils.Face.RIGHT)) {
             // Right face
             list.add(new Vector3f(0.5f, 0.5f, 0.5f));
             list.add(new Vector3f(0.5f, -0.5f, 0.5f));

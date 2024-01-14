@@ -1,7 +1,7 @@
 package com.ezzenix.game.worldgeneration;
 
 import com.ezzenix.engine.opengl.utils.BlockPos;
-import com.ezzenix.engine.opengl.utils.FastNoiseLite;
+import com.ezzenix.engine.utils.FastNoiseLite;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockType;
 
