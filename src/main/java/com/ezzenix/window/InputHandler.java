@@ -3,7 +3,6 @@ package com.ezzenix.window;
 import com.ezzenix.Game;
 import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.rendering.Camera;
-import com.ezzenix.rendering.WorldRenderer;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

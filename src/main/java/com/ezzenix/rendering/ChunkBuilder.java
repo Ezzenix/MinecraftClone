@@ -1,14 +1,13 @@
 package com.ezzenix.rendering;
 
+import com.ezzenix.engine.opengl.utils.BlockPos;
+import com.ezzenix.engine.opengl.utils.Face;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.engine.opengl.utils.BlockPos;
-import com.ezzenix.engine.opengl.utils.Face;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ public class ChunkBuilder {
         vertexBuffer.put(vertexArray);
         vertexBuffer.flip();
 
-        Mesh mesh = new Mesh(vertexBuffer, vertexList.size()/5);
+        Mesh mesh = new Mesh(vertexBuffer, vertexList.size() / 5);
 
         int stride = 5 * Float.BYTES;
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);

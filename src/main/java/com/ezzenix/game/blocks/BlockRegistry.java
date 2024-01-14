@@ -6,7 +6,7 @@ public class BlockRegistry {
     private static final HashMap<Byte, BlockType> blockMap = new HashMap<>();
 
     public static byte registerBlock(BlockType blockType) {
-        byte newId = (byte)(blockMap.size() + 1);
+        byte newId = (byte) (blockMap.size() + 1);
         blockMap.put(newId, blockType);
         return newId;
     }

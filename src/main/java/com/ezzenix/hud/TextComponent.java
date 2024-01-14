@@ -29,7 +29,7 @@ public class TextComponent {
     private Vector2f toNormalizedDeviceCoordinates(Vector2f pixelCoordinates) {
         int width = Game.getInstance().getWindow().getWidth();
         int height = Game.getInstance().getWindow().getHeight();
-        return new Vector2f((pixelCoordinates.x/width) * 2 - 1, (pixelCoordinates.y/height) * 2 - 1);
+        return new Vector2f((pixelCoordinates.x / width) * 2 - 1, (pixelCoordinates.y / height) * 2 - 1);
     }
 
     public void setText(String text) {
@@ -74,7 +74,7 @@ public class TextComponent {
         vertexBuffer.put(vertexArray);
         vertexBuffer.flip();
 
-        this.mesh = new Mesh(vertexBuffer, vertexList.size()/4);
+        this.mesh = new Mesh(vertexBuffer, vertexList.size() / 4);
 
         int stride = 4 * Float.BYTES;
         glVertexAttribPointer(0, 2, GL_FLOAT, false, stride, 0);

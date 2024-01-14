@@ -2,7 +2,6 @@ package com.ezzenix.game.blocks;
 
 import com.ezzenix.Game;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 
 public class BlockType {
     // Register blocks

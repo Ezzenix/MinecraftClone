@@ -1,13 +1,13 @@
 package com.ezzenix.game;
 
+import com.ezzenix.engine.opengl.utils.BlockPos;
+import com.ezzenix.engine.opengl.utils.Face;
+import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.worldgenerator.WorldGenerator;
 import com.ezzenix.rendering.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
-import com.ezzenix.engine.opengl.utils.BlockPos;
-import com.ezzenix.engine.opengl.utils.Face;
-import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -41,7 +41,7 @@ public class Chunk {
 
         this.frustumBoundingBox = new FrustumBoundingBox(
                 new Vector3f(this.x, this.y, this.z),
-                new Vector3f(this.x+CHUNK_SIZE, this.y+CHUNK_SIZE, this.z+CHUNK_SIZE)
+                new Vector3f(this.x + CHUNK_SIZE, this.y + CHUNK_SIZE, this.z + CHUNK_SIZE)
         );
     }
 

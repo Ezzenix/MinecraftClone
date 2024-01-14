@@ -28,7 +28,8 @@ public class FontRenderer {
         Font customFont = null;
         try {
             customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-        } catch (FontFormatException | IOException ignored) {}
+        } catch (FontFormatException | IOException ignored) {
+        }
         if (customFont == null) return null;
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -52,20 +53,20 @@ public class FontRenderer {
         g2d.setFont(font);
         FontMetrics fontMetrics = g2d.getFontMetrics();
 
-        int estimatedWidth = (int)Math.sqrt(font.getNumGlyphs()) * font.getSize() + 1;
+        int estimatedWidth = (int) Math.sqrt(font.getNumGlyphs()) * font.getSize() + 1;
         width = 0;
         height = fontMetrics.getHeight();
         lineHeight = fontMetrics.getHeight();
         int x = 0;
-        int y = (int)(fontMetrics.getHeight() * 1.4f);
+        int y = (int) (fontMetrics.getHeight() * 1.4f);
 
         int X_SPACING = 6;
 
-        for (int i=0; i < font.getNumGlyphs(); i++) {
+        for (int i = 0; i < font.getNumGlyphs(); i++) {
             if (font.canDisplay(i)) {
                 // Get the sizes for each codepoint glyph, and update the actual image width and height
                 Glyph glyph = new Glyph(x, y, fontMetrics.charWidth(i), fontMetrics.getHeight());
-                characterMap.put((char)i, glyph);
+                characterMap.put((char) i, glyph);
                 width = Math.max(x + fontMetrics.charWidth(i) + X_SPACING, width);
 
                 x += glyph.width + X_SPACING;
@@ -85,19 +86,20 @@ public class FontRenderer {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(font);
         g2d.setColor(Color.WHITE);
-        for (int i=0; i < font.getNumGlyphs(); i++) {
+        for (int i = 0; i < font.getNumGlyphs(); i++) {
             if (font.canDisplay(i)) {
-                Glyph info = characterMap.get((char)i);
+                Glyph info = characterMap.get((char) i);
                 info.calculateUVs(width, height);
                 //info.calculateTextureCoordinates(width, height);
-                g2d.drawString("" + (char)i, info.x, info.y);
+                g2d.drawString("" + (char) i, info.x, info.y);
             }
         }
         g2d.dispose();
 
         try {
             ImageIO.write(img, "PNG", new File("fontAtlas.png"));
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
 
         int textureId = ImageUtil.loadTexture(img);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

@@ -1,10 +1,10 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.Game;
-import com.ezzenix.game.Chunk;
-import com.ezzenix.game.World;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.utils.ImageUtil;
+import com.ezzenix.game.Chunk;
+import com.ezzenix.game.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -19,7 +19,7 @@ public class WorldRenderer {
     public WorldRenderer() {
         blockTexture = ImageUtil.loadTexture(Game.getInstance().blockTextures.getAtlasImage());
         glGenerateTextureMipmap(blockTexture);
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
 
     public void render(long window) {
@@ -49,7 +49,7 @@ public class WorldRenderer {
         waterShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
         waterShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
         long timestamp = System.currentTimeMillis();
-        waterShader.uploadFloat("timestamp", (float)timestamp);
+        waterShader.uploadFloat("timestamp", (float) timestamp);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

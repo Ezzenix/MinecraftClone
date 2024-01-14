@@ -36,10 +36,10 @@ public class Hud {
         this.fontRenderer = new FontRenderer(new Font("Arial", Font.PLAIN, 18));
 
         fpsText = new TextComponent(fontRenderer, "", 10, 10);
-        positionText = new TextComponent(fontRenderer, "", 10, 10+20);
-        cameraText = new TextComponent(fontRenderer, "", 10, 10+20*2);
-        vertexText = new TextComponent(fontRenderer, "", 10, 10+20*3);
-        memoryText = new TextComponent(fontRenderer, "", 10, 10+20*4);
+        positionText = new TextComponent(fontRenderer, "", 10, 10 + 20);
+        cameraText = new TextComponent(fontRenderer, "", 10, 10 + 20 * 2);
+        vertexText = new TextComponent(fontRenderer, "", 10, 10 + 20 * 3);
+        memoryText = new TextComponent(fontRenderer, "", 10, 10 + 20 * 4);
     }
 
     public void render(long window) {
@@ -57,8 +57,8 @@ public class Hud {
 
             lastDebugTextUpdate = System.currentTimeMillis();
             fpsText.setText("FPS: " + (int) Scheduler.getFps());
-            positionText.setText("XYZ: " + (int)position.x + " " + (int)position.y + " " + (int)position.z);
-            cameraText.setText("Pitch: " + (int)camera.getPitch() + " Yaw: " + (int)camera.getYaw());
+            positionText.setText("XYZ: " + (int) position.x + " " + (int) position.y + " " + (int) position.z);
+            cameraText.setText("Pitch: " + (int) camera.getPitch() + " Yaw: " + (int) camera.getYaw());
 
             int vertexCount = 0;
             World world = Game.getInstance().getWorld();

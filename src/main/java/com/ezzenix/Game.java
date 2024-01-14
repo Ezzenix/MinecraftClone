@@ -6,7 +6,6 @@ import com.ezzenix.engine.utils.TextureAtlas;
 import com.ezzenix.game.World;
 import com.ezzenix.hud.Hud;
 import com.ezzenix.rendering.Camera;
-import com.ezzenix.rendering.WorldRenderer;
 import com.ezzenix.rendering.Renderer;
 import com.ezzenix.window.InputHandler;
 
@@ -81,7 +80,9 @@ public class Game {
     public Hud getHud() {
         return this.hud;
     }
-    public Camera getCamera() { return this.camera; }
+    public Camera getCamera() {
+        return this.camera;
+    }
 
 
     // Main entry

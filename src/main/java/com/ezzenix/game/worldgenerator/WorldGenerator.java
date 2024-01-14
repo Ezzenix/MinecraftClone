@@ -1,16 +1,15 @@
 package com.ezzenix.game.worldgenerator;
 
-import com.ezzenix.game.Chunk;
-import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.engine.opengl.utils.BlockPos;
 import com.ezzenix.engine.opengl.utils.FastNoiseLite;
-import org.joml.Vector3i;
+import com.ezzenix.game.Chunk;
+import com.ezzenix.game.blocks.BlockType;
 
-import java.util.HashMap;
 import java.util.Random;
 
 public class WorldGenerator {
     private static FastNoiseLite noise;
+
     static {
         noise = new FastNoiseLite();
         noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
@@ -25,7 +24,7 @@ public class WorldGenerator {
     }
 
     private static BlockType randomBlockType() {
-        int i = (int)(Math.round(Math.random() * 4));
+        int i = (int) (Math.round(Math.random() * 4));
         if (i == 0) return BlockType.STONE;
         if (i == 1) return BlockType.GRASS;
         if (i == 2) return BlockType.DIRT;
@@ -62,8 +61,8 @@ public class WorldGenerator {
                     int absoluteY = chunk.y * 16 + localY;
                     int absoluteZ = chunk.z * 16 + localZ;
 
-                    float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ)+1)/2;
-                    float density = (float) absoluteY /(16*3);
+                    float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
+                    float density = (float) absoluteY / (16 * 3);
                     if (value > density) {
                         chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 20) ? BlockType.SAND : BlockType.GRASS);
                     } else {
