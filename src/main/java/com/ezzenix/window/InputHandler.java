@@ -6,6 +6,8 @@ import com.ezzenix.rendering.Camera;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.text.DecimalFormat;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 public class InputHandler {
@@ -68,17 +70,19 @@ public class InputHandler {
 
         Vector3f movementVector = new Vector3f();
 
+        //System.out.println(lookVector.toString(new DecimalFormat("#.##")));
+
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            movementVector.add(new Vector3f(lookVector.z, 0, lookVector.x).mul(speed));
+            movementVector.add(new Vector3f(lookVector.x, 0, lookVector.z).mul(speed));
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            movementVector.add(new Vector3f(rightVector.z, 0, rightVector.x).mul(speed));
+            movementVector.add(new Vector3f(rightVector.x, 0, rightVector.z).mul(speed));
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            movementVector.add(new Vector3f(lookVector.z, 0, lookVector.x).mul(-speed));
+            movementVector.add(new Vector3f(lookVector.x, 0, lookVector.z).mul(-speed));
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            movementVector.add(new Vector3f(rightVector.z, 0, rightVector.x).mul(-speed));
+            movementVector.add(new Vector3f(rightVector.x, 0, rightVector.z).mul(-speed));
         }
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             camera.addPosition(new Vector3f(0, speed, 0));

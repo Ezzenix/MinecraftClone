@@ -45,7 +45,7 @@ public class Hud {
 
             fpsText.setText("FPS: " + (int) Scheduler.getFps());
             positionText.setText("XYZ: " + (int) position.x + " " + (int) position.y + " " + (int) position.z);
-            cameraText.setText("Pitch: " + (int) camera.getPitch() + " Yaw: " + (int) camera.getYaw());
+            cameraText.setText(getDirectionString(camera.getYaw()) + " (" + (int) camera.getYaw() + " / " + (int) camera.getPitch() + ")");
 
             int vertexCount = 0;
             World world = Game.getInstance().getWorld();
@@ -59,6 +59,18 @@ public class Hud {
             MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
             memoryText.setText("Memory: " + heapMemoryUsage.getUsed() / (1024 * 1024) + " MB");
         }, 50);
+    }
+
+    private String getDirectionString(float yaw) {
+        if (yaw < -135 || yaw >= 135) {
+            return "NORTH";
+        } else if (yaw > -135 && yaw < -45) {
+            return "EAST";
+        } else if (yaw >= -45 && yaw <= 45) {
+            return "SOUTH";
+        } else {
+            return "WEST";
+        }
     }
 
     public void render(long window) {
