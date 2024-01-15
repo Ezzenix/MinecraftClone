@@ -1,16 +1,11 @@
 package com.ezzenix.rendering.builder;
 
-import com.ezzenix.engine.opengl.utils.BlockPos;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockType;
 import org.joml.Vector3i;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.ezzenix.rendering.builder.ChunkBuilder.getBlockType;
-import static com.ezzenix.rendering.builder.ChunkBuilder.getFaceNormal;
 
 public class GreedyShape {
     private Chunk chunk;
@@ -25,7 +20,7 @@ public class GreedyShape {
 
     public GreedyShape(Chunk chunk, Face face, Vector3i initialVoxel) {
         this.voxels = new ArrayList<>();
-        this.blockType = getBlockType(chunk, initialVoxel);
+        this.blockType = chunk.getBlockTypeAt(initialVoxel);
         voxels.add(initialVoxel);
         this.chunk = chunk;
         this.face = face;
@@ -49,7 +44,7 @@ public class GreedyShape {
         if (voxel.x < 0 || voxel.x > Chunk.CHUNK_SIZE-1) return false;
         if (voxel.y < 0 || voxel.y > Chunk.CHUNK_SIZE-1) return false;
         if (voxel.z < 0 || voxel.z > Chunk.CHUNK_SIZE-1) return false;
-        BlockType type = getBlockType(this.chunk, voxel);
+        BlockType type = chunk.getBlockTypeAt(voxel);
         return type == this.blockType;
     }
 

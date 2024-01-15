@@ -5,7 +5,6 @@ import com.ezzenix.engine.utils.ImageUtil;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
-import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 import static org.lwjgl.opengl.GL45.glGenerateTextureMipmap;

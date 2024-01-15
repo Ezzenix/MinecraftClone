@@ -58,4 +58,8 @@ public class BlockType {
     public byte getId() {
         return id;
     }
+
+    public String toString() {
+        return "BlockType{"+getName()+"}";
+    }
 }

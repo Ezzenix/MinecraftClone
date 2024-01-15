@@ -1,7 +1,7 @@
 package com.ezzenix.game;
 
 import com.ezzenix.Game;
-import com.ezzenix.engine.opengl.utils.BlockPos;
+import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.worldgeneration.WorldGeneratorThread;
 import org.joml.Vector3f;

@@ -6,7 +6,6 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Mesh {
     public final int vao;

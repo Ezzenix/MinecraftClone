@@ -6,6 +6,7 @@ import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.World;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -17,8 +18,8 @@ public class WorldRenderer {
 
     public WorldRenderer() {
         blockTexture = new Texture(Game.getInstance().blockTextures.getAtlasImage());
-        blockTexture.generateMipmap();
-        blockTexture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        //blockTexture.generateMipmap();
+        //blockTexture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         blockTexture.setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
@@ -33,6 +34,10 @@ public class WorldRenderer {
         worldShader.use();
         worldShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
         worldShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
+        /*worldShader.uploadVec2f("textureAtlasSize", new Vector2f(
+                Game.getInstance().blockTextures.getAtlasImage().getWidth(),
+                Game.getInstance().blockTextures.getAtlasImage().getHeight()
+        ));*/
         for (Chunk chunk : world.getChunks().values()) {
             Mesh mesh = chunk.mesh;
             if (mesh != null) {
@@ -44,6 +49,7 @@ public class WorldRenderer {
             }
         }
 
+        /*
         waterShader.use();
         waterShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
         waterShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
@@ -69,5 +75,6 @@ public class WorldRenderer {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glEnable(GL_CULL_FACE);
+        */
     }
 }

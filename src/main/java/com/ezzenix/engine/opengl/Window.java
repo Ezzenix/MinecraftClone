@@ -1,8 +1,5 @@
 package com.ezzenix.engine.opengl;
 
-import com.ezzenix.Game;
-import com.ezzenix.game.Chunk;
-import org.joml.Vector3i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;

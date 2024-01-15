@@ -4,36 +4,8 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
-import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class ImageUtil {
-    public static int loadTexture(BufferedImage image) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        ByteBuffer imageBuffer = parseBufferedImage(image);
-
-        int textureID = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, textureID);
-
-        // Set texture parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        // Upload image data to OpenGL
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
-
-        // Generate mipmaps
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        // Release image buffer
-        memFree(imageBuffer);
-
-        return textureID;
-    }
-
     public static ByteBuffer parseBufferedImage(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();

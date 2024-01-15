@@ -8,7 +8,6 @@ import com.ezzenix.game.World;
 import com.ezzenix.rendering.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.awt.*;
 import java.lang.management.ManagementFactory;
@@ -66,11 +65,11 @@ public class Hud {
         if (yaw < -135 || yaw >= 135) {
             return "NORTH";
         } else if (yaw > -135 && yaw < -45) {
-            return "EAST";
+            return "WEST";
         } else if (yaw >= -45 && yaw <= 45) {
             return "SOUTH";
         } else {
-            return "WEST";
+            return "EAST";
         }
     }
 

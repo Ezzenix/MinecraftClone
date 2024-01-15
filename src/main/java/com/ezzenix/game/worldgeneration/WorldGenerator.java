@@ -1,6 +1,6 @@
 package com.ezzenix.game.worldgeneration;
 
-import com.ezzenix.engine.opengl.utils.BlockPos;
+import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.engine.utils.FastNoiseLite;
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockType;
@@ -46,11 +46,13 @@ public class WorldGenerator {
         chunk.setBlock(blockPos.add(new BlockPos(0, 7, 1)), BlockType.OAK_LEAVES);
         chunk.setBlock(blockPos.add(new BlockPos(0, 7, -1)), BlockType.OAK_LEAVES);
         chunk.setBlock(blockPos.add(new BlockPos(0, 8, 0)), BlockType.OAK_LEAVES);
-
     }
 
     public static void generateChunk(Chunk chunk) {
         //long startTime = System.currentTimeMillis();
+
+//        chunk.setBlock(new BlockPos(0, 0, 0), BlockType.GRASS);
+//        chunk.setBlock(new BlockPos(0, 1, 0), BlockType.STONE);
 
         for (int localX = 0; localX < 16; localX++) {
             for (int localY = 0; localY < 2; localY++) {
@@ -60,21 +62,16 @@ public class WorldGenerator {
                     int absoluteZ = chunk.z * 16 + localZ;
 
                     if (localY == 1) {
-                        if ((localX == 0 || localX == 1) && localZ == 0) {
-                            //chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.STONE);
-                        }
-                    } else {
-                        if (localZ < 8) {
-                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
-                        }
+                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.SAND);
+                    } else if (localY == 0) {
+                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
                     }
                 }
             }
         }
 
         //byte[] blockArray = chunk.getBlockArray();
-        /*
-        for (int localX = 0; localX < 16; localX++) {
+        /*for (int localX = 0; localX < 16; localX++) {
             for (int localY = 0; localY < 16; localY++) {
                 for (int localZ = 0; localZ < 16; localZ++) {
                     int absoluteX = chunk.x * 16 + localX;
@@ -96,8 +93,7 @@ public class WorldGenerator {
                     //}
                 }
             }
-        }
-         */
+        }*/
 
         //System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
     }

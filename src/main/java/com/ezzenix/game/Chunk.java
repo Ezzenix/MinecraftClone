@@ -1,12 +1,12 @@
 package com.ezzenix.game;
 
-import com.ezzenix.engine.opengl.utils.BlockPos;
 import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
+import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.worldgeneration.WorldGenerator;
-import com.ezzenix.rendering.builder.ChunkBuilder;
 import com.ezzenix.rendering.Mesh;
+import com.ezzenix.rendering.builder.ChunkBuilder;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -47,19 +47,19 @@ public class Chunk {
     }
 
     public Vector3i getLocalPosition(BlockPos blockPos) {
-        return new Vector3i(blockPos.x - this.x * 16, blockPos.y - this.y * 16, blockPos.z - this.z * 16);
+        return ChunkUtil.getLocalPosition(this, blockPos);
     }
-
     public int getIndexFromLocalPosition(Vector3i localPosition) {
-        return localPosition.x | localPosition.y << 4 | localPosition.z << 8;
+        return ChunkUtil.getIndexFromLocalPosition(localPosition);
     }
-
     public Vector3i getLocalPositionFromIndex(int index) {
-        int mask = 0xF; // This is 15 in decimal, representing the lowest 4 bits
-        int x = index & mask;
-        int y = (index >> 4) & mask;
-        int z = (index >> 8) & mask;
-        return new Vector3i(x, y, z);
+        return ChunkUtil.getLocalPositionFromIndex(index);
+    }
+    public BlockPos toWorldPos(int x, int y, int z) {
+        return new BlockPos(this.x*Chunk.CHUNK_SIZE + x, this.y*Chunk.CHUNK_SIZE + y, this.z*Chunk.CHUNK_SIZE + z);
+    }
+    public BlockPos toWorldPos(Vector3i voxel) {
+        return toWorldPos(voxel.x, voxel.y, voxel.z);
     }
 
     public void setBlock(BlockPos blockPos, BlockType blockType) {
@@ -74,6 +74,9 @@ public class Chunk {
     public BlockType getBlockTypeAt(BlockPos blockPos) {
         int blockArrayIndex = getIndexFromLocalPosition(getLocalPosition(blockPos));
         return BlockRegistry.getBlockFromId(blocks[blockArrayIndex]);
+    }
+    public BlockType getBlockTypeAt(Vector3i voxel) {
+        return this.getWorld().getBlockTypeAt(toWorldPos(voxel));
     }
 
     public void generate() {

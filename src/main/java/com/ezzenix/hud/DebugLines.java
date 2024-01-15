@@ -4,7 +4,6 @@ import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.rendering.Camera;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;

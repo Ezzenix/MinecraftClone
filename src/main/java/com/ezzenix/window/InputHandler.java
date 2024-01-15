@@ -6,8 +6,6 @@ import com.ezzenix.rendering.Camera;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.text.DecimalFormat;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 public class InputHandler {
@@ -45,7 +43,7 @@ public class InputHandler {
             lastMouseY = mouseY;
 
             float sensitivity = 0.35f;
-            camera.addYaw(deltaX * sensitivity);
+            camera.addYaw(deltaX * sensitivity * -1);
             camera.addPitch(deltaY * sensitivity * -1);
         });
     }
@@ -53,36 +51,36 @@ public class InputHandler {
     public void handleKeyboard(long window) {
         Camera camera = Game.getInstance().getCamera();
 
-        float speed = 0.03f * Scheduler.getDeltaTime();
+        float speed = 0.01f * Scheduler.getDeltaTime();
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            speed *= 6;
+            speed *= 5;
         }
 
         Vector3f lookVector = new Vector3f(0.0f, 0.0f, -1.0f);
         Vector3f upVector = new Vector3f(0.0f, 1.0f, 0.0f);
         Quaternionf orientation = new Quaternionf()
-                .rotateAxis((float) Math.toRadians(camera.getYaw()), upVector)
+                .rotateAxis((float) Math.toRadians(camera.getYaw()+180), upVector)
                 .rotateAxis((float) Math.toRadians(0), new Vector3f(1.0f, 0.0f, 0.0f));
         lookVector.set(0.0f, 0.0f, -1.0f).rotate(orientation);
-        upVector.set(0.0f, 1.0f, 0.0f).rotate(orientation);
+        upVector.set(0.0f, 1.0f, 0.0f);
         Vector3f rightVector = new Vector3f();
         lookVector.cross(upVector, rightVector).normalize();
 
+        //System.out.println(lookVector.toString(new DecimalFormat("#.#")));
+
         Vector3f movementVector = new Vector3f();
 
-        //System.out.println(lookVector.toString(new DecimalFormat("#.##")));
-
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            movementVector.add(new Vector3f(lookVector.z, 0, lookVector.x).mul(speed));
+            movementVector.add(new Vector3f(lookVector.x, 0, lookVector.z).mul(speed));
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            movementVector.add(new Vector3f(rightVector.z, 0, rightVector.x).mul(speed));
+            movementVector.add(new Vector3f(rightVector.x, 0, rightVector.z).mul(-speed));
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            movementVector.add(new Vector3f(lookVector.z, 0, lookVector.x).mul(-speed));
+            movementVector.add(new Vector3f(lookVector.x, 0, lookVector.z).mul(-speed));
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            movementVector.add(new Vector3f(rightVector.z, 0, rightVector.x).mul(-speed));
+            movementVector.add(new Vector3f(rightVector.x, 0, rightVector.z).mul(speed));
         }
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             camera.addPosition(new Vector3f(0, speed, 0));

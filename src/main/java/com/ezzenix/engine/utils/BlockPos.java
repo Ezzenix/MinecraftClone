@@ -1,4 +1,4 @@
-package com.ezzenix.engine.opengl.utils;
+package com.ezzenix.engine.utils;
 
 import org.joml.Vector3f;
 
@@ -36,7 +36,7 @@ public class BlockPos {
     }
 
     public String toString() {
-        return "X:" + this.x + " Y:" + this.x + " Z:" + this.z;
+        return "X:" + this.x + " Y:" + this.y + " Z:" + this.z;
     }
 
     public boolean equals(Object v) {
