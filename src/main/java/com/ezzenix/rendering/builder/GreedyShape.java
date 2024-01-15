@@ -18,9 +18,9 @@ public class GreedyShape {
     public BlockType blockType;
     public List<Vector3i> voxels;
 
-    private int minX, maxX;
-    private int minY, maxY;
-    private int minZ, maxZ;
+    public int minX, maxX;
+    public int minY, maxY;
+    public int minZ, maxZ;
 
 
     public GreedyShape(Chunk chunk, Face face, Vector3i initialVoxel) {

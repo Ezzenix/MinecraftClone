@@ -61,10 +61,12 @@ public class WorldGenerator {
 
                     if (localY == 1) {
                         if ((localX == 0 || localX == 1) && localZ == 0) {
-                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
+                            //chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.STONE);
                         }
                     } else {
-                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
+                        if (localZ < 8) {
+                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
+                        }
                     }
                 }
             }

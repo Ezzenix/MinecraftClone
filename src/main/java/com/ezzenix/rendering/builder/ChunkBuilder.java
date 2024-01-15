@@ -37,29 +37,95 @@ public class ChunkBuilder {
         return neighborType != null && neighborType != BlockType.AIR && neighborType != BlockType.WATER;
     }
 
-    public static Vector2f[] getBlockTextureUV(BlockType blockType, Vector3f face) {
-        if (face == com.ezzenix.engine.opengl.utils.OldFace.TOP) return blockType.textureUVTop;
-        if (face == com.ezzenix.engine.opengl.utils.OldFace.BOTTOM) return blockType.textureUVBottom;
+    public static Vector2f[] getBlockTextureUV(BlockType blockType, Face face) {
+        if (face == Face.TOP) return blockType.textureUVTop;
+        if (face == Face.BOTTOM) return blockType.textureUVBottom;
         return blockType.textureUVSides;
-    }
-
-    private static final List<Vector3f> faces = new ArrayList<>();
-
-    static {
-        faces.add(com.ezzenix.engine.opengl.utils.OldFace.TOP);
-        faces.add(com.ezzenix.engine.opengl.utils.OldFace.BACK);
-        faces.add(com.ezzenix.engine.opengl.utils.OldFace.BOTTOM);
-        faces.add(com.ezzenix.engine.opengl.utils.OldFace.RIGHT);
-        faces.add(com.ezzenix.engine.opengl.utils.OldFace.LEFT);
-        faces.add(com.ezzenix.engine.opengl.utils.OldFace.FRONT);
     }
 
     public static Mesh createMesh(Chunk chunk, boolean waterOnly) {
         //long startTime = System.currentTimeMillis();
 
+        List<Float> vertexList = new ArrayList<>();
         List<GreedyShape> shapes = generateShapes(chunk);
 
+        for (GreedyShape shape : shapes) {
+            Vector2f[] textureUV = getBlockTextureUV(shape.blockType, shape.face);
 
+            // Voxel coordinates are at the bottom corner of the blocks, so offset max by 1 to cover the last blocks
+            shape.maxX += 1;
+            shape.maxY += 1;
+            shape.maxZ += 1;
+
+            Vector3f vert1 = null;
+            Vector3f vert2 = null;
+            Vector3f vert3 = null;
+            Vector3f vert4 = null;
+
+            Vector2f shapeSize = new Vector2f();
+
+            // NOTE: Voxel coordinates are at the bottom corner of the blocks
+            switch (shape.face) {
+                case TOP: {
+                    vert1 = new Vector3f(shape.minX, shape.maxY, shape.minZ);
+                    vert2 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
+                    vert3 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
+                    vert4 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
+                    shapeSize = new Vector2f(shape.maxX - shape.minX, shape.maxZ - shape.minZ);
+                    break;
+                }
+                case BOTTOM: {
+                    vert1 = new Vector3f(shape.minX, shape.minY, shape.minZ);
+                    vert2 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
+                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
+                    vert4 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
+                    break;
+                }
+                case FRONT: {
+                    vert1 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
+                    vert2 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
+                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
+                    vert4 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
+                    break;
+                }
+                case BACK: {
+                    vert1 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
+                    vert2 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
+                    vert3 = new Vector3f(shape.minX, shape.minY, shape.minZ);
+                    vert4 = new Vector3f(shape.minX, shape.maxY, shape.minZ);
+                    break;
+                }
+                case LEFT: {
+                    vert1 = new Vector3f(shape.minX, shape.maxY, shape.minZ);
+                    vert2 = new Vector3f(shape.minX, shape.minY, shape.minZ);
+                    vert3 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
+                    vert4 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
+                    break;
+                }
+                case RIGHT: {
+                    vert1 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
+                    vert2 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
+                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
+                    vert4 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
+                    break;
+                }
+            }
+
+            if (vert1 != null && vert2 != null && vert3 != null && vert4 != null) {
+                addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y));
+                addVertex(vertexList, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y));
+                addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y));
+
+                addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y));
+                addVertex(vertexList, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y));
+                addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y));
+            }
+        }
+
+
+
+
+        /*
         byte[] blockArray = chunk.getBlockArray();
 
         List<Float> vertexList = new ArrayList<>();
@@ -101,6 +167,7 @@ public class ChunkBuilder {
                 addVertex(vertexList, vert1, textureUV[0].x, textureUV[0].y);
             }
         }
+        */
 
         float[] vertexArray = new float[vertexList.size()];
         for (int i = 0; i < vertexList.size(); i++) {
@@ -124,12 +191,12 @@ public class ChunkBuilder {
         return mesh;
     }
 
-    private static void addVertex(List<Float> vertexList, Vector3f pos, float uvX, float uvY) {
+    private static void addVertex(List<Float> vertexList, Vector3f pos, Vector2f uv) {
         vertexList.add(pos.x);
         vertexList.add(pos.y);
         vertexList.add(pos.z);
-        vertexList.add(uvX);
-        vertexList.add(uvY);
+        vertexList.add(uv.x);
+        vertexList.add(uv.y);
     }
 
     // GREEDY
