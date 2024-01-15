@@ -1,6 +1,8 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.Game;
+import com.ezzenix.hud.DebugLines;
+import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.opengl.GL11.*;
@@ -18,6 +20,10 @@ public class Renderer {
 
         worldRenderer.render(window);
         Game.getInstance().getHud().render(window);
+
+        DebugLines.draw(new Vector3f(0, -1, 0), new Vector3f(0, 20, 0), new Vector3f(1, 1, 1));
+        DebugLines.draw(new Vector3f(0, -1, 0), new Vector3f(0, -1, -15), new Vector3f(1, 0, 0));
+        DebugLines.draw(new Vector3f(0, -1, 0), new Vector3f(5, -1, 0), new Vector3f(1, 0, 0));
 
         glfwSwapBuffers(window); // swap the color buffers
     }
