@@ -10,16 +10,17 @@ uniform vec2 textureAtlasSize;
 void main() {
     vec2 numTiles = floor(texCoord);
     vec2 atlasUV = texCoord - floor(texCoord);
-    vec2 atlasTileSizeNormalized = vec2(16/textureAtlasSize.x, 16/textureAtlasSize.y); // how big one tile of atlas is
-    vec2 topLeftUV = floor(atlasUV * 16) / 16; // the UV coordinates at the top-left of the texture in the atlas
+    vec2 atlasTileSizeNormalized = vec2(16.0 / textureAtlasSize.x, 16.0 / textureAtlasSize.y); // how big one tile of atlas is
+    vec2 topLeftUV = floor(atlasUV / atlasTileSizeNormalized) * atlasTileSizeNormalized; // the UV coordinates at the top-left of the texture in the atlas
     vec2 uv = texCoord - numTiles - topLeftUV; // uv coordinates relative to the top-left corner
     vec2 uvAlpha = vec2(uv.x / atlasTileSizeNormalized.x, uv.y / atlasTileSizeNormalized.y);
     vec2 repeatedUVAlpha = vec2(mod(uvAlpha.x * numTiles.x, 1), mod(uvAlpha.y * numTiles.y, 1));
 
     vec2 final = topLeftUV + vec2(repeatedUVAlpha.x * atlasTileSizeNormalized.x, repeatedUVAlpha.y * atlasTileSizeNormalized.y);
 
-    //fragColor = vec4(topLeftUV.y, topLeftUV.y, topLeftUV.y, 1);
+    //fragColor = vec4(topLeftUV.x, topLeftUV.x, topLeftUV.y, 1);
     fragColor = texture(textureSampler, final);
+
     //if (final.x >= 0 && final.x <= 1 && final.y >= 0 && final.y <= 1) {
     //} else {
     //    fragColor = vec4(1, 0, 0, 1);

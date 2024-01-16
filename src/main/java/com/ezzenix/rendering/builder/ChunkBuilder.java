@@ -26,8 +26,8 @@ public class ChunkBuilder {
             case BOTTOM -> new Vector3i(0, -1, 0);
             case RIGHT -> new Vector3i(1, 0, 0);
             case LEFT -> new Vector3i(-1, 0, 0);
-            case FRONT -> new Vector3i(0, 0, 1);
-            case BACK -> new Vector3i(0, 0, -1);
+            case FRONT -> new Vector3i(0, 0, -1);
+            case BACK -> new Vector3i(0, 0, 1);
         };
     }
 
@@ -66,28 +66,30 @@ public class ChunkBuilder {
                     vert3 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
                     vert4 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
                     shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxZ - shape.minZ));
-                    System.out.println("Top size: " + shapeSize.toString(new DecimalFormat("#.##")));
                     break;
                 }
                 case BOTTOM: {
-                    vert1 = new Vector3f(shape.minX, shape.minY, shape.minZ);
-                    vert2 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
-                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
-                    vert4 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
+                    vert1 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
+                    vert2 = new Vector3f(shape.minX, shape.minY, shape.minZ);
+                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
+                    vert4 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
+                    shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxZ - shape.minZ));
                     break;
                 }
                 case FRONT: {
-                    vert1 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
-                    vert2 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
-                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
-                    vert4 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
-                    break;
-                }
-                case BACK: {
                     vert1 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
                     vert2 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
                     vert3 = new Vector3f(shape.minX, shape.minY, shape.minZ);
                     vert4 = new Vector3f(shape.minX, shape.maxY, shape.minZ);
+                    shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxY - shape.minY));
+                    break;
+                }
+                case BACK: {
+                    vert1 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
+                    vert2 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
+                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
+                    vert4 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
+                    shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxY - shape.minY));
                     break;
                 }
                 case LEFT: {
@@ -95,6 +97,7 @@ public class ChunkBuilder {
                     vert2 = new Vector3f(shape.minX, shape.minY, shape.minZ);
                     vert3 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
                     vert4 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
+                    shapeSize.add(new Vector2f(shape.maxZ - shape.minZ, shape.maxY - shape.minY));
                     break;
                 }
                 case RIGHT: {
@@ -102,6 +105,7 @@ public class ChunkBuilder {
                     vert2 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
                     vert3 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
                     vert4 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
+                    shapeSize.add(new Vector2f(shape.maxZ - shape.minZ, shape.maxY - shape.minY));
                     break;
                 }
             }
