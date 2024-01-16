@@ -1,4 +1,4 @@
-package com.ezzenix.rendering.builder;
+package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.game.Chunk;
 import com.ezzenix.game.blocks.BlockType;

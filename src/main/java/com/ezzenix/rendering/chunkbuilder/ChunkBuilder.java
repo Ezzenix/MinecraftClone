@@ -1,8 +1,7 @@
-package com.ezzenix.rendering.builder;
+package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.Chunk;
-import com.ezzenix.game.ChunkUtil;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.rendering.Mesh;
 import org.joml.Vector2f;
@@ -10,7 +9,6 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.nio.FloatBuffer;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +38,9 @@ public class ChunkBuilder {
     public static Mesh createMesh(Chunk chunk, boolean waterOnly) {
         //long startTime = System.currentTimeMillis();
 
-        List<Float> vertexList = new ArrayList<>();
         List<GreedyShape> shapes = generateShapes(chunk);
+        int vertexCount = shapes.size() * 6;
+        FloatBuffer buffer = createFloatBuffer(vertexCount * 5);
 
         for (GreedyShape shape : shapes) {
             Vector2f[] textureUV = getBlockTextureUV(shape.blockType, shape.face);
@@ -110,25 +109,18 @@ public class ChunkBuilder {
                 }
             }
 
-            addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y));
-            addVertex(vertexList, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y));
-            addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y));
+            addVertex(buffer, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y));
+            addVertex(buffer, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y));
+            addVertex(buffer, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y));
 
-            addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y));
-            addVertex(vertexList, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y));
-            addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y));
+            addVertex(buffer, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y));
+            addVertex(buffer, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y));
+            addVertex(buffer, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y));
         }
 
+        buffer.flip();
 
-        float[] vertexArray = new float[vertexList.size()];
-        for (int i = 0; i < vertexList.size(); i++) {
-            vertexArray[i] = vertexList.get(i);
-        }
-        FloatBuffer vertexBuffer = createFloatBuffer(vertexArray.length);
-        vertexBuffer.put(vertexArray);
-        vertexBuffer.flip();
-
-        Mesh mesh = new Mesh(vertexBuffer, vertexList.size() / 5);
+        Mesh mesh = new Mesh(buffer, vertexCount);
 
         int stride = 5 * Float.BYTES;
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
@@ -142,12 +134,12 @@ public class ChunkBuilder {
         return mesh;
     }
 
-    private static void addVertex(List<Float> vertexList, Vector3f pos, Vector2f uv) {
-        vertexList.add(pos.x);
-        vertexList.add(pos.y);
-        vertexList.add(pos.z);
-        vertexList.add(uv.x);
-        vertexList.add(uv.y);
+    private static void addVertex(FloatBuffer buffer, Vector3f pos, Vector2f uv) {
+        buffer.put(pos.x);
+        buffer.put(pos.y);
+        buffer.put(pos.z);
+        buffer.put(uv.x);
+        buffer.put(uv.y);
     }
 
     // GREEDY
@@ -212,7 +204,7 @@ public class ChunkBuilder {
             }
         }
 
-        System.out.println("Shapes: " + shapes.size());
+        //System.out.println("Shapes: " + shapes.size());
         return shapes;
     }
 }

@@ -6,7 +6,7 @@ import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.worldgeneration.WorldGenerator;
 import com.ezzenix.rendering.Mesh;
-import com.ezzenix.rendering.builder.ChunkBuilder;
+import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
