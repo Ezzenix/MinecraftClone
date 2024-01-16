@@ -66,6 +66,7 @@ public class ChunkBuilder {
                     vert3 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
                     vert4 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
                     shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxZ - shape.minZ));
+                    System.out.println("Top size: " + shapeSize.toString(new DecimalFormat("#.##")));
                     break;
                 }
                 case BOTTOM: {

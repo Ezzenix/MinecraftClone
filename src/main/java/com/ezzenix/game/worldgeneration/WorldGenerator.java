@@ -61,6 +61,8 @@ public class WorldGenerator {
                     int absoluteY = chunk.y * 16 + localY;
                     int absoluteZ = chunk.z * 16 + localZ;
 
+                    if (localX > 5 || localZ > 5) continue;
+
                     if (localY == 1) {
                         chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.SAND);
                     } else if (localY == 0) {

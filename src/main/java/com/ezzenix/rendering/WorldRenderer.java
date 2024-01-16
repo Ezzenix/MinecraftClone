@@ -9,6 +9,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import java.text.DecimalFormat;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class WorldRenderer {
@@ -34,10 +36,10 @@ public class WorldRenderer {
         worldShader.use();
         worldShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
         worldShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
-        /*worldShader.uploadVec2f("textureAtlasSize", new Vector2f(
+        worldShader.uploadVec2f("textureAtlasSize", new Vector2f(
                 Game.getInstance().blockTextures.getAtlasImage().getWidth(),
                 Game.getInstance().blockTextures.getAtlasImage().getHeight()
-        ));*/
+        ));
         for (Chunk chunk : world.getChunks().values()) {
             Mesh mesh = chunk.mesh;
             if (mesh != null) {
