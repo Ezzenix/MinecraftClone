@@ -18,9 +18,9 @@ public class Renderer {
     public void render(long window) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Debug.drawLine(new Vector3f(0, -1, 0), new Vector3f(0, 9, 0));
-        Debug.drawLine(new Vector3f(0, -1, 0), new Vector3f(0, -1, -10));
-        Debug.drawLine(new Vector3f(0, -1, 0), new Vector3f(10, -1, 0));
+        Debug.drawLine(new Vector3f(0, -1, 0), new Vector3f(0, 9, 0), new Vector3f(0, 1, 0)); // y
+        Debug.drawLine(new Vector3f(0, -1, 0), new Vector3f(0, -1, -10), new Vector3f(0, 0, 1)); // z
+        Debug.drawLine(new Vector3f(0, -1, 0), new Vector3f(10, -1, 0), new Vector3f(1, 0, 0)); // x
 
         worldRenderer.render(window);
         Game.getInstance().getHud().render(window);

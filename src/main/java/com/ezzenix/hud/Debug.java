@@ -26,29 +26,37 @@ public class Debug {
         debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
 
         FloatBuffer buffer = Mesh.floatListTobuffer(vertexBatch);
-        Mesh mesh = new Mesh(buffer, vertexBatch.size()/2, GL_LINES);
+        Mesh mesh = new Mesh(buffer, vertexBatch.size()/6, GL_LINES);
         vertexBatch.clear();
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
+        glEnableVertexAttribArray(1);
 
         mesh.render();
         mesh.dispose();
     }
 
-    public static void drawLine(Vector3f pos1, Vector3f pos2) {
-        Camera camera = Game.getInstance().getCamera();
-
-        debugShader.use();
-        debugShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
-        debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
-
+    public static void drawLine(Vector3f pos1, Vector3f pos2, Vector3f color) {
         vertexBatch.add(pos1.x);
         vertexBatch.add(pos1.y);
         vertexBatch.add(pos1.z);
+        vertexBatch.add(color.x);
+        vertexBatch.add(color.y);
+        vertexBatch.add(color.z);
+
         vertexBatch.add(pos2.x);
         vertexBatch.add(pos2.y);
-        vertexBatch.add(pos2.z);;
+        vertexBatch.add(pos2.z);
+        vertexBatch.add(color.x);
+        vertexBatch.add(color.y);
+        vertexBatch.add(color.z);
+    }
+
+    public static void drawLine(Vector3f pos1, Vector3f pos2) {
+        drawLine(pos1, pos2, new Vector3f(1, 1, 1));
     }
 
     public static void highlightVoxel(Vector3f voxel) {
