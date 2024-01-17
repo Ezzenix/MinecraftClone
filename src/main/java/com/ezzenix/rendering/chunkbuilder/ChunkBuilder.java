@@ -1,7 +1,7 @@
 package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.engine.utils.BlockPos;
-import com.ezzenix.game.Chunk;
+import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.rendering.Mesh;
 import org.joml.Vector2f;

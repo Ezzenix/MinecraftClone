@@ -37,7 +37,7 @@ public class TextComponent {
         this.text = text;
 
         if (this.mesh != null) {
-            this.mesh.destroy();
+            this.mesh.dispose();
             this.mesh = null;
         }
 

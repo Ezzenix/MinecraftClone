@@ -2,7 +2,7 @@ package com.ezzenix.game.worldgeneration;
 
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.engine.utils.FastNoiseLite;
-import com.ezzenix.game.Chunk;
+import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.blocks.BlockType;
 
 import java.util.Random;

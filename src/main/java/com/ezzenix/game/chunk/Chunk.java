@@ -1,7 +1,8 @@
-package com.ezzenix.game;
+package com.ezzenix.game.chunk;
 
 import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import com.ezzenix.engine.utils.BlockPos;
+import com.ezzenix.game.world.World;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.worldgeneration.WorldGenerator;
@@ -73,7 +74,8 @@ public class Chunk {
 
     public BlockType getBlockTypeAt(BlockPos blockPos) {
         int blockArrayIndex = getIndexFromLocalPosition(getLocalPosition(blockPos));
-        return BlockRegistry.getBlockFromId(blocks[blockArrayIndex]);
+        BlockType type = BlockRegistry.getBlockFromId(blocks[blockArrayIndex]);
+        return type != null ? type : BlockType.AIR;
     }
     public BlockType getBlockTypeAt(Vector3i voxel) {
         return this.getWorld().getBlockTypeAt(toWorldPos(voxel));
@@ -94,11 +96,11 @@ public class Chunk {
 
     public void updateMesh(boolean dontTriggerUpdatesAround) {
         if (this.mesh != null) {
-            this.mesh.destroy();
+            this.mesh.dispose();
             this.mesh = null;
         }
         if (this.waterMesh != null) {
-            this.waterMesh.destroy();
+            this.waterMesh.dispose();
             this.waterMesh = null;
         }
         if (blockCount > 0) {
@@ -124,8 +126,8 @@ public class Chunk {
     }
 
     public void dispose() {
-        if (this.mesh != null) this.mesh.destroy();
-        if (this.waterMesh != null) this.waterMesh.destroy();
+        if (this.mesh != null) this.mesh.dispose();
+        if (this.waterMesh != null) this.waterMesh.dispose();
         this.world.getChunks().remove(new Vector3i(x, y, z));
     }
 }

@@ -1,57 +1,19 @@
 package com.ezzenix.rendering;
 
+import com.ezzenix.Game;
+import com.ezzenix.game.entities.Entity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Camera {
-    private Vector3f position;
-    private float yaw;
-    private float pitch;
+    private Entity entity;
 
     public Camera() {
-        position = new Vector3f(0, 40, 0);
-        yaw = 0;
-        pitch = 0;
+        this.entity = Game.getInstance().getPlayer();
     }
 
-    public Vector3f getPosition() {
-        return this.position;
-    }
-
-    public float getYaw() {
-        return this.yaw;
-    }
-
-    public float getPitch() {
-        return this.pitch;
-    }
-
-    public void setPosition(Vector3f pos) {
-        this.position = pos;
-    }
-
-    public void setYaw(float yaw) {
-        while (yaw > 180) yaw -= 360;
-        while (yaw < 180) yaw += 360;
-        this.yaw = (yaw + 180.0f) % 360.0f - 180.0f;
-    }
-
-    public void setPitch(float pitch) {
-        float min = -89.99f;
-        float max = 89.99f;
-        this.pitch = Math.max(min, Math.min(max, pitch));
-    }
-
-    public void addPosition(Vector3f offset) {
-        this.position = this.position.add(offset);
-    }
-
-    public void addYaw(float offset) {
-        this.setYaw(this.yaw + offset);
-    }
-
-    public void addPitch(float offset) {
-        this.setPitch(this.pitch + offset);
+    public Entity getEntity() {
+        return entity;
     }
 
     public Matrix4f getProjectionMatrix() {
@@ -69,14 +31,16 @@ public class Camera {
     }
 
     public Matrix4f getViewMatrix() {
-        float fakeYaw = ((yaw + 180) + 90) % 360;
+        float yaw = ((entity.getYaw() + 180) + 90) % 360;
+
+        Vector3f position = new Vector3f(entity.getPosition()).add(0, entity.eyeHeight, 0);
 
         return new Matrix4f().setLookAt(
                 position,
                 new Vector3f(
-                        (float) (position.x + Math.cos(Math.toRadians(fakeYaw)) * Math.cos(Math.toRadians(pitch))),
-                        (float) (position.y + Math.sin(Math.toRadians(pitch))),
-                        (float) (position.z - Math.sin(Math.toRadians(fakeYaw)) * Math.cos(Math.toRadians(pitch)))
+                        (float) (position.x + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(entity.getPitch()))),
+                        (float) (position.y + Math.sin(Math.toRadians(entity.getPitch()))),
+                        (float) (position.z - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(entity.getPitch())))
                 ),
                 new Vector3f(0.0f, 1.0f, 0.0f)
         );

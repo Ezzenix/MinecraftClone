@@ -3,8 +3,9 @@ package com.ezzenix.hud;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.Chunk;
-import com.ezzenix.game.World;
+import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.entities.Player;
+import com.ezzenix.game.world.World;
 import com.ezzenix.rendering.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -40,12 +41,12 @@ public class Hud {
         memoryText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 4);
 
         Scheduler.runPeriodic(() -> {
-            Camera camera = Game.getInstance().getCamera();
-            Vector3f position = camera.getPosition();
+            Player player = Game.getInstance().getPlayer();
+            Vector3f position = player.getPosition();
 
             fpsText.setText("FPS: " + (int) Scheduler.getFps());
             positionText.setText("XYZ: " + (int) position.x + " " + (int) position.y + " " + (int) position.z);
-            cameraText.setText(getDirectionString(camera.getYaw()) + " (" + (int) camera.getYaw() + " / " + (int) camera.getPitch() + ")");
+            cameraText.setText(getDirectionString(player.getYaw()) + " (" + (int) player.getYaw() + " / " + (int) player.getPitch() + ")");
 
             int vertexCount = 0;
             World world = Game.getInstance().getWorld();

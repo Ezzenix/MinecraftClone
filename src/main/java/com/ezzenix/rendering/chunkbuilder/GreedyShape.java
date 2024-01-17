@@ -1,6 +1,6 @@
 package com.ezzenix.rendering.chunkbuilder;
 
-import com.ezzenix.game.Chunk;
+import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.blocks.BlockType;
 import org.joml.Vector3i;
 

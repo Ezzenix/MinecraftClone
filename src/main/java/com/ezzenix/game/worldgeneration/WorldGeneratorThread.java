@@ -1,7 +1,7 @@
 package com.ezzenix.game.worldgeneration;
 
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.Chunk;
+import com.ezzenix.game.chunk.Chunk;
 
 import java.util.concurrent.*;
 

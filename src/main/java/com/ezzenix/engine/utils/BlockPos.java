@@ -27,11 +27,11 @@ public class BlockPos {
         return new Vector3f(v.x + 0.5f, v.y + 0.5f, v.z + 0.5f);
     }
 
-    public BlockPos fromVector3f(Vector3f vec) {
+    public static BlockPos fromVector3f(Vector3f vec) {
         return new BlockPos(
-                (int) Math.round(vec.x + 0.5),
-                (int) Math.round(vec.y + 0.5),
-                (int) Math.round(vec.z + 0.5)
+                (int) Math.floor(vec.x),
+                (int) Math.floor(vec.y),
+                (int) Math.floor(vec.z)
         );
     }
 

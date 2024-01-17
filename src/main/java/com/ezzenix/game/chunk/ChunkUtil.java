@@ -1,7 +1,6 @@
-package com.ezzenix.game;
+package com.ezzenix.game.chunk;
 
 import com.ezzenix.engine.utils.BlockPos;
-import com.ezzenix.game.blocks.BlockType;
 import org.joml.Vector3i;
 
 public class ChunkUtil {

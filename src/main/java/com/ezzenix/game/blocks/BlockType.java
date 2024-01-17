@@ -62,4 +62,8 @@ public class BlockType {
     public String toString() {
         return "BlockType{"+getName()+"}";
     }
+
+    public boolean isSolid() {
+        return this != BlockType.AIR;
+    }
 }

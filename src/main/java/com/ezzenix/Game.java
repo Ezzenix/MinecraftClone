@@ -3,13 +3,20 @@ package com.ezzenix;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.engine.utils.TextureAtlas;
-import com.ezzenix.game.World;
+import com.ezzenix.game.entities.Entity;
+import com.ezzenix.game.entities.Player;
+import com.ezzenix.game.physics.PhysicsEngine;
+import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Hud;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Renderer;
-import com.ezzenix.window.InputHandler;
+import com.ezzenix.input.InputHandler;
+import org.joml.Vector3f;
 
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11.glGetError;
 
@@ -18,9 +25,11 @@ public class Game {
 
     private final Renderer renderer;
     private final Camera camera;
+    private final Player player;
     private final InputHandler inputHandler;
     private final Hud hud;
     private final World world;
+    private final List<Entity> entities;
 
     public final TextureAtlas<String> blockTextures;
 
@@ -36,8 +45,12 @@ public class Game {
 
         // Initialize game
         this.blockTextures = TextureAtlas.fromDirectory("src/main/resources/textures");
-        this.camera = new Camera();
+
+        this.entities = new ArrayList<>();
         this.world = new World();
+        this.player = new Player(this.world, new Vector3f(0, 100, 0));
+        this.camera = new Camera();
+
         this.hud = new Hud();
         this.renderer = new Renderer();
         this.inputHandler = new InputHandler();
@@ -50,6 +63,7 @@ public class Game {
         while (!window.shouldWindowClose()) {
             Scheduler.update();
             inputHandler.handleInput(window.getId());
+            PhysicsEngine.step();
 
             this.getRenderer().render(window.getId());
 
@@ -83,6 +97,8 @@ public class Game {
     public Camera getCamera() {
         return this.camera;
     }
+    public Player getPlayer() { return this.player; }
+    public List<Entity> getEntities() { return this.entities; }
 
 
     // Main entry

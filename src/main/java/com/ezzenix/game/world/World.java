@@ -1,21 +1,25 @@
-package com.ezzenix.game;
+package com.ezzenix.game.world;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.worldgeneration.WorldGeneratorThread;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class World {
     private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
 
     public World() {
-        for (int x = 0; x < 15; x++) {
-            for (int y = 0; y < 6; y++) {
-                for (int z = 0; z < 15; z++) {
+        for (int x = 0; x < 5; x++) {
+            for (int y = 0; y < 4; y++) {
+                for (int z = 0; z < 5; z++) {
                     loadChunk(x, y, z);
                 }
             }
@@ -40,7 +44,7 @@ public class World {
 
     public BlockType getBlockTypeAt(BlockPos blockPos) {
         Chunk chunk = getChunkAtBlockPos(blockPos);
-        if (chunk == null) return null;
+        if (chunk == null) return BlockType.AIR;
         return chunk.getBlockTypeAt(blockPos);
     }
 
@@ -53,7 +57,7 @@ public class World {
     }
 
     public void loadNewChunks() {
-        Vector3f position = Game.getInstance().getCamera().getPosition();
+        Vector3f position = Game.getInstance().getPlayer().getPosition();
         int chunkX = ((int) position.x >> 4);
         int chunkY = ((int) position.y >> 4);
         int chunkZ = ((int) position.z >> 4);
