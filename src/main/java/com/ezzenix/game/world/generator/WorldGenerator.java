@@ -1,4 +1,4 @@
-package com.ezzenix.game.worldgeneration;
+package com.ezzenix.game.world.generator;
 
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.engine.utils.FastNoiseLite;

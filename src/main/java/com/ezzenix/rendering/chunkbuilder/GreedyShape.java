@@ -2,95 +2,132 @@ package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.blocks.BlockType;
+import org.joml.Vector2f;
 import org.joml.Vector3i;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GreedyShape {
-    private Chunk chunk;
-    public Face face;
-    public BlockType blockType;
-    public List<Vector3i> voxels;
+    public final Chunk chunk;
+    public final List<VoxelFace> voxels;
+    public final VoxelFace initialVoxelFace;
 
     public int minX, maxX;
     public int minY, maxY;
     public int minZ, maxZ;
 
 
-    public GreedyShape(Chunk chunk, Face face, Vector3i initialVoxel) {
+    public GreedyShape(Chunk chunk, VoxelFace initialVoxelFace) {
         this.voxels = new ArrayList<>();
-        this.blockType = chunk.getBlockTypeAt(initialVoxel);
-        voxels.add(initialVoxel);
+        this.initialVoxelFace = initialVoxelFace;
+        voxels.add(initialVoxelFace);
         this.chunk = chunk;
-        this.face = face;
-        minX = initialVoxel.x;
-        maxX = initialVoxel.x;
-        minY = initialVoxel.y;
-        maxY = initialVoxel.y;
-        minZ = initialVoxel.z;
-        maxZ = initialVoxel.z;
+        minX = initialVoxelFace.position.x;
+        maxX = initialVoxelFace.position.x;
+        minY = initialVoxelFace.position.y;
+        maxY = initialVoxelFace.position.y;
+        minZ = initialVoxelFace.position.z;
+        maxZ = initialVoxelFace.position.z;
     }
 
-    public boolean hasVoxel(Vector3i voxel) {
-        return this.voxels.contains(voxel);
-    }
-
-    private boolean canExpandTo(Vector3i voxel) {
-        if (voxel.x < 0 || voxel.x > Chunk.CHUNK_SIZE-1) return false;
-        if (voxel.y < 0 || voxel.y > Chunk.CHUNK_SIZE-1) return false;
-        if (voxel.z < 0 || voxel.z > Chunk.CHUNK_SIZE-1) return false;
-        BlockType type = chunk.getBlockTypeAt(voxel);
-        return type == this.blockType;
-    }
-
-    private boolean isAtEdgeInDirection(Vector3i direction, Vector3i voxel) {
-        if (direction.x < 0) return voxel.x == minX;
-        if (direction.x > 0) return voxel.x == maxX;
-        if (direction.y < 0) return voxel.y == minY;
-        if (direction.y > 0) return voxel.y == maxY;
-        if (direction.z < 0) return voxel.z == minZ;
-        if (direction.z > 0) return voxel.z == maxZ;
+    private boolean isAtEdgeInDirection(Vector3i direction, VoxelFace voxel) {
+        if (direction.x < 0) return voxel.position.x == minX;
+        if (direction.x > 0) return voxel.position.x == maxX;
+        if (direction.y < 0) return voxel.position.y == minY;
+        if (direction.y > 0) return voxel.position.y == maxY;
+        if (direction.z < 0) return voxel.position.z == minZ;
+        if (direction.z > 0) return voxel.position.z == maxZ;
         return false;
     }
 
-    public boolean expand(Vector3i direction, List<Vector3i> possibleVoxels) {
-        List<Vector3i> newVoxels = new ArrayList<>();
-        boolean expanded = false;
-
-        boolean canExpand = true;
-        for (Vector3i voxel : this.voxels) {
-            if (!isAtEdgeInDirection(direction, voxel)) continue;
-            Vector3i v = new Vector3i(voxel.x + direction.x, voxel.y + direction.y, voxel.z+direction.z);
-            if (possibleVoxels.contains(v) && canExpandTo(v)) {
+    private List<VoxelFace> getNextVoxelsInDirection(Vector3i direction, List<VoxelFace> voxelsAtEdge, List<VoxelFace> possibleVoxels) {
+        List<VoxelFace> voxels = new ArrayList<>();
+        for (VoxelFace edgeVoxel : voxelsAtEdge) {
+            Vector3i newVoxelPos = new Vector3i(edgeVoxel.position).add(direction);
+            VoxelFace newVoxel = getVoxelAt(newVoxelPos, possibleVoxels);
+            if (newVoxel != null && canMergeWith(newVoxel)) {
+                voxels.add(newVoxel);
             } else {
-                canExpand = false;
-                break;
+                return null;
             }
         }
-        if (canExpand) {
-            for (Vector3i voxel : this.voxels) {
-                if (!isAtEdgeInDirection(direction, voxel)) continue;
-                Vector3i v = new Vector3i(voxel.x + direction.x, voxel.y + direction.y, voxel.z+direction.z);
-                if (!hasVoxel(v)) {
-                    newVoxels.add(v);
-                    //System.out.println("shape with initial at " + voxels.get(0).toString(new DecimalFormat("#")) + " added " + v.toString(new DecimalFormat("#")));
-                    expanded = true;
+        return voxels;
+    }
+
+    private VoxelFace getVoxelAt(Vector3i position, List<VoxelFace> possibleVoxels) {
+        for (VoxelFace voxel : possibleVoxels) {
+            if (voxel.position.equals(position)) {
+                return voxel;
+            }
+        }
+        return null;
+    }
+
+    private boolean canMergeWith(VoxelFace voxelFace) {
+        if (voxelFace.blockId != this.initialVoxelFace.blockId) return false;
+        if (this.initialVoxelFace.ao1 != 0 || voxelFace.ao1 != 0) return false;
+        if (this.initialVoxelFace.ao2 != 0 || voxelFace.ao2 != 0) return false;
+        if (this.initialVoxelFace.ao3 != 0 || voxelFace.ao3 != 0) return false;
+        if (this.initialVoxelFace.ao4 != 0 || voxelFace.ao4 != 0) return false;
+        return true;
+    }
+
+    public static List<GreedyShape> createShapesFrom(Chunk chunk, List<VoxelFace> possibleVoxelFaces) {
+        List<GreedyShape> shapes = new ArrayList<>();
+
+        while (!possibleVoxelFaces.isEmpty()) {
+            VoxelFace initalVoxelFace = possibleVoxelFaces.get(0);
+
+            GreedyShape shape = new GreedyShape(chunk, initalVoxelFace);
+            possibleVoxelFaces.remove(initalVoxelFace);
+
+            for (Face face : Face.values()) {
+                Vector3i direction = ChunkBuilder.getFaceNormal(face);
+
+                List<VoxelFace> voxelsAtEdge = new ArrayList<>();
+                for (VoxelFace voxel : shape.voxels) {
+                    if (shape.isAtEdgeInDirection(direction, voxel)) {
+                        voxelsAtEdge.add(voxel);
+                    }
+                }
+
+                while (true) {
+                    List<VoxelFace> voxelsToExpandTo = shape.getNextVoxelsInDirection(direction, voxelsAtEdge, possibleVoxelFaces);
+                    if (voxelsToExpandTo == null) {
+                        break;
+                    }
+
+                    voxelsAtEdge = voxelsToExpandTo;
+                    shape.voxels.addAll(voxelsToExpandTo);
+                    possibleVoxelFaces.removeAll(voxelsToExpandTo);
+
+                    switch (face) {
+                        case TOP:
+                            shape.maxY += 1;
+                            break;
+                        case BOTTOM:
+                            shape.minY += 1;
+                            break;
+                        case FRONT:
+                            shape.minZ += 1;
+                            break;
+                        case BACK:
+                            shape.maxZ += 1;
+                            break;
+                        case RIGHT:
+                            shape.maxX += 1;
+                            break;
+                        case LEFT:
+                            shape.minX += 1;
+                            break;
+                    }
                 }
             }
-            for (Vector3i voxel : newVoxels) {
-                possibleVoxels.remove(voxel);
-                this.voxels.add(voxel);
 
-                minX = Math.min(minX, voxel.x);
-                maxX = Math.max(maxX, voxel.x);
-                minY = Math.min(minY, voxel.y);
-                maxY = Math.max(maxY, voxel.y);
-                minZ = Math.min(minZ, voxel.z);
-                maxZ = Math.max(maxZ, voxel.z);
-            }
+            shapes.add(shape);
         }
 
-        return expanded;
+        return shapes;
     }
 }

@@ -1,4 +1,4 @@
-package com.ezzenix.game.worldgeneration;
+package com.ezzenix.game.world.generator;
 
 import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.game.chunk.Chunk;

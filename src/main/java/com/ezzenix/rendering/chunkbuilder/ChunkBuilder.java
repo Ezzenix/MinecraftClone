@@ -1,6 +1,7 @@
 package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.engine.utils.BlockPos;
+import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.rendering.Mesh;
@@ -41,10 +42,12 @@ public class ChunkBuilder {
 
         List<GreedyShape> shapes = generateShapes(chunk);
         int vertexCount = shapes.size() * 6;
-        FloatBuffer buffer = createFloatBuffer(vertexCount * 5);
+        FloatBuffer buffer = createFloatBuffer(vertexCount * 6);
 
         for (GreedyShape shape : shapes) {
-            Vector2f[] textureUV = getBlockTextureUV(shape.blockType, shape.face);
+            BlockType blockType = BlockRegistry.getBlockFromId(shape.initialVoxelFace.blockId);
+
+            Vector2f[] textureUV = getBlockTextureUV(blockType, shape.initialVoxelFace.face);
 
             // Voxel coordinates are at the bottom corner of the blocks, so offset max by 1 to cover the last blocks
             shape.maxX += 1;
@@ -59,7 +62,7 @@ public class ChunkBuilder {
             Vector2f shapeSize = new Vector2f();
 
             // NOTE: Voxel coordinates are at the bottom corner of the blocks
-            switch (shape.face) {
+            switch (shape.initialVoxelFace.face) {
                 case TOP: {
                     vert1 = new Vector3f(shape.minX, shape.maxY, shape.minZ);
                     vert2 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
@@ -110,24 +113,26 @@ public class ChunkBuilder {
                 }
             }
 
-            addVertex(buffer, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y));
-            addVertex(buffer, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y));
-            addVertex(buffer, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y));
+            addVertex(buffer, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
+            addVertex(buffer, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao2);
+            addVertex(buffer, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
 
-            addVertex(buffer, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y));
-            addVertex(buffer, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y));
-            addVertex(buffer, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y));
+            addVertex(buffer, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
+            addVertex(buffer, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao4);
+            addVertex(buffer, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
         }
 
         buffer.flip();
 
         Mesh mesh = new Mesh(buffer, vertexCount);
 
-        int stride = 5 * Float.BYTES;
+        int stride = 6 * Float.BYTES;
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 1, GL_FLOAT, false, stride, 5 * Float.BYTES);
+        glEnableVertexAttribArray(2);
 
         mesh.unbind();
 
@@ -135,12 +140,13 @@ public class ChunkBuilder {
         return mesh;
     }
 
-    private static void addVertex(FloatBuffer buffer, Vector3f pos, Vector2f uv) {
+    private static void addVertex(FloatBuffer buffer, Vector3f pos, Vector2f uv, float aoFactor) {
         buffer.put(pos.x);
         buffer.put(pos.y);
         buffer.put(pos.z);
         buffer.put(uv.x);
         buffer.put(uv.y);
+        buffer.put(aoFactor);
     }
 
     // GREEDY
@@ -177,53 +183,28 @@ public class ChunkBuilder {
             if (type == null || type == BlockType.AIR) continue;
 
             for (Face face : Face.values()) {
-                voxelFaces.get(face).add(new VoxelFace(localPosition.x, localPosition.y, localPosition.z, face, type.getId()));
+                if (shouldRenderFace(chunk, type, chunk.toWorldPos(localPosition), face)) {
+                    VoxelFace voxelFace = new VoxelFace(localPosition, face, type.getId());
+                    voxelFace.calculateAO(chunk);
+                    voxelFaces.get(face).add(voxelFace);
+                }
             }
         }
         return voxelFaces;
     }
 
     public static List<GreedyShape> generateShapes(Chunk chunk) {
+        HashMap<Face, List<VoxelFace>> voxelFaces = generateVoxelFaces(chunk);
+
         List<GreedyShape> shapes = new ArrayList<>();
 
         for (Face face : Face.values()) {
             //if (face != Face.TOP) continue;
-            List<Vector3i> remainingVoxels = getVoxels(chunk);
-
-            while (!remainingVoxels.isEmpty()) {
-                Vector3i initialVoxel = remainingVoxels.get(0);
-                BlockType shapeType = chunk.getBlockTypeAt(initialVoxel);
-
-                if (!shouldRenderFace(chunk, shapeType, chunk.toWorldPos(initialVoxel), face)) {
-                    remainingVoxels.remove(initialVoxel); // the initialVoxel shouldn't even be rendered
-                    continue;
-                }
-
-                GreedyShape shape = new GreedyShape(chunk, face, initialVoxel);
-
-                List<Vector3i> possibleVoxels = new ArrayList<>();
-                for (Vector3i v : remainingVoxels) {
-                    BlockType t = chunk.getBlockTypeAt(v);
-                    if (t == shapeType && shouldRenderFace(chunk, shapeType, chunk.toWorldPos(v), face)) {
-                        possibleVoxels.add(v);
-                    }
-                }
-
-                for (Face f : Face.values()) {
-                    Vector3i direction = getFaceNormal(f);
-                    while (shape.expand(direction, possibleVoxels)) {}
-                }
-
-                for (Vector3i v : shape.voxels) {
-                    remainingVoxels.remove(v);
-                }
-                //System.out.println("remainingVoxels " + remainingVoxels.size());
-
-                shapes.add(shape);
-            }
+            List<VoxelFace> possibleVoxels = voxelFaces.get(face);
+            shapes.addAll(GreedyShape.createShapesFrom(chunk, possibleVoxels));
         }
 
-        //System.out.println("Shapes: " + shapes.size());
+        System.out.println("Shape count: " + shapes.size());
         return shapes;
     }
 }

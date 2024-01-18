@@ -1,6 +1,7 @@
 #version 330
 
 in vec2 texCoord;
+in float ambientOcclusion;
 
 out vec4 fragColor;
 
@@ -18,11 +19,9 @@ void main() {
 
     vec2 final = topLeftUV + vec2(repeatedUVAlpha.x * atlasTileSizeNormalized.x, repeatedUVAlpha.y * atlasTileSizeNormalized.y);
 
-    //fragColor = vec4(topLeftUV.x, topLeftUV.x, topLeftUV.y, 1);
-    fragColor = texture(textureSampler, final);
+    vec4 textureColor = texture(textureSampler, final);
 
-    //if (final.x >= 0 && final.x <= 1 && final.y >= 0 && final.y <= 1) {
-    //} else {
-    //    fragColor = vec4(1, 0, 0, 1);
-    //}
+    textureColor.rgb *= (1.0 - ambientOcclusion*0.55f);
+
+    fragColor = textureColor;
 }
