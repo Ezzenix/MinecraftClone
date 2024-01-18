@@ -74,11 +74,14 @@ public class Chunk {
 
     public BlockType getBlockTypeAt(BlockPos blockPos) {
         int blockArrayIndex = getIndexFromLocalPosition(getLocalPosition(blockPos));
-        BlockType type = BlockRegistry.getBlockFromId(blocks[blockArrayIndex]);
-        return type != null ? type : BlockType.AIR;
+        return getBlockTypeAt(blockArrayIndex);
     }
     public BlockType getBlockTypeAt(Vector3i voxel) {
         return this.getWorld().getBlockTypeAt(toWorldPos(voxel));
+    }
+    public BlockType getBlockTypeAt(int index) {
+        BlockType type = BlockRegistry.getBlockFromId(blocks[index]);
+        return type != null ? type : BlockType.AIR;
     }
 
     public void generate() {

@@ -32,10 +32,6 @@ public class GreedyShape {
         maxZ = initialVoxel.z;
     }
 
-    public void addVoxel(Vector3i voxel) {
-        this.voxels.add(voxel);
-    }
-
     public boolean hasVoxel(Vector3i voxel) {
         return this.voxels.contains(voxel);
     }

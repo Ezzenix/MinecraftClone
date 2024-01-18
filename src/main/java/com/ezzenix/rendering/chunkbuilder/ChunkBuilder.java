@@ -10,6 +10,7 @@ import org.joml.Vector3i;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
@@ -162,6 +163,24 @@ public class ChunkBuilder {
         BlockType neighborType = chunk.getWorld().getBlockTypeAt(neighborPos);
         if (neighborType == null || neighborType == BlockType.AIR) return true;
         return false;
+    }
+
+    private static HashMap<Face, List<VoxelFace>> generateVoxelFaces(Chunk chunk) {
+        HashMap<Face, List<VoxelFace>> voxelFaces = new HashMap<>();
+        for (Face face : Face.values()) {
+            voxelFaces.put(face, new ArrayList<>());
+        }
+
+        for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
+            Vector3i localPosition = chunk.getLocalPositionFromIndex(i);
+            BlockType type = chunk.getBlockTypeAt(localPosition);
+            if (type == null || type == BlockType.AIR) continue;
+
+            for (Face face : Face.values()) {
+                voxelFaces.get(face).add(new VoxelFace(localPosition.x, localPosition.y, localPosition.z, face, type.getId()));
+            }
+        }
+        return voxelFaces;
     }
 
     public static List<GreedyShape> generateShapes(Chunk chunk) {
