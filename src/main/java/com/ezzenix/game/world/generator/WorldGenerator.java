@@ -86,16 +86,6 @@ public class WorldGenerator {
                     int absoluteY = chunk.y * 16 + localY;
                     int absoluteZ = chunk.z * 16 + localZ;
 
-                    if (absoluteY < 5) {
-                        continue;
-                    }
-                    if (absoluteY == 5) {
-                        if (Math.random() > 0.5) {
-                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.SAND);
-                        }
-                        continue;
-                    }
-
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
                     float density = (float) absoluteY / (16 * 3);
                     if (value > density) {
