@@ -149,24 +149,13 @@ public class ChunkBuilder {
         buffer.put(aoFactor);
     }
 
-    // GREEDY
-    private static List<Vector3i> getVoxels(Chunk chunk) {
-        List<Vector3i> voxels = new ArrayList<>();
-        for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
-            Vector3i localPosition = chunk.getLocalPositionFromIndex(i);
-            BlockType type = chunk.getBlockTypeAt(localPosition);
-            if (type != null && type != BlockType.AIR) {
-                voxels.add(localPosition);
-            }
-        }
-        return voxels;
-    }
-
     private static boolean shouldRenderFace(Chunk chunk, BlockType blockType, BlockPos blockPos, Face face) {
         if (blockType == BlockType.AIR) return false;
         Vector3i faceNormal = getFaceNormal(face);
         BlockPos neighborPos = blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
         BlockType neighborType = chunk.getWorld().getBlockTypeAt(neighborPos);
+        if (blockType == neighborType) return false;
+        if (neighborType == BlockType.WATER) return true;
         if (neighborType == null || neighborType == BlockType.AIR) return true;
         return false;
     }

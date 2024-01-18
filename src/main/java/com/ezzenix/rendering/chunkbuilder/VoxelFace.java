@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 import static com.ezzenix.rendering.chunkbuilder.ChunkBuilder.getFaceNormal;
 
@@ -25,39 +26,86 @@ public class VoxelFace {
         this.position = position;
         this.face = face;
         this.blockId = blockId;
-
-        //this.ao1 = Math.random() > 0.5 ? 1 : 0;
     }
 
-    private boolean isBlockAt(Chunk chunk, Vector3i position) {
-        BlockPos worldPos = chunk.toWorldPos(position);
+    private int isBlockAt(Chunk chunk, Face face, Vector3i offset) {
+        Vector3i realOffset = offsetFace(face, offset);
+
+        BlockPos worldPos = chunk.toWorldPos(new Vector3i(this.position).add(realOffset));
         BlockType blockType = chunk.getWorld().getBlockTypeAt(worldPos);
-        return blockType != null && blockType != BlockType.AIR;
+        return (blockType != null && blockType != BlockType.AIR && !blockType.isTransparent()) ? 1 : 0;
     }
 
-    private Vector3i getVectorFromNormalAndOffset(Vector3i normal, Vector3i offset) {
-        return new Vector3i(normal).sub(offset);
+    private Vector3i offsetFace(Face face, Vector3i offset) {
+        return switch (face) {
+            case TOP -> offset;
+            case BOTTOM -> new Vector3i(-offset.x, -offset.y, -offset.z);
+            case FRONT -> new Vector3i(offset.x, offset.z, -offset.y);
+            case BACK -> new Vector3i(-offset.x, -offset.z, offset.y);
+            case RIGHT -> new Vector3i(offset.y, -offset.x, offset.z);
+            case LEFT -> new Vector3i(-offset.y, offset.x, -offset.z);
+        };
     }
 
-    private boolean isBlockAt(Chunk chunk, Vector3i normal, Vector3i offset) {
-        return isBlockAt(chunk, getVectorFromNormalAndOffset(normal, offset));
+    private float solveAO(int side1, int side2, int corner) {
+        if (side1 == 1 && side2 == 1) {
+            return 1;
+        }
+        return 1-((float) (3 - (side1 + side2 + corner)) /3);
     }
 
     public void calculateAO(Chunk chunk) {
-        Vector3i faceNormal = getFaceNormal(this.face);
-        if (this.face != Face.TOP) return;
+        int W = isBlockAt(chunk, this.face, new Vector3i(-1, 1, 0));
+        int NW = isBlockAt(chunk, this.face, new Vector3i(-1, 1, -1));
+        int N = isBlockAt(chunk, this.face, new Vector3i(0, 1, -1));
+        int NE = isBlockAt(chunk, this.face, new Vector3i(1, 1, -1));
+        int E = isBlockAt(chunk, this.face, new Vector3i(1, 1, 0));
+        int SE = isBlockAt(chunk, this.face, new Vector3i(1, 1, 1));
+        int S = isBlockAt(chunk, this.face, new Vector3i(0, 1, 1));
+        int SW = isBlockAt(chunk, this.face, new Vector3i(-1, 1, 1));
 
-        boolean leftUp = isBlockAt(chunk, faceNormal, new Vector3i(-1, 1, 0));
-        boolean frontUp = isBlockAt(chunk, faceNormal, new Vector3i(0, 1, -1));
-        boolean rightUp = isBlockAt(chunk, faceNormal, new Vector3i(1, 1, 0));
-        boolean backUp = isBlockAt(chunk, faceNormal, new Vector3i(0, 1, 1));
+        float ao1 = solveAO(W, N, NW);
+        float ao2 = solveAO(W, S, SW);
+        float ao3 = solveAO(E, S, SE);
+        float ao4 = solveAO(E, N, NE);
 
-        this.ao1 = (leftUp || frontUp)  ? 1 : 0;
-        this.ao2 = (leftUp || backUp)  ? 1 : 0;
-        this.ao3 = (rightUp || backUp)  ? 1 : 0;
-        this.ao4 = (rightUp || frontUp)  ? 1 : 0;
-
-
-
+        switch (face) {
+            case TOP:
+                this.ao1 = ao1;
+                this.ao2 = ao2;
+                this.ao3 = ao3;
+                this.ao4 = ao4;
+                break;
+            case BOTTOM:
+                this.ao1 = ao4;
+                this.ao2 = ao3;
+                this.ao3 = ao2;
+                this.ao4 = ao1;
+                break;
+            case FRONT:
+                this.ao1 = ao3;
+                this.ao2 = ao4;
+                this.ao3 = ao1;
+                this.ao4 = ao2;
+                break;
+            case BACK:
+                this.ao1 = ao4;
+                this.ao2 = ao3;
+                this.ao3 = ao2;
+                this.ao4 = ao1;
+                break;
+            case RIGHT:
+                this.ao1 = ao2;
+                this.ao2 = ao3;
+                this.ao3 = ao4;
+                this.ao4 = ao1;
+                break;
+            case LEFT:
+                this.ao1 = ao3;
+                this.ao2 = ao2;
+                this.ao3 = ao1;
+                this.ao4 = ao4;
+                break;
+        }
     }
 }

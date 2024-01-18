@@ -54,10 +54,11 @@ public class WorldGenerator {
 //        chunk.setBlock(new BlockPos(0, 0, 0), BlockType.GRASS);
 //        chunk.setBlock(new BlockPos(0, 1, 0), BlockType.STONE);
 
+
         /*
-        for (int localX = 0; localX < 16; localX++) {
-            for (int localY = 0; localY < 2; localY++) {
-                for (int localZ = 0; localZ < 16; localZ++) {
+        for (int localX = 0; localX < 1; localX++) {
+            for (int localY = 0; localY < 1; localY++) {
+                for (int localZ = 0; localZ < 1; localZ++) {
                     int absoluteX = chunk.x * 16 + localX;
                     int absoluteY = chunk.y * 16 + localY;
                     int absoluteZ = chunk.z * 16 + localZ;
@@ -72,16 +73,28 @@ public class WorldGenerator {
                 }
             }
         }
-        */
+
+         */
 
 
-        //byte[] blockArray = chunk.getBlockArray();
+
+
         for (int localX = 0; localX < 16; localX++) {
             for (int localY = 0; localY < 16; localY++) {
                 for (int localZ = 0; localZ < 16; localZ++) {
                     int absoluteX = chunk.x * 16 + localX;
                     int absoluteY = chunk.y * 16 + localY;
                     int absoluteZ = chunk.z * 16 + localZ;
+
+                    if (absoluteY < 5) {
+                        continue;
+                    }
+                    if (absoluteY == 5) {
+                        if (Math.random() > 0.5) {
+                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.SAND);
+                        }
+                        continue;
+                    }
 
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
                     float density = (float) absoluteY / (16 * 3);
@@ -99,6 +112,7 @@ public class WorldGenerator {
                 }
             }
         }
+
 
         //System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
     }
