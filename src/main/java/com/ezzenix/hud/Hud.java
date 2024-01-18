@@ -6,7 +6,6 @@ import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
-import com.ezzenix.rendering.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

@@ -8,15 +8,15 @@ import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.physics.PhysicsEngine;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Hud;
+import com.ezzenix.input.InputHandler;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Renderer;
-import com.ezzenix.input.InputHandler;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11.glGetError;
 

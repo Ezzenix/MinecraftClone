@@ -9,8 +9,6 @@ import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Debug;
 import org.joml.Vector3f;
 
-import java.text.DecimalFormat;
-
 public class PhysicsEngine {
     public static void step() {
         float deltaTime = Scheduler.getDeltaTime();

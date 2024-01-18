@@ -9,7 +9,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 
 public class WorldRenderer {
     private final Shader worldShader = new Shader("world.vert", "world.frag");

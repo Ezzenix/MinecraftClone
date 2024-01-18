@@ -10,8 +10,10 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL15.GL_FLOAT;
+import static org.lwjgl.opengl.GL15.GL_LINES;
+import static org.lwjgl.opengl.GL30.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glVertexAttribPointer;
 
 public class Debug {
     private static final Shader debugShader = new Shader("debugLine.vert", "debugLine.frag");

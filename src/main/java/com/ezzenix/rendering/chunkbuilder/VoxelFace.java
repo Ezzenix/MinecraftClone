@@ -3,13 +3,7 @@ package com.ezzenix.rendering.chunkbuilder;
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunk.Chunk;
-import org.joml.Vector3f;
 import org.joml.Vector3i;
-
-import java.text.DecimalFormat;
-import java.util.Objects;
-
-import static com.ezzenix.rendering.chunkbuilder.ChunkBuilder.getFaceNormal;
 
 public class VoxelFace {
     public Face face;

@@ -2,9 +2,9 @@ package com.ezzenix.game.chunk;
 
 import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import com.ezzenix.engine.utils.BlockPos;
-import com.ezzenix.game.world.World;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.world.World;
 import com.ezzenix.game.world.generator.WorldGenerator;
 import com.ezzenix.rendering.Mesh;
 import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;

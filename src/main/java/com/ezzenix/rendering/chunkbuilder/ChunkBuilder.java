@@ -2,8 +2,8 @@ package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
-import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.rendering.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -54,61 +54,61 @@ public class ChunkBuilder {
             shape.maxY += 1;
             shape.maxZ += 1;
 
-            Vector3f vert1 = null;
-            Vector3f vert2 = null;
-            Vector3f vert3 = null;
-            Vector3f vert4 = null;
+            Vector3f vert1 = new Vector3f();
+            Vector3f vert2 = new Vector3f();
+            Vector3f vert3 = new Vector3f();
+            Vector3f vert4 = new Vector3f();
 
             Vector2f shapeSize = new Vector2f();
 
             // NOTE: Voxel coordinates are at the bottom corner of the blocks
             switch (shape.initialVoxelFace.face) {
                 case TOP: {
-                    vert1 = new Vector3f(shape.minX, shape.maxY, shape.minZ);
-                    vert2 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
-                    vert3 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
-                    vert4 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
-                    shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxZ - shape.minZ));
+                    vert1.set(shape.minX, shape.maxY, shape.minZ);
+                    vert2.set(shape.minX, shape.maxY, shape.maxZ);
+                    vert3.set(shape.maxX, shape.maxY, shape.maxZ);
+                    vert4.set(shape.maxX, shape.maxY, shape.minZ);
+                    shapeSize.set(shape.maxX - shape.minX, shape.maxZ - shape.minZ);
                     break;
                 }
                 case BOTTOM: {
-                    vert1 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
-                    vert2 = new Vector3f(shape.minX, shape.minY, shape.minZ);
-                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
-                    vert4 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
-                    shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxZ - shape.minZ));
+                    vert1.set(shape.minX, shape.minY, shape.maxZ);
+                    vert2.set(shape.minX, shape.minY, shape.minZ);
+                    vert3.set(shape.maxX, shape.minY, shape.minZ);
+                    vert4.set(shape.maxX, shape.minY, shape.maxZ);
+                    shapeSize.set(shape.maxX - shape.minX, shape.maxZ - shape.minZ);
                     break;
                 }
                 case FRONT: {
-                    vert1 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
-                    vert2 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
-                    vert3 = new Vector3f(shape.minX, shape.minY, shape.minZ);
-                    vert4 = new Vector3f(shape.minX, shape.maxY, shape.minZ);
-                    shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxY - shape.minY));
+                    vert1.set(shape.maxX, shape.maxY, shape.minZ);
+                    vert2.set(shape.maxX, shape.minY, shape.minZ);
+                    vert3.set(shape.minX, shape.minY, shape.minZ);
+                    vert4.set(shape.minX, shape.maxY, shape.minZ);
+                    shapeSize.set(shape.maxX - shape.minX, shape.maxY - shape.minY);
                     break;
                 }
                 case BACK: {
-                    vert1 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
-                    vert2 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
-                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
-                    vert4 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
-                    shapeSize.add(new Vector2f(shape.maxX - shape.minX, shape.maxY - shape.minY));
+                    vert1.set(shape.minX, shape.maxY, shape.maxZ);
+                    vert2.set(shape.minX, shape.minY, shape.maxZ);
+                    vert3.set(shape.maxX, shape.minY, shape.maxZ);
+                    vert4.set(shape.maxX, shape.maxY, shape.maxZ);
+                    shapeSize.set(shape.maxX - shape.minX, shape.maxY - shape.minY);
                     break;
                 }
                 case LEFT: {
-                    vert1 = new Vector3f(shape.minX, shape.maxY, shape.minZ);
-                    vert2 = new Vector3f(shape.minX, shape.minY, shape.minZ);
-                    vert3 = new Vector3f(shape.minX, shape.minY, shape.maxZ);
-                    vert4 = new Vector3f(shape.minX, shape.maxY, shape.maxZ);
-                    shapeSize.add(new Vector2f(shape.maxZ - shape.minZ, shape.maxY - shape.minY));
+                    vert1.set(shape.minX, shape.maxY, shape.minZ);
+                    vert2.set(shape.minX, shape.minY, shape.minZ);
+                    vert3.set(shape.minX, shape.minY, shape.maxZ);
+                    vert4.set(shape.minX, shape.maxY, shape.maxZ);
+                    shapeSize.set(shape.maxZ - shape.minZ, shape.maxY - shape.minY);
                     break;
                 }
                 case RIGHT: {
-                    vert1 = new Vector3f(shape.maxX, shape.maxY, shape.maxZ);
-                    vert2 = new Vector3f(shape.maxX, shape.minY, shape.maxZ);
-                    vert3 = new Vector3f(shape.maxX, shape.minY, shape.minZ);
-                    vert4 = new Vector3f(shape.maxX, shape.maxY, shape.minZ);
-                    shapeSize.add(new Vector2f(shape.maxZ - shape.minZ, shape.maxY - shape.minY));
+                    vert1.set(shape.maxX, shape.maxY, shape.maxZ);
+                    vert2.set(shape.maxX, shape.minY, shape.maxZ);
+                    vert3.set(shape.maxX, shape.minY, shape.minZ);
+                    vert4.set(shape.maxX, shape.maxY, shape.minZ);
+                    shapeSize.set(shape.maxZ - shape.minZ, shape.maxY - shape.minY);
                     break;
                 }
             }
@@ -188,12 +188,10 @@ public class ChunkBuilder {
         List<GreedyShape> shapes = new ArrayList<>();
 
         for (Face face : Face.values()) {
-            //if (face != Face.TOP) continue;
             List<VoxelFace> possibleVoxels = voxelFaces.get(face);
             shapes.addAll(GreedyShape.createShapesFrom(chunk, possibleVoxels));
         }
 
-        System.out.println("Shape count: " + shapes.size());
         return shapes;
     }
 }
