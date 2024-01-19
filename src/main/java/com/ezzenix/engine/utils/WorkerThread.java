@@ -8,23 +8,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class WorkerThread<T> {
-    private final Queue<T> toProcessQueue = new ConcurrentLinkedDeque<>();
-    private final Queue<T> processedQueue = new ConcurrentLinkedDeque<>();
+public class WorkerThread<I, O> {
+    private final Queue<I> toProcessQueue = new ConcurrentLinkedDeque<>();
+    private final Queue<O> processedQueue = new ConcurrentLinkedDeque<>();
 
-    public WorkerThread(int poolSize, int interval, int maxPerInterval, Consumer<T> processObject, Consumer<T> objectProcessed) {
+    public WorkerThread(int poolSize, int interval, int maxPerInterval, Function<I, O> processObject, Function<O, Void> objectProcessed) {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(poolSize);
 
         executor.scheduleWithFixedDelay(() -> {
             int count = 0;
             while (!toProcessQueue.isEmpty()) {
                 if (count >= maxPerInterval) return; // cancel and do the rest next interval
-                T obj = toProcessQueue.peek();
+                I obj = toProcessQueue.peek();
                 if (obj != null) {
                     toProcessQueue.remove(obj);
-                    processObject.accept(obj);
-                    processedQueue.add(obj);
+                    O output = processObject.apply(obj);
+                    processedQueue.add(output);
                     count++;
                 }
             }
@@ -34,14 +35,16 @@ public class WorkerThread<T> {
         Runtime.getRuntime().addShutdownHook(new Thread(executor::shutdown));
 
         Scheduler.runPeriodic(() -> {
-            for (T obj : processedQueue) {
-                objectProcessed.accept(obj);
-                processedQueue.remove(obj);
+            synchronized (processedQueue) {
+                O result;
+                while ((result = processedQueue.poll()) != null) {
+                    objectProcessed.apply(result);
+                }
             }
         }, 500);
     }
 
-    public void add(T obj) {
+    public void add(I obj) {
         if (!toProcessQueue.contains(obj)) {
             toProcessQueue.add(obj);
         };

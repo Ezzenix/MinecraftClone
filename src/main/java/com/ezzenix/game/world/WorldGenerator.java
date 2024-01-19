@@ -4,6 +4,8 @@ import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.engine.utils.FastNoiseLite;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.threads.WorldGeneratorThread;
+import org.joml.Vector3i;
 
 import java.util.Random;
 
@@ -48,8 +50,10 @@ public class WorldGenerator {
         chunk.setBlock(blockPos.add(new BlockPos(0, 8, 0)), BlockType.OAK_LEAVES);
     }
 
-    public static void generateChunk(Chunk chunk) {
+    public static WorldGeneratorThread.WorldGeneratorOutput generateChunk(Chunk chunk) {
         //long startTime = System.currentTimeMillis();
+
+        WorldGeneratorThread.WorldGeneratorOutput output = new WorldGeneratorThread.WorldGeneratorOutput(chunk);
 
         for (int localX = 0; localX < 16; localX++) {
             for (int localY = 0; localY < 16; localY++) {
@@ -62,10 +66,10 @@ public class WorldGenerator {
                     float density = (float) absoluteY / (16 * 4);
 
                     if (value > density) {
-                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
+                        output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
                     } else {
                         if (absoluteY <= 25) {
-                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
+                            output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
                         }
                     }
                 }
@@ -73,5 +77,6 @@ public class WorldGenerator {
         }
 
         //System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
+        return output;
     }
 }
