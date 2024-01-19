@@ -30,12 +30,11 @@ public class WorldGeneratorThread {
                 30,
                 WorldGenerator::generateChunk,
                 (output) -> {
-                    //System.out.println(output);
                     for (BlockPos blockPos : output.blocks.keySet()) {
                         BlockType blockType = output.blocks.get(blockPos);
                         output.chunk.setBlock(blockPos, blockType);
                     }
-                    output.chunk.scheduleForRemesh();
+                    output.chunk.updateMesh(false);
                     return null;
                 }
         );

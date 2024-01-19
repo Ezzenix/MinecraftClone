@@ -3,10 +3,13 @@ package com.ezzenix.input;
 import com.ezzenix.Game;
 import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.game.entities.Player;
+import com.ezzenix.rendering.Camera;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 
 public class InputHandler {
     private int lastMouseX, lastMouseY;
@@ -14,6 +17,13 @@ public class InputHandler {
 
     public InputHandler() {
         handleMouse();
+
+        glfwSetKeyCallback(Game.getInstance().getWindow().getId(), (window, key, scancode, action, mods) -> {
+            if (key == GLFW_KEY_F5 && action == GLFW_RELEASE) {
+                Camera camera = Game.getInstance().getCamera();
+                camera.thirdPerson = !camera.thirdPerson;
+            }
+        });
     }
 
     public void handleInput(long window) {

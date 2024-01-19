@@ -61,7 +61,7 @@ public class Debug {
         drawLine(pos1, pos2, new Vector3f(1, 1, 1));
     }
 
-    public static void highlightVoxel(Vector3f voxel) {
+    public static void highlightVoxel(Vector3f voxel, Vector3f color) {
         Vector3f vert1 = new Vector3f(0, 0, 0) .add(voxel);
         Vector3f vert2 = new Vector3f(0, 0, 1) .add(voxel);
         Vector3f vert3 = new Vector3f(1, 0, 1) .add(voxel);
@@ -71,19 +71,23 @@ public class Debug {
         Vector3f vert7 = new Vector3f(1, 1, 1) .add(voxel);
         Vector3f vert8 = new Vector3f(1, 1, 0) .add(voxel);
 
-        drawLine(vert1, vert2);
-        drawLine(vert2, vert3);
-        drawLine(vert3, vert4);
-        drawLine(vert4, vert1);
+        drawLine(vert1, vert2, color);
+        drawLine(vert2, vert3, color);
+        drawLine(vert3, vert4, color);
+        drawLine(vert4, vert1, color);
 
-        drawLine(vert1, vert5);
-        drawLine(vert2, vert6);
-        drawLine(vert3, vert7);
-        drawLine(vert4, vert8);
+        drawLine(vert1, vert5, color);
+        drawLine(vert2, vert6, color);
+        drawLine(vert3, vert7, color);
+        drawLine(vert4, vert8, color);
 
-        drawLine(vert5, vert6);
-        drawLine(vert6, vert7);
-        drawLine(vert7, vert8);
-        drawLine(vert8, vert5);
+        drawLine(vert5, vert6, color);
+        drawLine(vert6, vert7, color);
+        drawLine(vert7, vert8, color);
+        drawLine(vert8, vert5, color);
+    }
+
+    public static void highlightVoxel(Vector3f voxel) {
+        highlightVoxel(voxel, new Vector3f(1, 1, 1));
     }
 }
