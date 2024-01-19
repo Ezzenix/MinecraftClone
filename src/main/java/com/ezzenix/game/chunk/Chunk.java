@@ -1,15 +1,11 @@
 package com.ezzenix.game.chunk;
 
-import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunk.chunkrendering.ChunkMesh;
+import com.ezzenix.game.chunk.rendering.ChunkMesh;
 import com.ezzenix.game.world.World;
-import com.ezzenix.game.world.generator.WorldGenerator;
-import com.ezzenix.rendering.Mesh;
-import com.ezzenix.game.chunk.chunkrendering.chunkbuilder.ChunkBuilder;
-import org.joml.Vector3f;
+import com.ezzenix.game.world.WorldGenerator;
 import org.joml.Vector3i;
 
 public class Chunk {
@@ -28,7 +24,7 @@ public class Chunk {
 
     public boolean hasGenerated = false;
 
-    public FrustumBoundingBox frustumBoundingBox;
+    //public FrustumBoundingBox frustumBoundingBox;
 
     public Chunk(int x, int y, int z, World world) {
         this.x = x;
@@ -41,10 +37,10 @@ public class Chunk {
             blocks[i] = (byte) 0;
         }
 
-        this.frustumBoundingBox = new FrustumBoundingBox(
-                new Vector3f(this.x, this.y, this.z),
-                new Vector3f(this.x + CHUNK_SIZE, this.y + CHUNK_SIZE, this.z + CHUNK_SIZE)
-        );
+        //this.frustumBoundingBox = new FrustumBoundingBox(
+        //        new Vector3f(this.x, this.y, this.z),
+        //        new Vector3f(this.x + CHUNK_SIZE, this.y + CHUNK_SIZE, this.z + CHUNK_SIZE)
+        //);
 
         this.chunkMesh = new ChunkMesh(this);
     }

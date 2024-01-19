@@ -14,7 +14,7 @@ public class BlockType {
     public static final BlockType SAND = new BlockType("Sand").setTexture("sand");
     public static final BlockType OAK_LEAVES = new BlockType("Oak Leaves").setTexture("oak_leaves");
     public static final BlockType OAK_LOG = new BlockType("Oak Log").setTexture("oak_log").setTextureTop("oak_log_top").setTextureBottom("oak_log_top");
-    public static final BlockType GRASS = new BlockType("Grass").setTexture("oak_log").turnIntoFlower();
+    public static final BlockType GRASS = new BlockType("Grass").setTexture("grass_block_top").turnIntoFlower();
 
     //
     private final String name;

@@ -4,7 +4,7 @@ import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.game.chunk.Chunk;
-import com.ezzenix.game.chunk.chunkrendering.ChunkMesh;
+import com.ezzenix.game.chunk.rendering.ChunkMesh;
 import com.ezzenix.game.world.World;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -39,12 +39,19 @@ public class WorldRenderer {
         Camera camera = Game.getInstance().getCamera();
         Matrix4f projectionMatrix = camera.getProjectionMatrix();
         Matrix4f viewMatrix = camera.getViewMatrix();
+        Matrix4f viewProjectionMatrix = camera.getViewProjectionMatrix();
+
+        // Frustum culling
+        //for (Chunk chunk : world.getChunks().values()) {
+        //    chunk.frustumBoundingBox.isShown = chunk.frustumBoundingBox.isInsideFrustum(viewProjectionMatrix);
+       // }
 
         worldShader.use();
         worldShader.uploadMat4f("projectionMatrix", projectionMatrix);
         worldShader.uploadMat4f("viewMatrix", viewMatrix);
         worldShader.uploadVec2f("textureAtlasSize", textureAtlasSize);
         for (Chunk chunk : world.getChunks().values()) {
+            //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh mesh = chunk.getChunkMesh();
             Matrix4f translationMatrix = new Matrix4f().translate(new Vector3f(chunk.x * 16, chunk.y * 16, chunk.z * 16));
             worldShader.uploadMat4f("chunkPosition", translationMatrix);
@@ -61,6 +68,7 @@ public class WorldRenderer {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthMask(false);
         for (Chunk chunk : world.getChunks().values()) {
+            //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh mesh = chunk.getChunkMesh();
             Matrix4f translationMatrix = new Matrix4f().translate(new Vector3f(chunk.x * 16, chunk.y * 16, chunk.z * 16));
             waterShader.uploadMat4f("chunkPosition", translationMatrix);

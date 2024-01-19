@@ -5,7 +5,7 @@ import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.engine.utils.TextureAtlas;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.entities.Player;
-import com.ezzenix.game.physics.PhysicsEngine;
+import com.ezzenix.game.physics.Physics;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Hud;
 import com.ezzenix.input.InputHandler;
@@ -63,7 +63,7 @@ public class Game {
         while (!window.shouldWindowClose()) {
             Scheduler.update();
             inputHandler.handleInput(window.getId());
-            PhysicsEngine.step();
+            Physics.step();
 
             this.getRenderer().render(window.getId());
 

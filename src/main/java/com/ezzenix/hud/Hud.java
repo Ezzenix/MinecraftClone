@@ -6,6 +6,8 @@ import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
+import com.ezzenix.hud.font.FontRenderer;
+import com.ezzenix.hud.font.TextComponent;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -19,11 +21,11 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 
 public class Hud {
     FontRenderer fontRenderer;
-    TextComponent fpsText;
-    TextComponent positionText;
-    TextComponent cameraText;
-    TextComponent vertexText;
-    TextComponent memoryText;
+    com.ezzenix.hud.font.TextComponent fpsText;
+    com.ezzenix.hud.font.TextComponent positionText;
+    com.ezzenix.hud.font.TextComponent cameraText;
+    com.ezzenix.hud.font.TextComponent vertexText;
+    com.ezzenix.hud.font.TextComponent memoryText;
 
     Shader textShader;
 
@@ -33,10 +35,10 @@ public class Hud {
         this.textShader = new Shader("text.vert", "text.frag");
         this.fontRenderer = new FontRenderer(new Font("Arial", Font.PLAIN, 18));
 
-        fpsText = new TextComponent(fontRenderer, "", 6, 6);
-        positionText = new TextComponent(fontRenderer, "", 6, 6 + 18);
-        cameraText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 2);
-        vertexText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 3);
+        fpsText = new com.ezzenix.hud.font.TextComponent(fontRenderer, "", 6, 6);
+        positionText = new com.ezzenix.hud.font.TextComponent(fontRenderer, "", 6, 6 + 18);
+        cameraText = new com.ezzenix.hud.font.TextComponent(fontRenderer, "", 6, 6 + 18 * 2);
+        vertexText = new com.ezzenix.hud.font.TextComponent(fontRenderer, "", 6, 6 + 18 * 3);
         memoryText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 4);
 
         Scheduler.runPeriodic(() -> {

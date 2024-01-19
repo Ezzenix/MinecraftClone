@@ -3,7 +3,7 @@ package com.ezzenix.hud;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.rendering.Camera;
-import com.ezzenix.rendering.Mesh;
+import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector3f;
 
 import java.nio.FloatBuffer;

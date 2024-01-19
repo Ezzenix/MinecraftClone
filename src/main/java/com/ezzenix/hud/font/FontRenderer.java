@@ -1,4 +1,4 @@
-package com.ezzenix.hud;
+package com.ezzenix.hud.font;
 
 import com.ezzenix.engine.opengl.Texture;
 

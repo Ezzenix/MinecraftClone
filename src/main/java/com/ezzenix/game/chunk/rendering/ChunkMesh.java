@@ -1,8 +1,8 @@
-package com.ezzenix.game.chunk.chunkrendering;
+package com.ezzenix.game.chunk.rendering;
 
 import com.ezzenix.game.chunk.Chunk;
-import com.ezzenix.game.chunk.chunkrendering.chunkbuilder.ChunkBuilder;
-import com.ezzenix.rendering.Mesh;
+import com.ezzenix.game.chunk.rendering.builder.ChunkBuilder;
+import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector3f;
 
 public class ChunkMesh {

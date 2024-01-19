@@ -1,7 +1,7 @@
-package com.ezzenix.hud;
+package com.ezzenix.hud.font;
 
 import com.ezzenix.Game;
-import com.ezzenix.rendering.Mesh;
+import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector2f;
 
 import java.nio.FloatBuffer;

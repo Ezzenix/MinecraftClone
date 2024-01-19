@@ -1,7 +1,6 @@
-package com.ezzenix.game.chunk.chunkrendering.chunkbuilder;
+package com.ezzenix.game.chunk.rendering.builder;
 
 import com.ezzenix.game.chunk.Chunk;
-import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.util.ArrayList;

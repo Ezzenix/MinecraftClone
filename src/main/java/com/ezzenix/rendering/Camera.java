@@ -32,29 +32,21 @@ public class Camera {
 
     public Matrix4f getViewMatrix() {
         float yaw = ((entity.getYaw() + 180) + 90) % 360;
-
+        float pitch = entity.getPitch();
         Vector3f position = new Vector3f(entity.getPosition()).add(0, entity.eyeHeight, 0);
 
         return new Matrix4f().setLookAt(
                 position,
                 new Vector3f(
-                        (float) (position.x + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(entity.getPitch()))),
+                        (float) (position.x + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))),
                         (float) (position.y + Math.sin(Math.toRadians(entity.getPitch()))),
-                        (float) (position.z - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(entity.getPitch())))
+                        (float) (position.z - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)))
                 ),
                 new Vector3f(0.0f, 1.0f, 0.0f)
         );
     }
 
     public Matrix4f getViewProjectionMatrix() {
-        Matrix4f viewMatrix = getViewMatrix();
-        Matrix4f projectionMatrix = getProjectionMatrix();
-
-        // Multiply the projection matrix by the view matrix
-        Matrix4f viewProjectionMatrix = new Matrix4f();
-        viewProjectionMatrix.set(projectionMatrix);
-        viewProjectionMatrix.mul(viewMatrix);
-
-        return viewProjectionMatrix;
+        return new Matrix4f().set(getProjectionMatrix()).mul(getViewMatrix());
     }
 }

@@ -1,4 +1,4 @@
-package com.ezzenix.game.world.generator;
+package com.ezzenix.game.world;
 
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.engine.utils.FastNoiseLite;
@@ -51,34 +51,6 @@ public class WorldGenerator {
     public static void generateChunk(Chunk chunk) {
         //long startTime = System.currentTimeMillis();
 
-//        chunk.setBlock(new BlockPos(0, 0, 0), BlockType.GRASS);
-//        chunk.setBlock(new BlockPos(0, 1, 0), BlockType.STONE);
-
-
-        /*
-        for (int localX = 0; localX < 1; localX++) {
-            for (int localY = 0; localY < 1; localY++) {
-                for (int localZ = 0; localZ < 1; localZ++) {
-                    int absoluteX = chunk.x * 16 + localX;
-                    int absoluteY = chunk.y * 16 + localY;
-                    int absoluteZ = chunk.z * 16 + localZ;
-
-                    if (localX > 4) continue;
-
-                    if (localY == 1) {
-                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.SAND);
-                    } else if (localY == 0) {
-                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
-                    }
-                }
-            }
-        }
-
-         */
-
-
-
-
         for (int localX = 0; localX < 16; localX++) {
             for (int localY = 0; localY < 16; localY++) {
                 for (int localZ = 0; localZ < 16; localZ++) {
@@ -87,28 +59,18 @@ public class WorldGenerator {
                     int absoluteZ = chunk.z * 16 + localZ;
 
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
-                    float density = (float) absoluteY / (16 * 3);
+                    float density = (float) absoluteY / (16 * 4);
+
                     if (value > density) {
-                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 20) ? BlockType.SAND : BlockType.GRASS_BLOCK);
+                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
                     } else {
-                        if (absoluteY <= 20) {
+                        if (absoluteY <= 25) {
                             chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
                         }
                     }
-
-                    if (absoluteY == 30) {
-                        if (absoluteX % 2 == 0 && absoluteZ % 2 == 0) {
-                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
-                        }
-                    }
-
-                    //if (localX == 6 && localY == 7 && localZ == 6) {
-                    //    placeTree(chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
-                    //}
                 }
             }
         }
-
 
         //System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
     }

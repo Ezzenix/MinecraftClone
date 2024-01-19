@@ -4,7 +4,7 @@ import com.ezzenix.Game;
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunk.Chunk;
-import com.ezzenix.game.world.generator.WorldGeneratorThread;
+import com.ezzenix.game.threads.WorldGeneratorThread;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -14,9 +14,9 @@ public class World {
     private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
 
     public World() {
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 4; y++) {
-                for (int z = 0; z < 16; z++) {
+        for (int x = 0; x < 12; x++) {
+            for (int y = 0; y < 5; y++) {
+                for (int z = 0; z < 12; z++) {
                     loadChunk(x, y, z);
                 }
             }

@@ -1,4 +1,4 @@
-package com.ezzenix.engine.opengl.utils;
+package com.ezzenix.engine.utils;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -7,6 +7,8 @@ import org.joml.Vector4f;
 public class FrustumBoundingBox {
     private Vector3f min;
     private Vector3f max;
+
+    public boolean isShown = false;
 
     public FrustumBoundingBox(Vector3f min, Vector3f max) {
         this.min = min;

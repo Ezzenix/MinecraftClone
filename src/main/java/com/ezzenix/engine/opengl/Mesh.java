@@ -1,4 +1,4 @@
-package com.ezzenix.rendering;
+package com.ezzenix.engine.opengl;
 
 import java.nio.FloatBuffer;
 import java.util.List;

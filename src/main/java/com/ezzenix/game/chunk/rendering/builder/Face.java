@@ -1,4 +1,4 @@
-package com.ezzenix.game.chunk.chunkrendering.chunkbuilder;
+package com.ezzenix.game.chunk.rendering.builder;
 
 public enum Face {
     TOP,
