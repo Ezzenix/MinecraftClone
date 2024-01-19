@@ -1,6 +1,7 @@
-package com.ezzenix.rendering.chunkbuilder;
+package com.ezzenix.game.chunk.chunkrendering.chunkbuilder;
 
 import com.ezzenix.game.chunk.Chunk;
+import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.util.ArrayList;
@@ -64,10 +65,10 @@ public class GreedyShape {
 
     private boolean canMergeWith(VoxelFace voxelFace) {
         if (voxelFace.blockId != this.initialVoxelFace.blockId) return false;
-        if (this.initialVoxelFace.ao1 != 0 || voxelFace.ao1 != 0) return false;
-        if (this.initialVoxelFace.ao2 != 0 || voxelFace.ao2 != 0) return false;
-        if (this.initialVoxelFace.ao3 != 0 || voxelFace.ao3 != 0) return false;
-        if (this.initialVoxelFace.ao4 != 0 || voxelFace.ao4 != 0) return false;
+        if (this.initialVoxelFace.ao1 != voxelFace.ao1) return false;
+        if (this.initialVoxelFace.ao2 != voxelFace.ao2) return false;
+        if (this.initialVoxelFace.ao3 != voxelFace.ao3) return false;
+        if (this.initialVoxelFace.ao4 != voxelFace.ao4) return false;
         return true;
     }
 

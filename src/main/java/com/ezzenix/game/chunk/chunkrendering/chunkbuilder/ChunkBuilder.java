@@ -1,4 +1,4 @@
-package com.ezzenix.rendering.chunkbuilder;
+package com.ezzenix.game.chunk.chunkrendering.chunkbuilder;
 
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
@@ -37,14 +37,36 @@ public class ChunkBuilder {
         return blockType.textureUVSides;
     }
 
-    public static Mesh createMesh(Chunk chunk, boolean waterOnly) {
+    public static Mesh createMesh(Chunk chunk, boolean transparentBlocksOnly) {
         //long startTime = System.currentTimeMillis();
 
-        List<GreedyShape> shapes = generateShapes(chunk);
-        int vertexCount = shapes.size() * 6;
-        FloatBuffer buffer = createFloatBuffer(vertexCount * 6);
+        List<Float> vertexList = new ArrayList<>();
 
-        for (GreedyShape shape : shapes) {
+        // Flowers
+        /*
+        for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
+            Vector3i localPosition = chunk.getLocalPositionFromIndex(i);
+            BlockType blockType = chunk.getBlockTypeAt(localPosition);
+            if (blockType == null || !blockType.isFlower()) continue;
+            Vector2f[] textureUV = getBlockTextureUV(blockType, Face.TOP);
+            Vector3f voxelPos = new Vector3f(localPosition);
+
+            for (int k = 0; k < 4; k++) {
+                textureUV[k] = new Vector2f(textureUV[k]).add(1, 1);
+            }
+
+            addVertex(vertexList, new Vector3f(voxelPos).add(0, 1, 0), textureUV[0], 0);
+            addVertex(vertexList, new Vector3f(voxelPos).add(0, 0, 0), textureUV[1], 0);
+            addVertex(vertexList, new Vector3f(voxelPos).add(1, 0, 1), textureUV[2], 0);
+
+            addVertex(vertexList, new Vector3f(voxelPos).add(1, 0, 1), textureUV[2], 0);
+            addVertex(vertexList, new Vector3f(voxelPos).add(1, 1, 1), textureUV[3], 0);
+            addVertex(vertexList, new Vector3f(voxelPos).add(0, 1, 0), textureUV[0], 0);
+        }
+        */
+
+        // Blocks
+        for (GreedyShape shape : generateShapes(chunk, transparentBlocksOnly)) {
             BlockType blockType = BlockRegistry.getBlockFromId(shape.initialVoxelFace.blockId);
 
             Vector2f[] textureUV = getBlockTextureUV(blockType, shape.initialVoxelFace.face);
@@ -113,18 +135,18 @@ public class ChunkBuilder {
                 }
             }
 
-            addVertex(buffer, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
-            addVertex(buffer, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao2);
-            addVertex(buffer, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
+            addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
+            addVertex(vertexList, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao2);
+            addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
 
-            addVertex(buffer, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
-            addVertex(buffer, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao4);
-            addVertex(buffer, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
+            addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
+            addVertex(vertexList, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao4);
+            addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
         }
 
-        buffer.flip();
+        FloatBuffer buffer = Mesh.floatListTobuffer(vertexList);
 
-        Mesh mesh = new Mesh(buffer, vertexCount);
+        Mesh mesh = new Mesh(buffer, vertexList.size()/6);
 
         int stride = 6 * Float.BYTES;
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
@@ -140,13 +162,13 @@ public class ChunkBuilder {
         return mesh;
     }
 
-    private static void addVertex(FloatBuffer buffer, Vector3f pos, Vector2f uv, float aoFactor) {
-        buffer.put(pos.x);
-        buffer.put(pos.y);
-        buffer.put(pos.z);
-        buffer.put(uv.x);
-        buffer.put(uv.y);
-        buffer.put(aoFactor);
+    private static void addVertex(List<Float> vertexList, Vector3f pos, Vector2f uv, float aoFactor) {
+        vertexList.add(pos.x);
+        vertexList.add(pos.y);
+        vertexList.add(pos.z);
+        vertexList.add(uv.x);
+        vertexList.add(uv.y);
+        vertexList.add(aoFactor);
     }
 
     private static boolean shouldRenderFace(Chunk chunk, BlockType blockType, BlockPos blockPos, Face face) {
@@ -154,13 +176,14 @@ public class ChunkBuilder {
         Vector3i faceNormal = getFaceNormal(face);
         BlockPos neighborPos = blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
         BlockType neighborType = chunk.getWorld().getBlockTypeAt(neighborPos);
-        if (blockType == neighborType) return false;
-        if (neighborType == BlockType.WATER) return true;
-        if (neighborType == null || neighborType == BlockType.AIR) return true;
-        return false;
+        if (neighborType == null) neighborType = BlockType.AIR;
+
+        if (blockType == neighborType) return false; // do not render face if same block
+
+        return neighborType == BlockType.AIR || !neighborType.isSolid();
     }
 
-    private static HashMap<Face, List<VoxelFace>> generateVoxelFaces(Chunk chunk) {
+    private static HashMap<Face, List<VoxelFace>> generateVoxelFaces(Chunk chunk, boolean transparentBlocksOnly) {
         HashMap<Face, List<VoxelFace>> voxelFaces = new HashMap<>();
         for (Face face : Face.values()) {
             voxelFaces.put(face, new ArrayList<>());
@@ -169,21 +192,23 @@ public class ChunkBuilder {
         for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
             Vector3i localPosition = chunk.getLocalPositionFromIndex(i);
             BlockType type = chunk.getBlockTypeAt(localPosition);
-            if (type == null || type == BlockType.AIR) continue;
+            if (type == null || type == BlockType.AIR || type.isFlower()) continue;
 
             for (Face face : Face.values()) {
-                if (shouldRenderFace(chunk, type, chunk.toWorldPos(localPosition), face)) {
-                    VoxelFace voxelFace = new VoxelFace(localPosition, face, type.getId());
-                    voxelFace.calculateAO(chunk);
-                    voxelFaces.get(face).add(voxelFace);
+                if ((type.isTransparent() && transparentBlocksOnly) || (!type.isTransparent() && !transparentBlocksOnly)) {
+                    if (shouldRenderFace(chunk, type, chunk.toWorldPos(localPosition), face)) {
+                        VoxelFace voxelFace = new VoxelFace(localPosition, face, type.getId());
+                        voxelFace.calculateAO(chunk);
+                        voxelFaces.get(face).add(voxelFace);
+                    }
                 }
             }
         }
         return voxelFaces;
     }
 
-    public static List<GreedyShape> generateShapes(Chunk chunk) {
-        HashMap<Face, List<VoxelFace>> voxelFaces = generateVoxelFaces(chunk);
+    public static List<GreedyShape> generateShapes(Chunk chunk, boolean transparentBlocksOnly) {
+        HashMap<Face, List<VoxelFace>> voxelFaces = generateVoxelFaces(chunk, transparentBlocksOnly);
 
         List<GreedyShape> shapes = new ArrayList<>();
 

@@ -4,10 +4,11 @@ import com.ezzenix.engine.opengl.utils.FrustumBoundingBox;
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.chunk.chunkrendering.ChunkMesh;
 import com.ezzenix.game.world.World;
 import com.ezzenix.game.world.generator.WorldGenerator;
 import com.ezzenix.rendering.Mesh;
-import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
+import com.ezzenix.game.chunk.chunkrendering.chunkbuilder.ChunkBuilder;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -17,14 +18,13 @@ public class Chunk {
     public static final int CHUNK_SIZE_CUBED = (int) Math.pow(CHUNK_SIZE, 3);
 
     private final World world;
-    public Mesh mesh;
-    public Mesh waterMesh;
+    private final ChunkMesh chunkMesh;
     public final int x;
     public final int y;
     public final int z;
 
     private final byte[] blocks;
-    private int blockCount;
+    public int blockCount;
 
     public boolean hasGenerated = false;
 
@@ -45,6 +45,8 @@ public class Chunk {
                 new Vector3f(this.x, this.y, this.z),
                 new Vector3f(this.x + CHUNK_SIZE, this.y + CHUNK_SIZE, this.z + CHUNK_SIZE)
         );
+
+        this.chunkMesh = new ChunkMesh(this);
     }
 
     public Vector3i getLocalPosition(BlockPos blockPos) {
@@ -98,39 +100,15 @@ public class Chunk {
     }
 
     public void updateMesh(boolean dontTriggerUpdatesAround) {
-        if (this.mesh != null) {
-            this.mesh.dispose();
-            this.mesh = null;
-        }
-        if (this.waterMesh != null) {
-            this.waterMesh.dispose();
-            this.waterMesh = null;
-        }
-        if (blockCount > 0) {
-            this.mesh = ChunkBuilder.createMesh(this, false);
-            //this.waterMesh = ChunkBuilder.createMesh(this, true);
-        }
-        if (!dontTriggerUpdatesAround) {
-            for (Vector3f face : com.ezzenix.engine.opengl.utils.OldFace.ALL) {
-                Chunk chunk = getWorld().getChunk(
-                        (int) (x + face.x),
-                        (int) (y + face.y),
-                        (int) (z + face.z)
-                );
-                if (chunk != null) {
-                    chunk.updateMesh(true);
-                }
-            }
-        }
+        chunkMesh.refresh(dontTriggerUpdatesAround);
     }
 
-    public Mesh getMesh() {
-        return this.mesh;
+    public ChunkMesh getChunkMesh() {
+        return this.chunkMesh;
     }
 
     public void dispose() {
-        if (this.mesh != null) this.mesh.dispose();
-        if (this.waterMesh != null) this.waterMesh.dispose();
+        this.chunkMesh.dispose();
         this.world.getChunks().remove(new Vector3i(x, y, z));
     }
 }

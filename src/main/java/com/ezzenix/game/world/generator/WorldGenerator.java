@@ -20,13 +20,13 @@ public class WorldGenerator {
         float blocksToTop = height - y;
         if (blocksToTop > 4) return BlockType.STONE;
         if (blocksToTop > 1) return BlockType.DIRT;
-        return new Random().nextBoolean() ? BlockType.GRASS : BlockType.OAK_PLANKS;
+        return new Random().nextBoolean() ? BlockType.GRASS_BLOCK : BlockType.OAK_PLANKS;
     }
 
     private static BlockType randomBlockType() {
         int i = (int) (Math.round(Math.random() * 4));
         if (i == 0) return BlockType.STONE;
-        if (i == 1) return BlockType.GRASS;
+        if (i == 1) return BlockType.GRASS_BLOCK;
         if (i == 2) return BlockType.DIRT;
         return BlockType.OAK_PLANKS;
     }
@@ -89,10 +89,16 @@ public class WorldGenerator {
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
                     float density = (float) absoluteY / (16 * 3);
                     if (value > density) {
-                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 20) ? BlockType.SAND : BlockType.GRASS);
+                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 20) ? BlockType.SAND : BlockType.GRASS_BLOCK);
                     } else {
                         if (absoluteY <= 20) {
                             chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
+                        }
+                    }
+
+                    if (absoluteY == 30) {
+                        if (absoluteX % 2 == 0 && absoluteZ % 2 == 0) {
+                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.GRASS);
                         }
                     }
 

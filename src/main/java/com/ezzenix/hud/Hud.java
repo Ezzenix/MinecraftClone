@@ -50,8 +50,8 @@ public class Hud {
             int vertexCount = 0;
             World world = Game.getInstance().getWorld();
             for (Chunk chunk : world.getChunks().values()) {
-                if (chunk.mesh != null) vertexCount += chunk.mesh.vertexCount;
-                if (chunk.waterMesh != null) vertexCount += chunk.waterMesh.vertexCount;
+                if (chunk.getChunkMesh().getBlockMesh() != null) vertexCount += chunk.getChunkMesh().getBlockMesh().vertexCount;
+                //if (chunk.getChunkMesh() != null) vertexCount += chunk.waterMesh.vertexCount;
             }
             vertexText.setText("Vertices: " + vertexCount);
 

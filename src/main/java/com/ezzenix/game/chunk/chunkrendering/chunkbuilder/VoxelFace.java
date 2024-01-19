@@ -1,4 +1,4 @@
-package com.ezzenix.rendering.chunkbuilder;
+package com.ezzenix.game.chunk.chunkrendering.chunkbuilder;
 
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
@@ -27,7 +27,8 @@ public class VoxelFace {
 
         BlockPos worldPos = chunk.toWorldPos(new Vector3i(this.position).add(realOffset));
         BlockType blockType = chunk.getWorld().getBlockTypeAt(worldPos);
-        return (blockType != null && blockType != BlockType.AIR && !blockType.isTransparent()) ? 1 : 0;
+
+        return blockType == BlockType.AIR || !blockType.isSolid() ? 0 : 1;
     }
 
     private Vector3i offsetFace(Face face, Vector3i offset) {
