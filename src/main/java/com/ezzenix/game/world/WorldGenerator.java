@@ -73,7 +73,7 @@ public class WorldGenerator {
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
                     float density = (float) absoluteY / (16 * 4);
 
-                    if ((localX == 7) && (localZ == 7) && (absoluteY == 50)) {
+                    if (((localX == 7) && (localZ == 7) && (absoluteY == 50)) || ((localX == 21) && (localZ == 21) && (absoluteY == 50))) {
                         placeTree(output, chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
                     }
 

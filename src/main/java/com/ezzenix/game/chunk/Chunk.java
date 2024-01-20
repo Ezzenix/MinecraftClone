@@ -9,7 +9,7 @@ import com.ezzenix.game.world.WorldGenerator;
 import org.joml.Vector3i;
 
 public class Chunk {
-    public static final int CHUNK_SIZE = 16;
+    public static final int CHUNK_SIZE = 32;
     public static final int CHUNK_SIZE_SQUARED = (int) Math.pow(CHUNK_SIZE, 2);
     public static final int CHUNK_SIZE_CUBED = (int) Math.pow(CHUNK_SIZE, 3);
 

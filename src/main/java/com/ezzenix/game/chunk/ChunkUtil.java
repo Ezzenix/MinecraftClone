@@ -3,23 +3,27 @@ package com.ezzenix.game.chunk;
 import com.ezzenix.engine.utils.BlockPos;
 import org.joml.Vector3i;
 
+import static com.ezzenix.engine.utils.MathUtil.*;
+
 public class ChunkUtil {
     public static Vector3i getLocalPosition(Chunk chunk, BlockPos blockPos) {
-        return new Vector3i(blockPos.x - chunk.x * 16, blockPos.y - chunk.y * 16, blockPos.z - chunk.z * 16);
+        return new Vector3i(blockPos.x - chunk.x * Chunk.CHUNK_SIZE, blockPos.y - chunk.y * Chunk.CHUNK_SIZE, blockPos.z - chunk.z * Chunk.CHUNK_SIZE);
     }
 
     public static int genIndexFromLocalPosition(int x, int y, int z) {
-        return x | y << 4 | z << 8;
+        int shift = log2(Chunk.CHUNK_SIZE);
+        return x | y << shift | z << (2 * shift);
     }
     public static int getIndexFromLocalPosition(Vector3i localPos) {
         return genIndexFromLocalPosition(localPos.x, localPos.y, localPos.z);
     }
 
     public static Vector3i getLocalPositionFromIndex(int index) {
-        int mask = 0xF; // This is 15 in decimal, representing the lowest 4 bits
+        int shift = log2(Chunk.CHUNK_SIZE);
+        int mask = Chunk.CHUNK_SIZE - 1; // This is (chunkSize - 1) in decimal, representing the lowest bits
         int x = index & mask;
-        int y = (index >> 4) & mask;
-        int z = (index >> 8) & mask;
+        int y = (index >> shift) & mask;
+        int z = (index >> (2 * shift)) & mask;
         return new Vector3i(x, y, z);
     }
 }

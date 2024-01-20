@@ -53,7 +53,7 @@ public class WorldRenderer {
         for (Chunk chunk : world.getChunks().values()) {
             //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh mesh = chunk.getChunkMesh();
-            Matrix4f translationMatrix = new Matrix4f().translate(new Vector3f(chunk.x * 16, chunk.y * 16, chunk.z * 16));
+            Matrix4f translationMatrix = new Matrix4f().translate(new Vector3f(chunk.x * Chunk.CHUNK_SIZE, chunk.y * Chunk.CHUNK_SIZE, chunk.z * Chunk.CHUNK_SIZE));
             worldShader.uploadMat4f("chunkPosition", translationMatrix);
             mesh.renderBlocks();
         }
@@ -70,7 +70,7 @@ public class WorldRenderer {
         for (Chunk chunk : world.getChunks().values()) {
             //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh mesh = chunk.getChunkMesh();
-            Matrix4f translationMatrix = new Matrix4f().translate(new Vector3f(chunk.x * 16, chunk.y * 16, chunk.z * 16));
+            Matrix4f translationMatrix = new Matrix4f().translate(new Vector3f(chunk.x * Chunk.CHUNK_SIZE, chunk.y * Chunk.CHUNK_SIZE, chunk.z * Chunk.CHUNK_SIZE));
             waterShader.uploadMat4f("chunkPosition", translationMatrix);
             mesh.renderWater();
         }

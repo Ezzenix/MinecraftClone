@@ -2,7 +2,10 @@ package com.ezzenix.input;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.scheduler.Scheduler;
+import com.ezzenix.engine.utils.BlockPos;
+import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Player;
+import com.ezzenix.game.world.World;
 import com.ezzenix.rendering.Camera;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -37,6 +40,11 @@ public class InputHandler {
                     glEnable(GL_DEPTH_TEST);
                     glEnable(GL_CULL_FACE);
                 }
+            }
+            if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
+                BlockPos blockPos = Game.getInstance().getPlayer().getBlockPos();
+                World world = Game.getInstance().getWorld();
+                world.setBlock(blockPos, BlockType.AIR);
             }
         });
     }

@@ -10,13 +10,15 @@ import org.joml.Vector3i;
 
 import java.util.HashMap;
 
+import static com.ezzenix.engine.utils.MathUtil.log2;
+
 public class World {
     private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
 
     public World() {
-        for (int x = 0; x < 64; x++) {
-            for (int y = 0; y < 5; y++) {
-                for (int z = 0; z < 64; z++) {
+        for (int x = 0; x < 32; x++) {
+            for (int y = 0; y < 3; y++) {
+                for (int z = 0; z < 32; z++) {
                     loadChunk(x, y, z);
                 }
             }
@@ -32,10 +34,17 @@ public class World {
         WorldGeneratorThread.scheduleChunkForWorldGeneration(chunk);
     }
 
+    public void setBlock(BlockPos blockPos, BlockType blockType) {
+        Chunk chunk = getChunkAtBlockPos(blockPos);
+        if (chunk == null) return;
+        chunk.setBlock(blockPos, blockType);
+        chunk.updateMesh(true);
+    }
+
     public Chunk getChunkAtBlockPos(BlockPos blockPos) {
-        int chunkX = blockPos.x >> 4; // Divide by chunk size (16)
-        int chunkY = blockPos.y >> 4; // Divide by chunk size (16)
-        int chunkZ = blockPos.z >> 4; // Divide by chunk size (16)
+        int chunkX = blockPos.x >> log2(Chunk.CHUNK_SIZE); // Divide by chunk size (16)
+        int chunkY = blockPos.y >> log2(Chunk.CHUNK_SIZE); // Divide by chunk size (16)
+        int chunkZ = blockPos.z >> log2(Chunk.CHUNK_SIZE); // Divide by chunk size (16)
         return chunks.get(new Vector3i(chunkX, chunkY, chunkZ));
     }
 
@@ -55,9 +64,9 @@ public class World {
 
     public void loadNewChunks() {
         Vector3f position = Game.getInstance().getPlayer().getPosition();
-        int chunkX = ((int) position.x >> 4);
-        int chunkY = ((int) position.y >> 4);
-        int chunkZ = ((int) position.z >> 4);
+        int chunkX = ((int) position.x >> log2(Chunk.CHUNK_SIZE));
+        int chunkY = ((int) position.y >> log2(Chunk.CHUNK_SIZE));
+        int chunkZ = ((int) position.z >> log2(Chunk.CHUNK_SIZE));
 
         int renderDistance = 6;
 
