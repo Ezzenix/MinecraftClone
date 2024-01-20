@@ -2,10 +2,13 @@ package com.ezzenix.hud;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.entities.Player;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -23,26 +26,26 @@ public class Debug {
     private static final List<Float> vertexBatch = new ArrayList<>();
 
     public static void renderBatch() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            Camera camera = Game.getInstance().getCamera();
+        Camera camera = Game.getInstance().getCamera();
 
-            debugShader.use();
-            debugShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
-            debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
+        debugShader.use();
+        debugShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
+        debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
 
-            FloatBuffer buffer = Mesh.convertToBuffer(vertexBatch, stack);
-            Mesh mesh = new Mesh(buffer, vertexBatch.size() / 6, GL_LINES);
-            vertexBatch.clear();
+        FloatBuffer buffer = Mesh.convertToBuffer(vertexBatch);
+        Mesh mesh = new Mesh(buffer, vertexBatch.size() / 6, GL_LINES);
+        vertexBatch.clear();
 
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
-            glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
+        glEnableVertexAttribArray(0);
 
-            glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
-            glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
+        glEnableVertexAttribArray(1);
 
-            mesh.render();
-            mesh.dispose();
-        }
+        mesh.render();
+        mesh.dispose();
+
+        MemoryUtil.memFree(buffer);
     }
 
     public static void drawLine(Vector3f pos1, Vector3f pos2, Vector3f color) {
@@ -65,33 +68,50 @@ public class Debug {
         drawLine(pos1, pos2, new Vector3f(1, 1, 1));
     }
 
+    public static void drawBox(Vector3f corner1, Vector3f corner2, Vector3f color) {
+        float minX = Math.min(corner1.x, corner2.x);
+        float maxX = Math.max(corner1.x, corner2.x);
+        float minY = Math.min(corner1.y, corner2.y);
+        float maxY = Math.max(corner1.y, corner2.y);
+        float minZ = Math.min(corner1.z, corner2.z);
+        float maxZ = Math.max(corner1.z, corner2.z);
+
+        Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(maxX, minY, minZ), color);
+        Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, minY, maxZ), color);
+        Debug.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, minY, maxZ), color);
+        Debug.drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(maxX, minY, maxZ), color);
+
+        Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, maxY, minZ), color);
+        Debug.drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(minX, maxY, maxZ), color);
+        Debug.drawLine(new Vector3f(maxX, minY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
+        Debug.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, maxY, minZ), color);
+
+        Debug.drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(maxX, maxY, minZ), color);
+        Debug.drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(minX, maxY, maxZ), color);
+        Debug.drawLine(new Vector3f(maxX, maxY, minZ), new Vector3f(maxX, maxY, maxZ), color);
+        Debug.drawLine(new Vector3f(minX, maxY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
+    }
+
     public static void highlightVoxel(Vector3f voxel, Vector3f color) {
-        Vector3f vert1 = new Vector3f(0, 0, 0) .add(voxel);
-        Vector3f vert2 = new Vector3f(0, 0, 1) .add(voxel);
-        Vector3f vert3 = new Vector3f(1, 0, 1) .add(voxel);
-        Vector3f vert4 = new Vector3f(1, 0, 0) .add(voxel);
-        Vector3f vert5 = new Vector3f(0, 1, 0) .add(voxel);
-        Vector3f vert6 = new Vector3f(0, 1, 1) .add(voxel);
-        Vector3f vert7 = new Vector3f(1, 1, 1) .add(voxel);
-        Vector3f vert8 = new Vector3f(1, 1, 0) .add(voxel);
-
-        drawLine(vert1, vert2, color);
-        drawLine(vert2, vert3, color);
-        drawLine(vert3, vert4, color);
-        drawLine(vert4, vert1, color);
-
-        drawLine(vert1, vert5, color);
-        drawLine(vert2, vert6, color);
-        drawLine(vert3, vert7, color);
-        drawLine(vert4, vert8, color);
-
-        drawLine(vert5, vert6, color);
-        drawLine(vert6, vert7, color);
-        drawLine(vert7, vert8, color);
-        drawLine(vert8, vert5, color);
+        Debug.drawBox(voxel, new Vector3f(voxel).add(1, 1, 1), color);
     }
 
     public static void highlightVoxel(Vector3f voxel) {
         highlightVoxel(voxel, new Vector3f(1, 1, 1));
+    }
+
+    public static void drawChunkBorders() {
+        Player player = Game.getInstance().getPlayer();
+        int chunkX = (player.getBlockPos().x >> 5) * Chunk.CHUNK_SIZE;
+        int chunkY = (player.getBlockPos().y >> 5) * Chunk.CHUNK_SIZE;
+        int chunkZ = (player.getBlockPos().z >> 5) * Chunk.CHUNK_SIZE;
+        int distance = 1;
+        for (int x = chunkX - Chunk.CHUNK_SIZE*distance; x <= chunkX + Chunk.CHUNK_SIZE*distance; x += Chunk.CHUNK_SIZE) {
+            for (int y = chunkY - Chunk.CHUNK_SIZE*distance; y <= chunkY + Chunk.CHUNK_SIZE*distance; y += Chunk.CHUNK_SIZE) {
+                for (int z = chunkZ - Chunk.CHUNK_SIZE*distance; z <= chunkZ + Chunk.CHUNK_SIZE*distance; z += Chunk.CHUNK_SIZE) {
+                    drawBox(new Vector3f(x, y, z), new Vector3f(x + Chunk.CHUNK_SIZE, y + Chunk.CHUNK_SIZE, z + Chunk.CHUNK_SIZE), new Vector3f((float) 244 /255, (float) 255 /255, (float) 128 /255));
+                }
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
 import com.ezzenix.rendering.Camera;
+import com.ezzenix.rendering.WorldRenderer;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -45,6 +46,11 @@ public class InputHandler {
                 BlockPos blockPos = Game.getInstance().getPlayer().getBlockPos();
                 World world = Game.getInstance().getWorld();
                 world.setBlock(blockPos, BlockType.AIR);
+            }
+            if (key == GLFW_KEY_G && action == GLFW_RELEASE) {
+                System.out.println("Chunk meshing took " + (Game.getInstance().TIME_MESH_BUILD) + "ms");
+                WorldRenderer worldRenderer = Game.getInstance().getRenderer().getWorldRenderer();
+                worldRenderer.drawChunkBorders = !worldRenderer.drawChunkBorders;
             }
         });
     }

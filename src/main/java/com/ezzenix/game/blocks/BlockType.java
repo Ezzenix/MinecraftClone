@@ -28,12 +28,12 @@ public class BlockType {
     public Vector2f[] textureUVBottom;
 
     public BlockType(String name) {
-        this.id = BlockRegistry.registerBlock(this);
         this.name = name;
         this.transparent = false;
         this.isFlower = false;
         this.isSolid = true;
         this.setTexture("stone");
+        this.id = BlockRegistry.registerBlock(this);
     }
 
     public String getName() {

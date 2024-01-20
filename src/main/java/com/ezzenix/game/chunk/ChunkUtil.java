@@ -11,7 +11,7 @@ public class ChunkUtil {
     }
 
     public static int genIndexFromLocalPosition(int x, int y, int z) {
-        int shift = log2(Chunk.CHUNK_SIZE);
+        int shift = 5;
         return x | y << shift | z << (2 * shift);
     }
     public static int getIndexFromLocalPosition(Vector3i localPos) {
@@ -19,7 +19,7 @@ public class ChunkUtil {
     }
 
     public static Vector3i getLocalPositionFromIndex(int index) {
-        int shift = log2(Chunk.CHUNK_SIZE);
+        int shift = 5;
         int mask = Chunk.CHUNK_SIZE - 1; // This is (chunkSize - 1) in decimal, representing the lowest bits
         int x = index & mask;
         int y = (index >> shift) & mask;

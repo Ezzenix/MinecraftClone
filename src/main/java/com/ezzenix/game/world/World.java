@@ -10,15 +10,13 @@ import org.joml.Vector3i;
 
 import java.util.HashMap;
 
-import static com.ezzenix.engine.utils.MathUtil.log2;
-
 public class World {
     private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
 
     public World() {
-        for (int x = 0; x < 32; x++) {
+        for (int x = 0; x < 12; x++) {
             for (int y = 0; y < 3; y++) {
-                for (int z = 0; z < 32; z++) {
+                for (int z = 0; z < 12; z++) {
                     loadChunk(x, y, z);
                 }
             }
@@ -27,10 +25,10 @@ public class World {
 
     private void loadChunk(int x, int y, int z) {
         if (y < 0) return;
-        if (chunks.get(new Vector3i(x, y, z)) != null) return;
+        Vector3i pos = new Vector3i(x, y, z);
+        if (chunks.get(pos) != null) return;
         Chunk chunk = new Chunk(x, y, z, this);
-        chunks.put(new Vector3i(x, y, z), chunk);
-        //chunk.generate();
+        chunks.put(pos, chunk);
         WorldGeneratorThread.scheduleChunkForWorldGeneration(chunk);
     }
 
@@ -42,9 +40,9 @@ public class World {
     }
 
     public Chunk getChunkAtBlockPos(BlockPos blockPos) {
-        int chunkX = blockPos.x >> log2(Chunk.CHUNK_SIZE); // Divide by chunk size (16)
-        int chunkY = blockPos.y >> log2(Chunk.CHUNK_SIZE); // Divide by chunk size (16)
-        int chunkZ = blockPos.z >> log2(Chunk.CHUNK_SIZE); // Divide by chunk size (16)
+        int chunkX = blockPos.x >> 5; // Divide by chunk size (16)
+        int chunkY = blockPos.y >> 5; // Divide by chunk size (16)
+        int chunkZ = blockPos.z >> 5; // Divide by chunk size (16)
         return chunks.get(new Vector3i(chunkX, chunkY, chunkZ));
     }
 
@@ -64,9 +62,9 @@ public class World {
 
     public void loadNewChunks() {
         Vector3f position = Game.getInstance().getPlayer().getPosition();
-        int chunkX = ((int) position.x >> log2(Chunk.CHUNK_SIZE));
-        int chunkY = ((int) position.y >> log2(Chunk.CHUNK_SIZE));
-        int chunkZ = ((int) position.z >> log2(Chunk.CHUNK_SIZE));
+        int chunkX = ((int) position.x >> 5);
+        int chunkY = ((int) position.y >> 5);
+        int chunkZ = ((int) position.z >> 5);
 
         int renderDistance = 6;
 

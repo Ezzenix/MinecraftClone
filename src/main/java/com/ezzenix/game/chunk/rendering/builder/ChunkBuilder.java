@@ -1,15 +1,14 @@
 package com.ezzenix.game.chunk.rendering.builder;
 
+import com.ezzenix.Game;
+import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.utils.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunk.Chunk;
-import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -19,17 +18,22 @@ import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class ChunkBuilder {
+    private static final Vector3i TOP_NORMAL = new Vector3i(0, 1, 0);
+    private static final Vector3i BOTTOM_NORMAL = new Vector3i(0, -1, 0);
+    private static final Vector3i RIGHT_NORMAL = new Vector3i(1, 0, 0);
+    private static final Vector3i LEFT_NORMAL = new Vector3i(-1, 0, 0);
+    private static final Vector3i FRONT_NORMAL = new Vector3i(0, 0, -1);
+    private static final Vector3i BACK_NORMAL = new Vector3i(0, 0, 1);
     static Vector3i getFaceNormal(Face face) {
         return switch (face) {
-            case TOP -> new Vector3i(0, 1, 0);
-            case BOTTOM -> new Vector3i(0, -1, 0);
-            case RIGHT -> new Vector3i(1, 0, 0);
-            case LEFT -> new Vector3i(-1, 0, 0);
-            case FRONT -> new Vector3i(0, 0, -1);
-            case BACK -> new Vector3i(0, 0, 1);
+            case TOP -> TOP_NORMAL;
+            case BOTTOM -> BOTTOM_NORMAL;
+            case RIGHT -> RIGHT_NORMAL;
+            case LEFT -> LEFT_NORMAL;
+            case FRONT -> FRONT_NORMAL;
+            case BACK -> BACK_NORMAL;
         };
     }
 
@@ -63,7 +67,7 @@ public class ChunkBuilder {
         }
         */
 
-        //long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         List<Float> vertexList = new ArrayList<>();
 
         // Blocks
@@ -161,6 +165,7 @@ public class ChunkBuilder {
         mesh.unbind();
 
         //System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
+        Game.getInstance().TIME_MESH_BUILD += (System.currentTimeMillis() - startTime);
         return mesh;
     }
 
@@ -191,10 +196,13 @@ public class ChunkBuilder {
             voxelFaces.put(face, new ArrayList<>());
         }
 
+        byte[] blockArray = chunk.getBlockArray();
+
         for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
+            byte blockId = blockArray[i];
+            if (blockId == 1) continue; // air
             Vector3i localPosition = chunk.getLocalPositionFromIndex(i);
-            BlockType type = chunk.getBlockTypeAt(localPosition);
-            if (type == null || type == BlockType.AIR || type.isFlower()) continue;
+            BlockType type = BlockRegistry.getBlockFromId(blockId);
 
             for (Face face : Face.values()) {
                 if ((type.isTransparent() && transparentBlocksOnly) || (!type.isTransparent() && !transparentBlocksOnly)) {

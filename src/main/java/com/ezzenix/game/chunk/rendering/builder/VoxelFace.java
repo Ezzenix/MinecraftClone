@@ -23,22 +23,21 @@ public class VoxelFace {
     }
 
     private int isBlockAt(Chunk chunk, Face face, Vector3i offset) {
-        Vector3i realOffset = offsetFace(face, offset);
+        applyOffsetRotation(face, offset);
 
-        BlockPos worldPos = chunk.toWorldPos(new Vector3i(this.position).add(realOffset));
+        BlockPos worldPos = chunk.toWorldPos(this.position.x + offset.x, this.position.y + offset.y, this.position.z + offset.z);
         BlockType blockType = chunk.getWorld().getBlockTypeAt(worldPos);
 
         return blockType == BlockType.AIR || !blockType.isSolid() ? 0 : 1;
     }
 
-    private Vector3i offsetFace(Face face, Vector3i offset) {
-        return switch (face) {
-            case TOP -> offset;
-            case BOTTOM -> new Vector3i(-offset.x, -offset.y, -offset.z);
-            case FRONT -> new Vector3i(offset.x, offset.z, -offset.y);
-            case BACK -> new Vector3i(-offset.x, -offset.z, offset.y);
-            case RIGHT -> new Vector3i(offset.y, -offset.x, offset.z);
-            case LEFT -> new Vector3i(-offset.y, offset.x, -offset.z);
+    private void applyOffsetRotation(Face face, Vector3i offset) {
+        switch (face) {
+            case BOTTOM -> offset.set(-offset.x, -offset.y, -offset.z);
+            case FRONT -> offset.set(offset.x, offset.z, -offset.y);
+            case BACK -> offset.set(-offset.x, -offset.z, offset.y);
+            case RIGHT -> offset.set(offset.y, -offset.x, offset.z);
+            case LEFT -> offset.set(-offset.y, offset.x, -offset.z);
         };
     }
 

@@ -34,6 +34,8 @@ public class Game {
 
     public final TextureAtlas<String> blockTextures;
 
+    public long TIME_MESH_BUILD = 0;
+
     public Game() {
         INSTANCE = this;
 

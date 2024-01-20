@@ -6,6 +6,7 @@ import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.chunk.rendering.ChunkMesh;
 import com.ezzenix.game.world.World;
+import com.ezzenix.hud.Debug;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -18,6 +19,8 @@ public class WorldRenderer {
     private final Texture blockTexture;
 
     private final Vector2f textureAtlasSize;
+
+    public boolean drawChunkBorders = false;
 
     public WorldRenderer() {
         blockTexture = new Texture(Game.getInstance().blockTextures.getAtlasImage());
@@ -34,6 +37,10 @@ public class WorldRenderer {
         World world = Game.getInstance().getWorld();
         if (world == null) return;
 
+        if (drawChunkBorders) {
+            Debug.drawChunkBorders();
+        }
+
         blockTexture.bind();
 
         Camera camera = Game.getInstance().getCamera();
@@ -42,20 +49,19 @@ public class WorldRenderer {
         Matrix4f viewProjectionMatrix = camera.getViewProjectionMatrix();
 
         // Frustum culling
-        //for (Chunk chunk : world.getChunks().values()) {
-        //    chunk.frustumBoundingBox.isShown = chunk.frustumBoundingBox.isInsideFrustum(viewProjectionMatrix);
-       // }
+        for (Chunk chunk : world.getChunks().values()) {
+            chunk.frustumBoundingBox.isShown = chunk.frustumBoundingBox.isInsideFrustum(viewProjectionMatrix);
+        }
 
         worldShader.use();
         worldShader.uploadMat4f("projectionMatrix", projectionMatrix);
         worldShader.uploadMat4f("viewMatrix", viewMatrix);
         worldShader.uploadVec2f("textureAtlasSize", textureAtlasSize);
         for (Chunk chunk : world.getChunks().values()) {
-            //if (!chunk.frustumBoundingBox.isShown) continue;
-            ChunkMesh mesh = chunk.getChunkMesh();
-            Matrix4f translationMatrix = new Matrix4f().translate(new Vector3f(chunk.x * Chunk.CHUNK_SIZE, chunk.y * Chunk.CHUNK_SIZE, chunk.z * Chunk.CHUNK_SIZE));
-            worldShader.uploadMat4f("chunkPosition", translationMatrix);
-            mesh.renderBlocks();
+            if (!chunk.frustumBoundingBox.isShown) continue;
+            ChunkMesh chunkMesh = chunk.getChunkMesh();
+            worldShader.uploadMat4f("chunkPosition", chunkMesh.getTranslationMatrix());
+            chunkMesh.renderBlocks();
         }
 
         waterShader.use();
@@ -68,11 +74,10 @@ public class WorldRenderer {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthMask(false);
         for (Chunk chunk : world.getChunks().values()) {
-            //if (!chunk.frustumBoundingBox.isShown) continue;
-            ChunkMesh mesh = chunk.getChunkMesh();
-            Matrix4f translationMatrix = new Matrix4f().translate(new Vector3f(chunk.x * Chunk.CHUNK_SIZE, chunk.y * Chunk.CHUNK_SIZE, chunk.z * Chunk.CHUNK_SIZE));
-            waterShader.uploadMat4f("chunkPosition", translationMatrix);
-            mesh.renderWater();
+            if (!chunk.frustumBoundingBox.isShown) continue;
+            ChunkMesh chunkMesh = chunk.getChunkMesh();
+            waterShader.uploadMat4f("chunkPosition", chunkMesh.getTranslationMatrix());
+            chunkMesh.renderWater();
         }
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
