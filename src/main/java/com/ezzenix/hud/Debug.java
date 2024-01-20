@@ -5,6 +5,7 @@ import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import static org.lwjgl.opengl.GL15.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_LINES;
 import static org.lwjgl.opengl.GL30.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glVertexAttribPointer;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Debug {
     private static final Shader debugShader = new Shader("debugLine.vert", "debugLine.frag");
@@ -21,24 +23,26 @@ public class Debug {
     private static final List<Float> vertexBatch = new ArrayList<>();
 
     public static void renderBatch() {
-        Camera camera = Game.getInstance().getCamera();
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            Camera camera = Game.getInstance().getCamera();
 
-        debugShader.use();
-        debugShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
-        debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
+            debugShader.use();
+            debugShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
+            debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
 
-        FloatBuffer buffer = Mesh.floatListTobuffer(vertexBatch);
-        Mesh mesh = new Mesh(buffer, vertexBatch.size()/6, GL_LINES);
-        vertexBatch.clear();
+            FloatBuffer buffer = Mesh.convertToBuffer(vertexBatch, stack);
+            Mesh mesh = new Mesh(buffer, vertexBatch.size() / 6, GL_LINES);
+            vertexBatch.clear();
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
-        glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
+            glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
-        glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
+            glEnableVertexAttribArray(1);
 
-        mesh.render();
-        mesh.dispose();
+            mesh.render();
+            mesh.dispose();
+        }
     }
 
     public static void drawLine(Vector3f pos1, Vector3f pos2, Vector3f color) {

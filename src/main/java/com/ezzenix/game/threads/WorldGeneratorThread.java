@@ -19,6 +19,10 @@ public class WorldGeneratorThread {
             this.chunk = chunk;
             this.blocks = new HashMap<>();
         }
+
+        public void setBlock(BlockPos blockPos, BlockType blockType) {
+            this.blocks.put(blockPos, blockType);
+        }
     }
 
     private static WorkerThread<Chunk, WorldGeneratorOutput> workerThread;
@@ -35,6 +39,7 @@ public class WorldGeneratorThread {
                         output.chunk.setBlock(blockPos, blockType);
                     }
                     output.chunk.updateMesh(false);
+                    output.blocks.clear(); // free memory (maybe)
                     return null;
                 }
         );

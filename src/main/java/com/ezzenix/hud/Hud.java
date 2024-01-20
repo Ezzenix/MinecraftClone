@@ -8,10 +8,9 @@ import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.font.FontRenderer;
 import com.ezzenix.hud.font.TextComponent;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import java.awt.*;
+import java.awt.Font;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -21,24 +20,22 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 
 public class Hud {
     FontRenderer fontRenderer;
-    com.ezzenix.hud.font.TextComponent fpsText;
-    com.ezzenix.hud.font.TextComponent positionText;
-    com.ezzenix.hud.font.TextComponent cameraText;
-    com.ezzenix.hud.font.TextComponent vertexText;
-    com.ezzenix.hud.font.TextComponent memoryText;
+    TextComponent fpsText;
+    TextComponent positionText;
+    TextComponent cameraText;
+    TextComponent vertexText;
+    TextComponent memoryText;
 
     Shader textShader;
-
-    public Matrix4f hudProjectionMatrix = new Matrix4f().setOrtho2D(0, 500, 0, 500);
 
     public Hud() {
         this.textShader = new Shader("text.vert", "text.frag");
         this.fontRenderer = new FontRenderer(new Font("Arial", Font.PLAIN, 18));
 
-        fpsText = new com.ezzenix.hud.font.TextComponent(fontRenderer, "", 6, 6);
-        positionText = new com.ezzenix.hud.font.TextComponent(fontRenderer, "", 6, 6 + 18);
-        cameraText = new com.ezzenix.hud.font.TextComponent(fontRenderer, "", 6, 6 + 18 * 2);
-        vertexText = new com.ezzenix.hud.font.TextComponent(fontRenderer, "", 6, 6 + 18 * 3);
+        fpsText = new TextComponent(fontRenderer, "", 6, 6);
+        positionText = new TextComponent(fontRenderer, "", 6, 6 + 18);
+        cameraText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 2);
+        vertexText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 3);
         memoryText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 4);
 
         Scheduler.runPeriodic(() -> {
@@ -75,7 +72,7 @@ public class Hud {
         }
     }
 
-    public void render(long window) {
+    public void render() {
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);

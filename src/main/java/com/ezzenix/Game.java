@@ -2,6 +2,7 @@ package com.ezzenix;
 
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.engine.scheduler.Scheduler;
+import com.ezzenix.engine.utils.FileIO;
 import com.ezzenix.engine.utils.TextureAtlas;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.entities.Player;

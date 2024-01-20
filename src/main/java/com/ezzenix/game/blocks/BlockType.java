@@ -12,7 +12,7 @@ public class BlockType {
     public static final BlockType OAK_PLANKS = new BlockType("Oak Planks").setTexture("oak_planks");
     public static final BlockType WATER = new BlockType("Water").setTexture("water").setTransparent(true);
     public static final BlockType SAND = new BlockType("Sand").setTexture("sand");
-    public static final BlockType OAK_LEAVES = new BlockType("Oak Leaves").setTexture("oak_leaves");
+    public static final BlockType OAK_LEAVES = new BlockType("Oak Leaves").setTexture("oak_leaves").setTransparent(true);
     public static final BlockType OAK_LOG = new BlockType("Oak Log").setTexture("oak_log").setTextureTop("oak_log_top").setTextureBottom("oak_log_top");
     public static final BlockType GRASS = new BlockType("Grass").setTexture("grass_block_top").turnIntoFlower();
 

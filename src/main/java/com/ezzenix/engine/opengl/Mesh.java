@@ -1,9 +1,11 @@
 package com.ezzenix.engine.opengl;
 
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
+
 import java.nio.FloatBuffer;
 import java.util.List;
 
-import static org.lwjgl.BufferUtils.createFloatBuffer;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -53,18 +55,35 @@ public class Mesh {
     }
 
     // Helper methods
-    public static FloatBuffer floatArrayToBuffer(float[] floats) {
-        FloatBuffer buffer = createFloatBuffer(floats.length);
+    public static FloatBuffer convertToBuffer(float[] floats, MemoryStack stack) {
+        FloatBuffer buffer = stack.mallocFloat(floats.length);
         buffer.put(floats);
         buffer.flip();
         return buffer;
     }
 
-    public static FloatBuffer floatListTobuffer(List<Float> floats) {
-        float[] floatArray = new float[floats.size()];
-        for (int i = 0; i < floats.size(); i++) {
-            floatArray[i] = floats.get(i);
+    public static FloatBuffer convertToBuffer(List<Float> floats, MemoryStack stack) {
+        FloatBuffer buffer = stack.mallocFloat(floats.size());
+        for (Float v : floats) {
+            buffer.put(v);
         }
-        return floatArrayToBuffer(floatArray);
+        buffer.flip();
+        return buffer;
+    }
+
+    public static FloatBuffer convertToBuffer(float[] floats) {
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(floats.length);
+        buffer.put(floats);
+        buffer.flip();
+        return buffer;
+    }
+
+    public static FloatBuffer convertToBuffer(List<Float> floats) {
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(floats.size());
+        for (Float v : floats) {
+            buffer.put(v);
+        }
+        buffer.flip();
+        return buffer;
     }
 }

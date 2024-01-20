@@ -7,6 +7,8 @@ import com.ezzenix.rendering.Camera;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
@@ -18,10 +20,23 @@ public class InputHandler {
     public InputHandler() {
         handleMouse();
 
+        AtomicBoolean wireframeMode = new AtomicBoolean(false);
         glfwSetKeyCallback(Game.getInstance().getWindow().getId(), (window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_F5 && action == GLFW_RELEASE) {
                 Camera camera = Game.getInstance().getCamera();
                 camera.thirdPerson = !camera.thirdPerson;
+            }
+            if (key == GLFW_KEY_Z && action == GLFW_RELEASE) {
+                wireframeMode.set(!wireframeMode.get());
+                if (wireframeMode.get()) {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                    glDisable(GL_DEPTH_TEST);
+                    glDisable(GL_CULL_FACE);
+                } else {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                    glEnable(GL_DEPTH_TEST);
+                    glEnable(GL_CULL_FACE);
+                }
             }
         });
     }

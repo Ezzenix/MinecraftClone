@@ -52,6 +52,8 @@ public class Window {
             Configuration.DEBUG_STACK.set(true);
         }
 
+        Configuration.STACK_SIZE.set(1024);
+
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
@@ -74,22 +76,6 @@ public class Window {
             this.width = width;
             this.height = height;
             glViewport(0, 0, width, height);
-        });
-
-        AtomicBoolean wireframeMode = new AtomicBoolean(false);
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_Z && action == GLFW_RELEASE) {
-                wireframeMode.set(!wireframeMode.get());
-                if (wireframeMode.get()) {
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                    glDisable(GL_DEPTH_TEST);
-                    glDisable(GL_CULL_FACE);
-                } else {
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                    glEnable(GL_DEPTH_TEST);
-                    glEnable(GL_CULL_FACE);
-                }
-            }
         });
 
         glfwSetWindowIconifyCallback(window, (window, iconified) -> {

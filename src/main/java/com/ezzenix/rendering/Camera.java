@@ -7,29 +7,24 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Camera {
-    private Entity entity;
+    private final Entity entity;
     public boolean thirdPerson = false;
+
+    private Matrix4f projectionMatrix;
 
     public Camera() {
         this.entity = Game.getInstance().getPlayer();
-    }
 
-    public Entity getEntity() {
-        return entity;
-    }
-
-    public Matrix4f getProjectionMatrix() {
-        // Example parameters
+        // Initialize projection matrix
         float fov = 70.0f;
         float aspectRatio = 16.0f / 9.0f;
         float near = 0.1f;
         float far = 2000.0f;
+        projectionMatrix = new Matrix4f().perspective(fov, aspectRatio, near, far);
+    }
 
-        // Create a perspective projection matrix
-        Matrix4f projectionMatrix = new Matrix4f();
-        projectionMatrix.perspective(fov, aspectRatio, near, far);
-
-        return projectionMatrix;
+    public Matrix4f getProjectionMatrix() {
+        return this.projectionMatrix;
     }
 
     public Vector3f getLookVector() {

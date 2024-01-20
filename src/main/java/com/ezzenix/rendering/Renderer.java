@@ -23,7 +23,7 @@ public class Renderer {
         Debug.drawLine(new Vector3f(0, -1, 0), new Vector3f(10, -1, 0), new Vector3f(1, 0, 0)); // x
 
         worldRenderer.render(window);
-        Game.getInstance().getHud().render(window);
+        Game.getInstance().getHud().render();
         Debug.renderBatch();
 
         glfwSwapBuffers(window); // swap the color buffers

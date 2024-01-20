@@ -9,6 +9,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class ChunkBuilder {
     static Vector3i getFaceNormal(Face face) {
@@ -61,106 +63,105 @@ public class ChunkBuilder {
         }
         */
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            //long startTime = System.currentTimeMillis();
-            List<Float> vertexList = new ArrayList<>();
+        //long startTime = System.currentTimeMillis();
+        List<Float> vertexList = new ArrayList<>();
 
-            // Blocks
-            for (GreedyShape shape : generateShapes(chunk, transparentBlocksOnly)) {
-                BlockType blockType = BlockRegistry.getBlockFromId(shape.initialVoxelFace.blockId);
+        // Blocks
+        for (GreedyShape shape : generateShapes(chunk, transparentBlocksOnly)) {
+            BlockType blockType = BlockRegistry.getBlockFromId(shape.initialVoxelFace.blockId);
 
-                Vector2f[] textureUV = getBlockTextureUV(blockType, shape.initialVoxelFace.face);
+            Vector2f[] textureUV = getBlockTextureUV(blockType, shape.initialVoxelFace.face);
 
-                // Voxel coordinates are at the bottom corner of the blocks, so offset max by 1 to cover the last blocks
-                shape.maxX += 1;
-                shape.maxY += 1;
-                shape.maxZ += 1;
+            // Voxel coordinates are at the bottom corner of the blocks, so offset max by 1 to cover the last blocks
+            shape.maxX += 1;
+            shape.maxY += 1;
+            shape.maxZ += 1;
 
-                Vector3f vert1 = new Vector3f();
-                Vector3f vert2 = new Vector3f();
-                Vector3f vert3 = new Vector3f();
-                Vector3f vert4 = new Vector3f();
+            Vector3f vert1 = new Vector3f();
+            Vector3f vert2 = new Vector3f();
+            Vector3f vert3 = new Vector3f();
+            Vector3f vert4 = new Vector3f();
 
-                Vector2f shapeSize = new Vector2f();
+            Vector2f shapeSize = new Vector2f();
 
-                // NOTE: Voxel coordinates are at the bottom corner of the blocks
-                switch (shape.initialVoxelFace.face) {
-                    case TOP: {
-                        vert1.set(shape.minX, shape.maxY, shape.minZ);
-                        vert2.set(shape.minX, shape.maxY, shape.maxZ);
-                        vert3.set(shape.maxX, shape.maxY, shape.maxZ);
-                        vert4.set(shape.maxX, shape.maxY, shape.minZ);
-                        shapeSize.set(shape.maxX - shape.minX, shape.maxZ - shape.minZ);
-                        break;
-                    }
-                    case BOTTOM: {
-                        vert1.set(shape.minX, shape.minY, shape.maxZ);
-                        vert2.set(shape.minX, shape.minY, shape.minZ);
-                        vert3.set(shape.maxX, shape.minY, shape.minZ);
-                        vert4.set(shape.maxX, shape.minY, shape.maxZ);
-                        shapeSize.set(shape.maxX - shape.minX, shape.maxZ - shape.minZ);
-                        break;
-                    }
-                    case FRONT: {
-                        vert1.set(shape.maxX, shape.maxY, shape.minZ);
-                        vert2.set(shape.maxX, shape.minY, shape.minZ);
-                        vert3.set(shape.minX, shape.minY, shape.minZ);
-                        vert4.set(shape.minX, shape.maxY, shape.minZ);
-                        shapeSize.set(shape.maxX - shape.minX, shape.maxY - shape.minY);
-                        break;
-                    }
-                    case BACK: {
-                        vert1.set(shape.minX, shape.maxY, shape.maxZ);
-                        vert2.set(shape.minX, shape.minY, shape.maxZ);
-                        vert3.set(shape.maxX, shape.minY, shape.maxZ);
-                        vert4.set(shape.maxX, shape.maxY, shape.maxZ);
-                        shapeSize.set(shape.maxX - shape.minX, shape.maxY - shape.minY);
-                        break;
-                    }
-                    case LEFT: {
-                        vert1.set(shape.minX, shape.maxY, shape.minZ);
-                        vert2.set(shape.minX, shape.minY, shape.minZ);
-                        vert3.set(shape.minX, shape.minY, shape.maxZ);
-                        vert4.set(shape.minX, shape.maxY, shape.maxZ);
-                        shapeSize.set(shape.maxZ - shape.minZ, shape.maxY - shape.minY);
-                        break;
-                    }
-                    case RIGHT: {
-                        vert1.set(shape.maxX, shape.maxY, shape.maxZ);
-                        vert2.set(shape.maxX, shape.minY, shape.maxZ);
-                        vert3.set(shape.maxX, shape.minY, shape.minZ);
-                        vert4.set(shape.maxX, shape.maxY, shape.minZ);
-                        shapeSize.set(shape.maxZ - shape.minZ, shape.maxY - shape.minY);
-                        break;
-                    }
+            // NOTE: Voxel coordinates are at the bottom corner of the blocks
+            switch (shape.initialVoxelFace.face) {
+                case TOP: {
+                    vert1.set(shape.minX, shape.maxY, shape.minZ);
+                    vert2.set(shape.minX, shape.maxY, shape.maxZ);
+                    vert3.set(shape.maxX, shape.maxY, shape.maxZ);
+                    vert4.set(shape.maxX, shape.maxY, shape.minZ);
+                    shapeSize.set(shape.maxX - shape.minX, shape.maxZ - shape.minZ);
+                    break;
                 }
-
-                addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
-                addVertex(vertexList, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao2);
-                addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
-
-                addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
-                addVertex(vertexList, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao4);
-                addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
+                case BOTTOM: {
+                    vert1.set(shape.minX, shape.minY, shape.maxZ);
+                    vert2.set(shape.minX, shape.minY, shape.minZ);
+                    vert3.set(shape.maxX, shape.minY, shape.minZ);
+                    vert4.set(shape.maxX, shape.minY, shape.maxZ);
+                    shapeSize.set(shape.maxX - shape.minX, shape.maxZ - shape.minZ);
+                    break;
+                }
+                case FRONT: {
+                    vert1.set(shape.maxX, shape.maxY, shape.minZ);
+                    vert2.set(shape.maxX, shape.minY, shape.minZ);
+                    vert3.set(shape.minX, shape.minY, shape.minZ);
+                    vert4.set(shape.minX, shape.maxY, shape.minZ);
+                    shapeSize.set(shape.maxX - shape.minX, shape.maxY - shape.minY);
+                    break;
+                }
+                case BACK: {
+                    vert1.set(shape.minX, shape.maxY, shape.maxZ);
+                    vert2.set(shape.minX, shape.minY, shape.maxZ);
+                    vert3.set(shape.maxX, shape.minY, shape.maxZ);
+                    vert4.set(shape.maxX, shape.maxY, shape.maxZ);
+                    shapeSize.set(shape.maxX - shape.minX, shape.maxY - shape.minY);
+                    break;
+                }
+                case LEFT: {
+                    vert1.set(shape.minX, shape.maxY, shape.minZ);
+                    vert2.set(shape.minX, shape.minY, shape.minZ);
+                    vert3.set(shape.minX, shape.minY, shape.maxZ);
+                    vert4.set(shape.minX, shape.maxY, shape.maxZ);
+                    shapeSize.set(shape.maxZ - shape.minZ, shape.maxY - shape.minY);
+                    break;
+                }
+                case RIGHT: {
+                    vert1.set(shape.maxX, shape.maxY, shape.maxZ);
+                    vert2.set(shape.maxX, shape.minY, shape.maxZ);
+                    vert3.set(shape.maxX, shape.minY, shape.minZ);
+                    vert4.set(shape.maxX, shape.maxY, shape.minZ);
+                    shapeSize.set(shape.maxZ - shape.minZ, shape.maxY - shape.minY);
+                    break;
+                }
             }
 
-            FloatBuffer buffer = Mesh.floatListTobuffer(vertexList);
+            addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
+            addVertex(vertexList, vert2, new Vector2f(textureUV[1]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao2);
+            addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
 
-            Mesh mesh = new Mesh(buffer, vertexList.size() / 6);
-
-            int stride = 6 * Float.BYTES;
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, 3 * Float.BYTES);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(2, 1, GL_FLOAT, false, stride, 5 * Float.BYTES);
-            glEnableVertexAttribArray(2);
-
-            mesh.unbind();
-
-            //System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
-            return mesh;
+            addVertex(vertexList, vert3, new Vector2f(textureUV[2]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao3);
+            addVertex(vertexList, vert4, new Vector2f(textureUV[3]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao4);
+            addVertex(vertexList, vert1, new Vector2f(textureUV[0]).add(shapeSize.x, shapeSize.y), shape.initialVoxelFace.ao1);
         }
+
+
+        FloatBuffer buffer = Mesh.convertToBuffer(vertexList);
+
+        Mesh mesh = new Mesh(buffer, vertexList.size() / 6);
+
+        int stride = 6 * Float.BYTES;
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, 3 * Float.BYTES);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 1, GL_FLOAT, false, stride, 5 * Float.BYTES);
+        glEnableVertexAttribArray(2);
+
+        mesh.unbind();
+
+        //System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
+        return mesh;
     }
 
     private static void addVertex(List<Float> vertexList, Vector3f pos, Vector2f uv, float aoFactor) {

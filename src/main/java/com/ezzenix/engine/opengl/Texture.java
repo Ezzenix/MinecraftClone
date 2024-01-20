@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 import static org.lwjgl.opengl.GL45.glGenerateTextureMipmap;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Texture {
     private final int id;
@@ -21,6 +22,8 @@ public class Texture {
         setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        memFree(data);
     }
 
     public Texture(BufferedImage image) {

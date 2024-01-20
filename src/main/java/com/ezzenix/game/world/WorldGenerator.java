@@ -33,21 +33,29 @@ public class WorldGenerator {
         return BlockType.OAK_PLANKS;
     }
 
-    public static void placeTree(Chunk chunk, BlockPos blockPos) {
-        chunk.setBlock(blockPos.add(new BlockPos(0, 0, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 1, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 2, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 3, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 4, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 5, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 6, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 7, 0)), BlockType.OAK_LOG);
+    public static void placeTree(WorldGeneratorThread.WorldGeneratorOutput output, Chunk chunk, BlockPos blockPos) {
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                if ((x==-2 && z==-2) || (x==2 && z==2) || (x==-2 && z==2) || (x==2 && z==-2)) continue;
+                output.setBlock(blockPos.add(new BlockPos(x, 3, z)), BlockType.OAK_LEAVES);
+                output.setBlock(blockPos.add(new BlockPos(x, 4, z)), BlockType.OAK_LEAVES);
+            }
+        }
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                output.setBlock(blockPos.add(new BlockPos(x, 5, z)), BlockType.OAK_LEAVES);
+				if ((x != -1 || z != -1) && (x != 1 || z != 1) && (x != -1 || z != 1) && (x != 1 || z != -1)) {
+					output.setBlock(blockPos.add(new BlockPos(x, 6, z)), BlockType.OAK_LEAVES);
+				};
+            }
+        }
 
-        chunk.setBlock(blockPos.add(new BlockPos(1, 7, 0)), BlockType.OAK_LEAVES);
-        chunk.setBlock(blockPos.add(new BlockPos(-1, 7, 0)), BlockType.OAK_LEAVES);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 7, 1)), BlockType.OAK_LEAVES);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 7, -1)), BlockType.OAK_LEAVES);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 8, 0)), BlockType.OAK_LEAVES);
+        // Logs
+        output.setBlock(blockPos.add(new BlockPos(0, 0, 0)), BlockType.OAK_LOG);
+        output.setBlock(blockPos.add(new BlockPos(0, 1, 0)), BlockType.OAK_LOG);
+        output.setBlock(blockPos.add(new BlockPos(0, 2, 0)), BlockType.OAK_LOG);
+        output.setBlock(blockPos.add(new BlockPos(0, 3, 0)), BlockType.OAK_LOG);
+        output.setBlock(blockPos.add(new BlockPos(0, 4, 0)), BlockType.OAK_LOG);
     }
 
     public static WorldGeneratorThread.WorldGeneratorOutput generateChunk(Chunk chunk) {
@@ -55,15 +63,19 @@ public class WorldGenerator {
 
         WorldGeneratorThread.WorldGeneratorOutput output = new WorldGeneratorThread.WorldGeneratorOutput(chunk);
 
-        for (int localX = 0; localX < 16; localX++) {
-            for (int localY = 0; localY < 16; localY++) {
-                for (int localZ = 0; localZ < 16; localZ++) {
-                    int absoluteX = chunk.x * 16 + localX;
-                    int absoluteY = chunk.y * 16 + localY;
-                    int absoluteZ = chunk.z * 16 + localZ;
+        for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
+            for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
+                for (int localZ = 0; localZ < Chunk.CHUNK_SIZE; localZ++) {
+                    int absoluteX = chunk.x * Chunk.CHUNK_SIZE + localX;
+                    int absoluteY = chunk.y * Chunk.CHUNK_SIZE + localY;
+                    int absoluteZ = chunk.z * Chunk.CHUNK_SIZE + localZ;
 
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
                     float density = (float) absoluteY / (16 * 4);
+
+                    if ((localX == 7) && (localZ == 7) && (absoluteY == 50)) {
+                        placeTree(output, chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
+                    }
 
                     if (value > density) {
                         output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);

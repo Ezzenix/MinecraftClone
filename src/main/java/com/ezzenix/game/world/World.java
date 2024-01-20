@@ -14,9 +14,9 @@ public class World {
     private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
 
     public World() {
-        for (int x = 0; x < 12; x++) {
+        for (int x = 0; x < 64; x++) {
             for (int y = 0; y < 5; y++) {
-                for (int z = 0; z < 12; z++) {
+                for (int z = 0; z < 64; z++) {
                     loadChunk(x, y, z);
                 }
             }
@@ -59,7 +59,7 @@ public class World {
         int chunkY = ((int) position.y >> 4);
         int chunkZ = ((int) position.z >> 4);
 
-        int renderDistance = 3;
+        int renderDistance = 6;
 
         for (int x = chunkX - renderDistance; x < chunkX + renderDistance; x++) {
             for (int y = chunkY - renderDistance; y < chunkY + renderDistance; y++) {

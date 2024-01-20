@@ -12,7 +12,7 @@ import org.joml.Vector3f;
 import java.text.DecimalFormat;
 
 public class Physics {
-	private static float gameSpeed = 0.2f;
+	private static float gameSpeed = 1f;
 
 	private static void stepEntity(Entity entity) {
 		float deltaTime = Scheduler.getDeltaTime();
@@ -58,7 +58,8 @@ public class Physics {
 					if (intersection.length() > 0) {
 						System.out.println(intersection.toString(new DecimalFormat("#.##")));
 						Debug.highlightVoxel(new Vector3f(blockPos.x, blockPos.y, blockPos.z), new Vector3f(1, 0, 0));
-						isColliding = true;
+						//isColliding = true;
+						nextPosition.add(0, intersection.y, 0);
 					}
 				}
 			}
@@ -71,8 +72,8 @@ public class Physics {
 	}
 
 	public static void step() {
-		for (Entity entity : Game.getInstance().getEntities()) {
-			stepEntity(entity);
-		}
+		//for (Entity entity : Game.getInstance().getEntities()) {
+		//	stepEntity(entity);
+		//}
 	}
 }
