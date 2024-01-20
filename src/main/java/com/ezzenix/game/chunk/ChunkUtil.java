@@ -1,9 +1,7 @@
 package com.ezzenix.game.chunk;
 
-import com.ezzenix.engine.utils.BlockPos;
+import com.ezzenix.engine.core.BlockPos;
 import org.joml.Vector3i;
-
-import static com.ezzenix.engine.utils.MathUtil.*;
 
 public class ChunkUtil {
     public static Vector3i getLocalPosition(Chunk chunk, BlockPos blockPos) {

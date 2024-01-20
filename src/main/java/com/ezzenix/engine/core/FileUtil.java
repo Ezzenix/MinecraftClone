@@ -1,4 +1,4 @@
-package com.ezzenix.engine.opengl.utils;
+package com.ezzenix.engine.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;

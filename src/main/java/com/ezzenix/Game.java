@@ -1,9 +1,9 @@
 package com.ezzenix;
 
+import com.ezzenix.engine.core.FrustumBoundingBox;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.engine.utils.FileIO;
-import com.ezzenix.engine.utils.TextureAtlas;
+import com.ezzenix.engine.core.TextureAtlas;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.physics.Physics;
@@ -62,6 +62,8 @@ public class Game {
             Game.getInstance().getWorld().loadNewChunks();
         }, 1000);
 
+        //FrustumBoundingBox test = new FrustumBoundingBox(new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
+
         // Game loop
         while (!window.shouldWindowClose()) {
             Scheduler.update();
@@ -69,6 +71,9 @@ public class Game {
             Physics.step();
 
             this.getRenderer().render(window.getId());
+
+            //boolean isViewingTest = test.isInsideFrustum(camera.getViewProjectionMatrix());
+            //System.out.println(isViewingTest);
 
             glfwPollEvents();
             int glError = glGetError();

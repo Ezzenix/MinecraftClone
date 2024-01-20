@@ -1,12 +1,10 @@
 package com.ezzenix.game.threads;
 
-import com.ezzenix.engine.utils.BlockPos;
-import com.ezzenix.engine.utils.WorkerThread;
+import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.engine.core.WorkerThread;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.world.WorldGenerator;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.util.HashMap;
 

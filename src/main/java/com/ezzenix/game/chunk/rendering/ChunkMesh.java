@@ -1,5 +1,6 @@
 package com.ezzenix.game.chunk.rendering;
 
+import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.chunk.rendering.builder.ChunkBuilder;
 import com.ezzenix.engine.opengl.Mesh;
@@ -31,11 +32,11 @@ public class ChunkMesh {
             waterMesh = ChunkBuilder.createMesh(chunk, true);
         }
         if (!dontTriggerUpdatesAround) {
-            for (Vector3f face : com.ezzenix.engine.opengl.utils.OldFace.ALL) {
+            for (Face face : Face.values()) {
                 Chunk c = this.chunk.getWorld().getChunk(
-                        (int) (chunk.x + face.x),
-                        (int) (chunk.y + face.y),
-                        (int) (chunk.z + face.z)
+                        chunk.x + face.getNormal().x,
+                        chunk.y + face.getNormal().y,
+                        chunk.z + face.getNormal().z
                 );
                 if (c != null) {
                     c.updateMesh(true);

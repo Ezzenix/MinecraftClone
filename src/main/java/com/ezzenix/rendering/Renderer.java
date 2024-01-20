@@ -12,7 +12,7 @@ public class Renderer {
 
     public Renderer() {
         this.worldRenderer = new WorldRenderer();
-        glClearColor(110f / 255f, 177f / 255f, 1.0f, 1.0f);
+        glClearColor(110f / 255f, 177f / 255f, 1.0f, 0.0f);
     }
 
     public void render(long window) {

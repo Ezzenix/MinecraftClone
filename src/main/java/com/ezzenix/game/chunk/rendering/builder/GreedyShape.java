@@ -1,5 +1,6 @@
 package com.ezzenix.game.chunk.rendering.builder;
 
+import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.game.chunk.Chunk;
 import org.joml.Vector3i;
 
@@ -81,7 +82,7 @@ public class GreedyShape {
             possibleVoxelFaces.remove(initalVoxelFace);
 
             for (Face face : Face.values()) {
-                Vector3i direction = ChunkBuilder.getFaceNormal(face);
+                Vector3i direction = face.getNormal();
 
                 List<VoxelFace> voxelsAtEdge = new ArrayList<>();
                 for (VoxelFace voxel : shape.voxels) {

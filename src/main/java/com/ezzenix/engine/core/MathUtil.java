@@ -1,4 +1,4 @@
-package com.ezzenix.engine.utils;
+package com.ezzenix.engine.core;
 
 public class MathUtil {
 	public static int log2(int value) {

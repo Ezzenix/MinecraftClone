@@ -14,7 +14,9 @@ public class BlockType {
     public static final BlockType SAND = new BlockType("Sand").setTexture("sand");
     public static final BlockType OAK_LEAVES = new BlockType("Oak Leaves").setTexture("oak_leaves").setTransparent(true);
     public static final BlockType OAK_LOG = new BlockType("Oak Log").setTexture("oak_log").setTextureTop("oak_log_top").setTextureBottom("oak_log_top");
-    public static final BlockType GRASS = new BlockType("Grass").setTexture("grass_block_top").turnIntoFlower();
+    public static final BlockType GRASS = new BlockType("Grass").setTexture("grass").setTransparent(true).turnIntoFlower();
+    public static final BlockType POPPY = new BlockType("Poppy").setTexture("poppy").setTransparent(true).turnIntoFlower();
+    public static final BlockType GLASS = new BlockType("Glass").setTexture("glass").setTransparent(true);
 
     //
     private final String name;

@@ -49,16 +49,16 @@ public class WorldRenderer {
         Matrix4f viewProjectionMatrix = camera.getViewProjectionMatrix();
 
         // Frustum culling
-        for (Chunk chunk : world.getChunks().values()) {
-            chunk.frustumBoundingBox.isShown = chunk.frustumBoundingBox.isInsideFrustum(viewProjectionMatrix);
-        }
+        //for (Chunk chunk : world.getChunks().values()) {
+        //    chunk.frustumBoundingBox.isShown = chunk.frustumBoundingBox.isInsideFrustum(viewProjectionMatrix);
+        //}
 
         worldShader.use();
         worldShader.uploadMat4f("projectionMatrix", projectionMatrix);
         worldShader.uploadMat4f("viewMatrix", viewMatrix);
         worldShader.uploadVec2f("textureAtlasSize", textureAtlasSize);
         for (Chunk chunk : world.getChunks().values()) {
-            if (!chunk.frustumBoundingBox.isShown) continue;
+            //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh chunkMesh = chunk.getChunkMesh();
             worldShader.uploadMat4f("chunkPosition", chunkMesh.getTranslationMatrix());
             chunkMesh.renderBlocks();
@@ -74,7 +74,7 @@ public class WorldRenderer {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthMask(false);
         for (Chunk chunk : world.getChunks().values()) {
-            if (!chunk.frustumBoundingBox.isShown) continue;
+            //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh chunkMesh = chunk.getChunkMesh();
             waterShader.uploadMat4f("chunkPosition", chunkMesh.getTranslationMatrix());
             chunkMesh.renderWater();

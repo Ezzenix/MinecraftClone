@@ -1,4 +1,4 @@
-package com.ezzenix.engine.utils;
+package com.ezzenix.engine.core;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;

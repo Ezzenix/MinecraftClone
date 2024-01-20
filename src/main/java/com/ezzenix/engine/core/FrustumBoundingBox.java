@@ -1,8 +1,7 @@
-package com.ezzenix.engine.utils;
+package com.ezzenix.engine.core;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 import org.joml.Vector4f;
 
 public class FrustumBoundingBox {

@@ -1,5 +1,6 @@
 package com.ezzenix.engine.opengl;
 
+import com.ezzenix.engine.core.ImageParser;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -127,7 +128,7 @@ public class Window {
     public void setIcon(String path) {
         GLFWImage image = GLFWImage.malloc();
         GLFWImage.Buffer imageBuffer = GLFWImage.malloc(1);
-        com.ezzenix.engine.opengl.utils.ImageParser resource = com.ezzenix.engine.opengl.utils.ImageParser.loadImage(path);
+        ImageParser resource = ImageParser.loadImage(path);
         if (resource != null) {
             image.set(resource.getWidth(), resource.getHeight(), resource.getImage());
             imageBuffer.put(0, image);

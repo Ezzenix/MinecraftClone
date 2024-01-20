@@ -1,6 +1,8 @@
 package com.ezzenix.game.chunk.rendering.builder;
 
-import com.ezzenix.engine.utils.BlockPos;
+import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.engine.core.enums.Face;
+import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunk.Chunk;
 import org.joml.Vector3i;
@@ -49,6 +51,9 @@ public class VoxelFace {
     }
 
     public void calculateAO(Chunk chunk) {
+        BlockType type = BlockRegistry.getBlockFromId(blockId);
+        if (type.isTransparent()) return;
+
         int W = isBlockAt(chunk, this.face, new Vector3i(-1, 1, 0));
         int NW = isBlockAt(chunk, this.face, new Vector3i(-1, 1, -1));
         int N = isBlockAt(chunk, this.face, new Vector3i(0, 1, -1));

@@ -1,7 +1,7 @@
 package com.ezzenix.game.chunk;
 
-import com.ezzenix.engine.utils.BlockPos;
-import com.ezzenix.engine.utils.FrustumBoundingBox;
+import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.engine.core.FrustumBoundingBox;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunk.rendering.ChunkMesh;
@@ -26,7 +26,7 @@ public class Chunk {
 
     public boolean hasGenerated = false;
 
-    public FrustumBoundingBox frustumBoundingBox;
+    //public FrustumBoundingBox frustumBoundingBox;
 
     public Chunk(int x, int y, int z, World world) {
         this.x = x;
@@ -39,10 +39,10 @@ public class Chunk {
             blocks[i] = (byte) 1;
         }
 
-        this.frustumBoundingBox = new FrustumBoundingBox(
-                new Vector3f(this.x, this.y, this.z),
-                new Vector3f(this.x + CHUNK_SIZE, this.y + CHUNK_SIZE, this.z + CHUNK_SIZE)
-        );
+        //this.frustumBoundingBox = new FrustumBoundingBox(
+        //        new Vector3f(this.x, this.y, this.z),
+        //        new Vector3f(this.x + CHUNK_SIZE, this.y + CHUNK_SIZE, this.z + CHUNK_SIZE)
+        //);
 
         this.chunkMesh = new ChunkMesh(this);
     }

@@ -1,6 +1,6 @@
 package com.ezzenix.engine.opengl;
 
-import com.ezzenix.engine.opengl.utils.FileUtil;
+import com.ezzenix.engine.core.FileUtil;
 import org.joml.*;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL33;

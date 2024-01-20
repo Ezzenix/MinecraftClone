@@ -1,12 +1,12 @@
 package com.ezzenix.game.world;
 
-import com.ezzenix.engine.utils.BlockPos;
-import com.ezzenix.engine.utils.FastNoiseLite;
+import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunk.Chunk;
 import com.ezzenix.game.threads.WorldGeneratorThread;
-import org.joml.Vector3i;
 
+import javax.swing.*;
 import java.util.Random;
 
 public class WorldGenerator {
@@ -75,6 +75,10 @@ public class WorldGenerator {
 
                     if (((localX == 7) && (localZ == 7) && (absoluteY == 50)) || ((localX == 21) && (localZ == 21) && (absoluteY == 50))) {
                         placeTree(output, chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
+                    }
+
+                    if (absoluteY == 40 && absoluteX % 2 == 0 && absoluteZ % 2 == 0) {
+                        output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), Math.random() > 0.3f ? BlockType.GRASS : BlockType.POPPY);
                     }
 
                     if (value > density) {

@@ -2,7 +2,7 @@ package com.ezzenix.game.physics;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.engine.utils.BlockPos;
+import com.ezzenix.engine.core.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.world.World;
@@ -59,7 +59,7 @@ public class Physics {
 						System.out.println(intersection.toString(new DecimalFormat("#.##")));
 						Debug.highlightVoxel(new Vector3f(blockPos.x, blockPos.y, blockPos.z), new Vector3f(1, 0, 0));
 						//isColliding = true;
-						nextPosition.add(0, intersection.y, 0);
+						//nextPosition.add(0, intersection.y, 0);
 					}
 				}
 			}

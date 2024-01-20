@@ -1,6 +1,6 @@
 package com.ezzenix.engine.opengl;
 
-import com.ezzenix.engine.utils.ImageUtil;
+import com.ezzenix.engine.core.ImageUtil;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;

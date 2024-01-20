@@ -1,8 +1,7 @@
 package com.ezzenix.game.physics;
 
-import com.ezzenix.engine.utils.BlockPos;
+import com.ezzenix.engine.core.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.entities.Entity;
 import com.ezzenix.hud.Debug;
 import org.joml.Vector3f;
 

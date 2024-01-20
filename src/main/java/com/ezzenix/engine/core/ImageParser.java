@@ -1,4 +1,4 @@
-package com.ezzenix.engine.opengl.utils;
+package com.ezzenix.engine.core;
 
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
