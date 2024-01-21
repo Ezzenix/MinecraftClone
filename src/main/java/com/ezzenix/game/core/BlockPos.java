@@ -1,4 +1,4 @@
-package com.ezzenix.engine.core;
+package com.ezzenix.game.core;
 
 import org.joml.Vector3f;
 

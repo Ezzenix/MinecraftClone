@@ -1,7 +1,7 @@
-package com.ezzenix.game.chunk.rendering.builder;
+package com.ezzenix.game.world.chunk.rendering.builder;
 
 import com.ezzenix.engine.core.enums.Face;
-import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.world.chunk.Chunk;
 import org.joml.Vector3i;
 
 import java.util.ArrayList;

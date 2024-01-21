@@ -1,18 +1,17 @@
-package com.ezzenix.game.chunk.rendering.builder;
+package com.ezzenix.game.world.chunk.rendering.builder;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.engine.opengl.Mesh;
-import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.game.core.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.world.chunk.Chunk;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.nio.FloatBuffer;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +44,7 @@ public class ChunkBuilder {
                 float flowerSize = 0.9f;
                 for (float deg = 45; deg <= (45 + 90*4); deg += 90) {
                     Vector3f lookVector = new Vector3f((float)-Math.cos(Math.toRadians(deg)), 0.0f, (float)-Math.sin(Math.toRadians(deg)));
-                    lookVector.mul(flowerSize);
+                    lookVector.mul((float)Math.pow(flowerSize, 4));
                     addQuad(vertexList,
                             new Vector3f(midPos).add(-lookVector.x, flowerSize, -lookVector.z),
                             new Vector3f(midPos).add(-lookVector.x, 0, -lookVector.z),

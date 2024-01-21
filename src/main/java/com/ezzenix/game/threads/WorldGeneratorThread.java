@@ -1,9 +1,9 @@
 package com.ezzenix.game.threads;
 
-import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.game.core.BlockPos;
 import com.ezzenix.engine.core.WorkerThread;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.world.chunk.Chunk;
 import com.ezzenix.game.world.WorldGenerator;
 
 import java.util.HashMap;

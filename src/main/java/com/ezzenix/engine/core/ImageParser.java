@@ -30,9 +30,10 @@ public class ImageParser {
     }
 
     public static ImageParser loadImage(String path) {
-        ByteBuffer image;
-        int width, height;
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            ByteBuffer image;
+            int width, height;
+
             IntBuffer comp = stack.mallocInt(1);
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
@@ -40,8 +41,9 @@ public class ImageParser {
             image = STBImage.stbi_load(path, w, h, comp, 4);
             width = w.get();
             height = h.get();
+
+            if (image == null) return null;
+            return new ImageParser(width, height, image);
         }
-        if (image == null) return null;
-        return new ImageParser(width, height, image);
     }
 }

@@ -1,10 +1,11 @@
 package com.ezzenix.game.world;
 
 import com.ezzenix.Game;
-import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.game.core.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.world.chunk.Chunk;
 import com.ezzenix.game.threads.WorldGeneratorThread;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -12,6 +13,8 @@ import java.util.HashMap;
 
 public class World {
     private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
+
+    private final HashMap<Vector2i, ChunkColumn> chunkColumns = new HashMap<>();
 
     public World() {
         for (int x = 0; x < 4; x++) {

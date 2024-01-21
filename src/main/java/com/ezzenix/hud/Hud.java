@@ -3,7 +3,7 @@ package com.ezzenix.hud;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.world.chunk.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.font.FontRenderer;

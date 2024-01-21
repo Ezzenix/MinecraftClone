@@ -1,13 +1,11 @@
-package com.ezzenix.game.chunk;
+package com.ezzenix.game.world.chunk;
 
-import com.ezzenix.engine.core.BlockPos;
-import com.ezzenix.engine.core.FrustumBoundingBox;
+import com.ezzenix.game.core.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunk.rendering.ChunkMesh;
+import com.ezzenix.game.world.chunk.rendering.ChunkMesh;
 import com.ezzenix.game.world.World;
 import com.ezzenix.game.world.WorldGenerator;
-import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 public class Chunk {

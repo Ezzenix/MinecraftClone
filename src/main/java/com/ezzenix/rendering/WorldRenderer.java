@@ -3,13 +3,12 @@ package com.ezzenix.rendering;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
-import com.ezzenix.game.chunk.Chunk;
-import com.ezzenix.game.chunk.rendering.ChunkMesh;
+import com.ezzenix.game.world.chunk.Chunk;
+import com.ezzenix.game.world.chunk.rendering.ChunkMesh;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Debug;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
 

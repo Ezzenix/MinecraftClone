@@ -2,7 +2,7 @@ package com.ezzenix.input;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.game.core.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;

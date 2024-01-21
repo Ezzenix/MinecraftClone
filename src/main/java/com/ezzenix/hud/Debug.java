@@ -2,12 +2,11 @@ package com.ezzenix.hud;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
-import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.world.chunk.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;

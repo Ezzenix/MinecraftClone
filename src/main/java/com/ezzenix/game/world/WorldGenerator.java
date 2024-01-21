@@ -1,12 +1,11 @@
 package com.ezzenix.game.world;
 
-import com.ezzenix.engine.core.BlockPos;
+import com.ezzenix.game.core.BlockPos;
 import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunk.Chunk;
+import com.ezzenix.game.world.chunk.Chunk;
 import com.ezzenix.game.threads.WorldGeneratorThread;
 
-import javax.swing.*;
 import java.util.Random;
 
 public class WorldGenerator {

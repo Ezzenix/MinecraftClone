@@ -1,8 +1,8 @@
-package com.ezzenix.game.chunk.rendering;
+package com.ezzenix.game.world.chunk.rendering;
 
 import com.ezzenix.engine.core.enums.Face;
-import com.ezzenix.game.chunk.Chunk;
-import com.ezzenix.game.chunk.rendering.builder.ChunkBuilder;
+import com.ezzenix.game.world.chunk.Chunk;
+import com.ezzenix.game.world.chunk.rendering.builder.ChunkBuilder;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
