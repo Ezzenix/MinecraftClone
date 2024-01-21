@@ -1,9 +1,9 @@
 package com.ezzenix.game.threads;
 
-import com.ezzenix.game.core.BlockPos;
+import com.ezzenix.game.BlockPos;
 import com.ezzenix.engine.core.WorkerThread;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.world.chunk.Chunk;
+import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.WorldGenerator;
 
 import java.util.HashMap;
@@ -21,6 +21,10 @@ public class WorldGeneratorThread {
         public void setBlock(BlockPos blockPos, BlockType blockType) {
             this.blocks.put(blockPos, blockType);
         }
+
+        public BlockType getBlock(BlockPos blockPos) {
+            return this.blocks.getOrDefault(blockPos, BlockType.AIR);
+        }
     }
 
     private static WorkerThread<Chunk, WorldGeneratorOutput> workerThread;
@@ -36,7 +40,7 @@ public class WorldGeneratorThread {
                         BlockType blockType = output.blocks.get(blockPos);
                         output.chunk.setBlock(blockPos, blockType);
                     }
-                    output.chunk.updateMesh(false);
+                    output.chunk.flagMeshForUpdate(false);
                     output.blocks.clear(); // free memory (maybe)
                     return null;
                 }

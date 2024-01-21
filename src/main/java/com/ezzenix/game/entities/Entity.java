@@ -1,7 +1,7 @@
 package com.ezzenix.game.entities;
 
 import com.ezzenix.Game;
-import com.ezzenix.game.core.BlockPos;
+import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.physics.AABB;
 import com.ezzenix.game.world.World;
 import org.joml.Vector3f;
@@ -70,7 +70,7 @@ public class Entity {
     }
 
     public BlockPos getBlockPos() {
-        return BlockPos.fromVector3f(position);
+        return BlockPos.from(position);
     }
 
     public World getWorld() {

@@ -1,7 +1,7 @@
 package com.ezzenix.game.physics;
 
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.core.BlockPos;
+import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.world.World;
@@ -29,7 +29,7 @@ public class Physics {
 		);
 
 		World world = entity.getWorld();
-		BlockPos nextBlockPos = BlockPos.fromVector3f(nextPosition);
+		BlockPos nextBlockPos = BlockPos.from(nextPosition);
 
 
 		boolean isColliding = false;
@@ -39,7 +39,7 @@ public class Physics {
 			for (int y = nextBlockPos.y - 1; y <= nextBlockPos.y + 2; y++) {
 				for (int z = nextBlockPos.z - 1; z <= nextBlockPos.z + 1; z++) {
 					BlockPos blockPos = new BlockPos(x, y, z);
-					BlockType blockType = world.getBlockTypeAt(blockPos);
+					BlockType blockType = world.getBlock(blockPos);
 					if (!blockType.isSolid()) continue;
 					if (blockPos == nextBlockPos) continue;
 

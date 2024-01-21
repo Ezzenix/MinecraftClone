@@ -1,68 +1,75 @@
 package com.ezzenix.game.world;
 
-import com.ezzenix.Game;
-import com.ezzenix.game.core.BlockPos;
+import com.ezzenix.game.BlockPos;
+import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.world.chunk.Chunk;
 import com.ezzenix.game.threads.WorldGeneratorThread;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.util.HashMap;
 
 public class World {
-    private final HashMap<Vector3i, Chunk> chunks = new HashMap<>();
-
-    private final HashMap<Vector2i, ChunkColumn> chunkColumns = new HashMap<>();
+    private final HashMap<ChunkPos, Chunk> chunks = new HashMap<>();
 
     public World() {
-        for (int x = 0; x < 4; x++) {
-            for (int y = 0; y < 3; y++) {
-                for (int z = 0; z < 4; z++) {
+        loadInitialChunks();
+    }
+
+    private void loadInitialChunks() {
+        int WORLD_SIZE = 32;
+        int WORLD_HEIGHT = 3;
+        for (int x = 0; x < WORLD_SIZE; x++) {
+            for (int y = 0; y < WORLD_HEIGHT; y++) {
+                for (int z = 0; z < WORLD_SIZE; z++) {
                     loadChunk(x, y, z);
                 }
             }
         }
     }
 
-    private void loadChunk(int x, int y, int z) {
-        if (y < 0) return;
-        Vector3i pos = new Vector3i(x, y, z);
-        if (chunks.get(pos) != null) return;
-        Chunk chunk = new Chunk(x, y, z, this);
-        chunks.put(pos, chunk);
+    private Chunk loadChunk(ChunkPos chunkPos) {
+        if (chunkPos.y < 0) return null;
+        if (chunks.get(chunkPos) != null) return null;
+        Chunk chunk = new Chunk(chunkPos, this);
+        chunks.put(chunkPos, chunk);
         WorldGeneratorThread.scheduleChunkForWorldGeneration(chunk);
+        return chunk;
+    }
+    private Chunk loadChunk(int x, int y, int z) {
+        return loadChunk(new ChunkPos(x, y, z));
     }
 
-    public void setBlock(BlockPos blockPos, BlockType blockType) {
-        Chunk chunk = getChunkAtBlockPos(blockPos);
-        if (chunk == null) return;
+    public synchronized void setBlock(BlockPos blockPos, BlockType blockType) {
+        ChunkPos chunkPos = ChunkPos.from(blockPos);
+        Chunk chunk = getChunk(chunkPos);
+        if (chunk == null) {
+            chunk = loadChunk(chunkPos);
+            if (chunk == null) return;
+        };
         chunk.setBlock(blockPos, blockType);
-        chunk.updateMesh(true);
+        chunk.flagMeshForUpdate(true);
     }
 
-    public Chunk getChunkAtBlockPos(BlockPos blockPos) {
-        int chunkX = blockPos.x >> 5; // Divide by chunk size (16)
-        int chunkY = blockPos.y >> 5; // Divide by chunk size (16)
-        int chunkZ = blockPos.z >> 5; // Divide by chunk size (16)
-        return chunks.get(new Vector3i(chunkX, chunkY, chunkZ));
-    }
-
-    public BlockType getBlockTypeAt(BlockPos blockPos) {
-        Chunk chunk = getChunkAtBlockPos(blockPos);
+    public synchronized BlockType getBlock(BlockPos blockPos) {
+        Chunk chunk = getChunk(blockPos);
         if (chunk == null) return BlockType.AIR;
-        return chunk.getBlockTypeAt(blockPos);
+        return chunk.getBlock(blockPos);
     }
 
+    public Chunk getChunk(ChunkPos chunkPos) {
+        return chunks.get(chunkPos);
+    }
     public Chunk getChunk(int x, int y, int z) {
-        return chunks.get(new Vector3i(x, y, z));
+        return getChunk(new ChunkPos(x, y, z));
+    }
+    public Chunk getChunk(BlockPos blockPos) {
+        return getChunk(ChunkPos.from(blockPos));
     }
 
-    public HashMap<Vector3i, Chunk> getChunks() {
+    public HashMap<ChunkPos, Chunk> getChunkMap() {
         return this.chunks;
     }
 
+    /*
     public void loadNewChunks() {
         Vector3f position = Game.getInstance().getPlayer().getPosition();
         int chunkX = ((int) position.x >> 5);
@@ -79,4 +86,5 @@ public class World {
             }
         }
     }
+     */
 }

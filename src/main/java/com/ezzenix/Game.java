@@ -1,6 +1,5 @@
 package com.ezzenix;
 
-import com.ezzenix.engine.core.FrustumBoundingBox;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.engine.core.TextureAtlas;
@@ -59,7 +58,7 @@ public class Game {
         this.inputHandler = new InputHandler();
 
         Scheduler.runPeriodic(() -> {
-            Game.getInstance().getWorld().loadNewChunks();
+            //Game.getInstance().getWorld().loadNewChunks();
         }, 1000);
 
         //FrustumBoundingBox test = new FrustumBoundingBox(new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));

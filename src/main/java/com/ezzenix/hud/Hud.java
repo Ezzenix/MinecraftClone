@@ -3,7 +3,7 @@ package com.ezzenix.hud;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.world.chunk.Chunk;
+import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.font.FontRenderer;
@@ -48,7 +48,7 @@ public class Hud {
 
             int vertexCount = 0;
             World world = Game.getInstance().getWorld();
-            for (Chunk chunk : world.getChunks().values()) {
+            for (Chunk chunk : world.getChunkMap().values()) {
                 if (chunk.getChunkMesh().getBlockMesh() != null) vertexCount += chunk.getChunkMesh().getBlockMesh().vertexCount;
                 //if (chunk.getChunkMesh() != null) vertexCount += chunk.waterMesh.vertexCount;
             }

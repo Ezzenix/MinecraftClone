@@ -1,9 +1,8 @@
 package com.ezzenix.game.world;
 
-import com.ezzenix.game.core.BlockPos;
+import com.ezzenix.game.BlockPos;
 import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.world.chunk.Chunk;
 import com.ezzenix.game.threads.WorldGeneratorThread;
 
 import java.util.Random;
@@ -65,28 +64,59 @@ public class WorldGenerator {
         for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
             for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
                 for (int localZ = 0; localZ < Chunk.CHUNK_SIZE; localZ++) {
-                    int absoluteX = chunk.x * Chunk.CHUNK_SIZE + localX;
-                    int absoluteY = chunk.y * Chunk.CHUNK_SIZE + localY;
-                    int absoluteZ = chunk.z * Chunk.CHUNK_SIZE + localZ;
+                    int absoluteX = chunk.getPos().x * Chunk.CHUNK_SIZE + localX;
+                    int absoluteY = chunk.getPos().y * Chunk.CHUNK_SIZE + localY;
+                    int absoluteZ = chunk.getPos().z * Chunk.CHUNK_SIZE + localZ;
 
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
                     float density = (float) absoluteY / (16 * 4);
 
-                    if (((localX == 7) && (localZ == 7) && (absoluteY == 50)) || ((localX == 21) && (localZ == 21) && (absoluteY == 50))) {
-                        placeTree(output, chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
-                    }
+                    //if (((localX == 7) && (localZ == 7) && (absoluteY == 50)) || ((localX == 21) && (localZ == 21) && (absoluteY == 50))) {
+                    //    placeTree(output, chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
+                    //}
 
-                    if (absoluteY == 40 && absoluteX % 2 == 0 && absoluteZ % 2 == 0) {
-                        output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), Math.random() > 0.3f ? BlockType.GRASS : BlockType.POPPY);
-                    }
+                    //if (absoluteY == 40 && absoluteX % 2 == 0 && absoluteZ % 2 == 0) {
+                    //    output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), Math.random() > 0.3f ? BlockType.GRASS : BlockType.POPPY);
+                    //}
 
                     if (value > density) {
-                        output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
+                        output.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
                     } else {
                         if (absoluteY <= 25) {
-                            output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
+                            output.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
                         }
                     }
+                }
+            }
+        }
+
+        for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
+            for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
+                for (int localZ = 0; localZ < Chunk.CHUNK_SIZE; localZ++) {
+                    int absoluteX = chunk.getPos().x * Chunk.CHUNK_SIZE + localX;
+                    int absoluteY = chunk.getPos().y * Chunk.CHUNK_SIZE + localY;
+                    int absoluteZ = chunk.getPos().z * Chunk.CHUNK_SIZE + localZ;
+
+                    BlockPos blockPos = new BlockPos(absoluteX, absoluteY, absoluteZ);
+                    BlockPos blockPosBelow = new BlockPos(absoluteX, absoluteY-1, absoluteZ);
+                    BlockType blockType = output.getBlock(blockPos);
+                    BlockType blockTypeBelow = output.getBlock(blockPosBelow);
+
+                    if (blockTypeBelow == BlockType.GRASS_BLOCK && blockType == BlockType.AIR) {
+                        if (Math.random() > 0.78f) {
+                            output.setBlock(blockPos, Math.random() > 0.15f ? BlockType.GRASS : BlockType.POPPY);
+                        } else if (Math.random() > 0.97f) {
+                            placeTree(output, chunk, blockPos);
+                        }
+                    }
+
+                    //if (((localX == 7) && (localZ == 7) && (absoluteY == 50)) || ((localX == 21) && (localZ == 21) && (absoluteY == 50))) {
+                    //    placeTree(output, chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
+                    //}
+
+                    //if (absoluteY == 40 && absoluteX % 2 == 0 && absoluteZ % 2 == 0) {
+                    //    output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), Math.random() > 0.3f ? BlockType.GRASS : BlockType.POPPY);
+                    //}
                 }
             }
         }

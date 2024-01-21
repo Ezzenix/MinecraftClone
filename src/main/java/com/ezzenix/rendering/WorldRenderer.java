@@ -3,8 +3,8 @@ package com.ezzenix.rendering;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
-import com.ezzenix.game.world.chunk.Chunk;
-import com.ezzenix.game.world.chunk.rendering.ChunkMesh;
+import com.ezzenix.game.world.Chunk;
+import com.ezzenix.game.chunkbuilder.ChunkMesh;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Debug;
 import org.joml.Matrix4f;
@@ -56,7 +56,7 @@ public class WorldRenderer {
         worldShader.uploadMat4f("projectionMatrix", projectionMatrix);
         worldShader.uploadMat4f("viewMatrix", viewMatrix);
         worldShader.uploadVec2f("textureAtlasSize", textureAtlasSize);
-        for (Chunk chunk : world.getChunks().values()) {
+        for (Chunk chunk : world.getChunkMap().values()) {
             //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh chunkMesh = chunk.getChunkMesh();
             worldShader.uploadMat4f("chunkPosition", chunkMesh.getTranslationMatrix());
@@ -72,7 +72,7 @@ public class WorldRenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthMask(false);
-        for (Chunk chunk : world.getChunks().values()) {
+        for (Chunk chunk : world.getChunkMap().values()) {
             //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh chunkMesh = chunk.getChunkMesh();
             waterShader.uploadMat4f("chunkPosition", chunkMesh.getTranslationMatrix());

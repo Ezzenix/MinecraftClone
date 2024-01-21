@@ -2,11 +2,12 @@ package com.ezzenix.hud;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
-import com.ezzenix.game.world.chunk.Chunk;
+import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -25,26 +26,28 @@ public class Debug {
     private static final List<Float> vertexBatch = new ArrayList<>();
 
     public static void renderBatch() {
-        Camera camera = Game.getInstance().getCamera();
+        try (
+            MemoryStack stack = MemoryStack.stackPush()
+        ) {
+            Camera camera = Game.getInstance().getCamera();
 
-        debugShader.use();
-        debugShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
-        debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
+            debugShader.use();
+            debugShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
+            debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
 
-        FloatBuffer buffer = Mesh.convertToBuffer(vertexBatch);
-        Mesh mesh = new Mesh(buffer, vertexBatch.size() / 6, GL_LINES);
-        vertexBatch.clear();
+            FloatBuffer buffer = Mesh.convertToBuffer(vertexBatch, stack);
+            Mesh mesh = new Mesh(buffer, vertexBatch.size() / 6, GL_LINES);
+            vertexBatch.clear();
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
-        glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
+            glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
-        glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
+            glEnableVertexAttribArray(1);
 
-        mesh.render();
-        mesh.dispose();
-
-        MemoryUtil.memFree(buffer);
+            mesh.render();
+            mesh.dispose();
+        }
     }
 
     public static void drawLine(Vector3f pos1, Vector3f pos2, Vector3f color) {
@@ -75,24 +78,24 @@ public class Debug {
         float minZ = Math.min(corner1.z, corner2.z);
         float maxZ = Math.max(corner1.z, corner2.z);
 
-        Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(maxX, minY, minZ), color);
-        Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, minY, maxZ), color);
-        Debug.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, minY, maxZ), color);
-        Debug.drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(maxX, minY, maxZ), color);
+        drawLine(new Vector3f(minX, minY, minZ), new Vector3f(maxX, minY, minZ), color);
+        drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, minY, maxZ), color);
+        drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, minY, maxZ), color);
+        drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(maxX, minY, maxZ), color);
 
-        Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, maxY, minZ), color);
-        Debug.drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(minX, maxY, maxZ), color);
-        Debug.drawLine(new Vector3f(maxX, minY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
-        Debug.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, maxY, minZ), color);
+        drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, maxY, minZ), color);
+        drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(minX, maxY, maxZ), color);
+        drawLine(new Vector3f(maxX, minY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
+        drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, maxY, minZ), color);
 
-        Debug.drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(maxX, maxY, minZ), color);
-        Debug.drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(minX, maxY, maxZ), color);
-        Debug.drawLine(new Vector3f(maxX, maxY, minZ), new Vector3f(maxX, maxY, maxZ), color);
-        Debug.drawLine(new Vector3f(minX, maxY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
+        drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(maxX, maxY, minZ), color);
+        drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(minX, maxY, maxZ), color);
+        drawLine(new Vector3f(maxX, maxY, minZ), new Vector3f(maxX, maxY, maxZ), color);
+        drawLine(new Vector3f(minX, maxY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
     }
 
     public static void highlightVoxel(Vector3f voxel, Vector3f color) {
-        Debug.drawBox(voxel, new Vector3f(voxel).add(1, 1, 1), color);
+        drawBox(voxel, new Vector3f(voxel).add(1, 1, 1), color);
     }
 
     public static void highlightVoxel(Vector3f voxel) {

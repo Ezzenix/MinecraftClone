@@ -1,4 +1,4 @@
-package com.ezzenix.game.core;
+package com.ezzenix.game;
 
 import org.joml.Vector3f;
 
@@ -18,7 +18,6 @@ public class BlockPos {
     public BlockPos add(BlockPos v) {
         return new BlockPos(x + v.x, y + v.y, z + v.z);
     }
-
     public BlockPos add(int x, int y, int z) {
         return new BlockPos(this.x + x, this.y + y, this.z + z);
     }
@@ -27,7 +26,7 @@ public class BlockPos {
         return new Vector3f(v.x + 0.5f, v.y + 0.5f, v.z + 0.5f);
     }
 
-    public static BlockPos fromVector3f(Vector3f vec) {
+    public static BlockPos from(Vector3f vec) {
         return new BlockPos(
                 (int) Math.floor(vec.x),
                 (int) Math.floor(vec.y),
@@ -36,7 +35,7 @@ public class BlockPos {
     }
 
     public String toString() {
-        return "X:" + this.x + " Y:" + this.y + " Z:" + this.z;
+        return "BlockPos(" + x + " " + y + " " + z + ")";
     }
 
     public boolean equals(Object v) {

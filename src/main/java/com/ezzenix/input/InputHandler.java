@@ -2,7 +2,7 @@ package com.ezzenix.input;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.core.BlockPos;
+import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
@@ -48,7 +48,7 @@ public class InputHandler {
                 world.setBlock(blockPos, BlockType.AIR);
             }
             if (key == GLFW_KEY_G && action == GLFW_RELEASE) {
-                System.out.println("Chunk meshing took " + (Game.getInstance().TIME_MESH_BUILD) + "ms");
+                //System.out.println("Chunk meshing took " + (Game.getInstance().TIME_MESH_BUILD) + "ms");
                 WorldRenderer worldRenderer = Game.getInstance().getRenderer().getWorldRenderer();
                 worldRenderer.drawChunkBorders = !worldRenderer.drawChunkBorders;
             }

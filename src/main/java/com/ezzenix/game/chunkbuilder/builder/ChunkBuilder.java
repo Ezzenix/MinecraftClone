@@ -1,12 +1,12 @@
-package com.ezzenix.game.world.chunk.rendering.builder;
+package com.ezzenix.game.chunkbuilder.builder;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.engine.opengl.Mesh;
-import com.ezzenix.game.core.BlockPos;
+import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.world.chunk.Chunk;
+import com.ezzenix.game.world.Chunk;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -34,8 +34,8 @@ public class ChunkBuilder {
         // Flowers
         if (transparentBlocksOnly) {
             for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
-                Vector3i localPosition = chunk.getLocalPositionFromIndex(i);
-                BlockType blockType = chunk.getBlockTypeAt(localPosition);
+                Vector3i localPosition = chunk.getLocalPosition(i);
+                BlockType blockType = chunk.getBlock(localPosition);
                 if (blockType == null || !blockType.isFlower()) continue;
                 Vector3f midPos = new Vector3f(localPosition.x + 0.5f, localPosition.y, localPosition.z + 0.5f);
 
@@ -181,7 +181,7 @@ public class ChunkBuilder {
         if (blockType == BlockType.AIR) return false;
         Vector3i faceNormal = face.getNormal();
         BlockPos neighborPos = blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
-        BlockType neighborType = chunk.getWorld().getBlockTypeAt(neighborPos);
+        BlockType neighborType = chunk.getWorld().getBlock(neighborPos);
         if (neighborType == null) neighborType = BlockType.AIR;
 
         if (blockType == neighborType) return false; // do not render face if same block
@@ -195,7 +195,7 @@ public class ChunkBuilder {
             voxelFaces.put(face, new ArrayList<>());
         }
 
-        byte[] blockArray = chunk.getBlockArray();
+        byte[] blockArray = chunk.getBlockIDs();
 
         for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
             byte blockId = blockArray[i];
@@ -203,7 +203,7 @@ public class ChunkBuilder {
             BlockType type = BlockRegistry.getBlockFromId(blockId);
             if (type.isFlower()) continue;
 
-            Vector3i localPosition = chunk.getLocalPositionFromIndex(i);
+            Vector3i localPosition = chunk.getLocalPosition(i);
 
             for (Face face : Face.values()) {
                 if ((type.isTransparent() && transparentBlocksOnly) || (!type.isTransparent() && !transparentBlocksOnly)) {
