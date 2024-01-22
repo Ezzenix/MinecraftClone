@@ -1,4 +1,4 @@
-package com.ezzenix.game.chunkbuilder.builder;
+package com.ezzenix.rendering.chunkbuilder.builder;
 
 import com.ezzenix.game.BlockPos;
 import com.ezzenix.engine.core.enums.Face;

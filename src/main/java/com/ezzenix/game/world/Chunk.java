@@ -4,7 +4,7 @@ import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunkbuilder.ChunkMesh;
+import com.ezzenix.rendering.chunkbuilder.ChunkMesh;
 import org.joml.Vector3i;
 
 import java.util.Arrays;
@@ -14,6 +14,7 @@ public class Chunk {
 	public static final int CHUNK_SIZE_SQUARED = (int) Math.pow(CHUNK_SIZE, 2);
 	public static final int CHUNK_SIZE_CUBED = (int) Math.pow(CHUNK_SIZE, 3);
 
+
 	private final ChunkPos chunkPos;
 	private final ChunkMesh chunkMesh;
 	private final World world;
@@ -21,6 +22,7 @@ public class Chunk {
 	private final byte[] blockIDs = new byte[CHUNK_SIZE_CUBED];
 	public int blockCount = 0;
 	public boolean hasGenerated = false;
+
 
 	public Chunk(ChunkPos chunkPos, World world) {
 		this.chunkPos = chunkPos;
@@ -31,11 +33,11 @@ public class Chunk {
 		this.chunkMesh = new ChunkMesh(this);
 	}
 
-
 	public void setBlock(BlockPos blockPos, BlockType blockType) {
 		int index = getIndex(getLocalPosition(blockPos));
-		if (index == -1) { // invalid index
-			//System.err.println("setBlock() got invalid index!");
+		if (index == -1) {
+			//System.out.println("setBlock() redirect " + blockPos + " " + this.getPos());
+			//world.setBlock(blockPos, blockType); // not in this chunk, redirect to world
 			return;
 		}
 		byte id = blockIDs[index];
@@ -47,6 +49,9 @@ public class Chunk {
 
 	public BlockType getBlock(BlockPos blockPos) {
 		int blockArrayIndex = getIndex(getLocalPosition(blockPos));
+		if (blockArrayIndex == -1) {
+			//return world.getBlock(blockPos); // not in this chunk, redirect to world
+		}
 		return getBlock(blockArrayIndex);
 	}
 	public BlockType getBlock(Vector3i voxel) {
@@ -113,7 +118,8 @@ public class Chunk {
 	}
 
 	public int getIndex(int x, int y, int z) {
-		if (x < 0 || x > CHUNK_SIZE - 1 || y < 0 || y > CHUNK_SIZE - 1 || z < 0 || z > CHUNK_SIZE - 1) return -1; // validate
+		if (x < 0 || x > CHUNK_SIZE - 1 || y < 0 || y > CHUNK_SIZE - 1 || z < 0 || z > CHUNK_SIZE - 1)
+			return -1; // validate
 		int index = x | y << 5 | z << (2 * 5);
 		return index <= CHUNK_SIZE_CUBED - 1 ? index : -1;
 	}

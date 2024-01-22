@@ -4,6 +4,7 @@ import com.ezzenix.game.BlockPos;
 import com.ezzenix.engine.core.WorkerThread;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.game.world.World;
 import com.ezzenix.game.world.WorldGenerator;
 
 import java.util.HashMap;
@@ -36,9 +37,11 @@ public class WorldGeneratorThread {
                 30,
                 WorldGenerator::generateChunk,
                 (output) -> {
+                    //World world = output.chunk.getWorld();
                     for (BlockPos blockPos : output.blocks.keySet()) {
                         BlockType blockType = output.blocks.get(blockPos);
                         output.chunk.setBlock(blockPos, blockType);
+                        //world.setBlock(blockPos, blockType);
                     }
                     output.chunk.flagMeshForUpdate(false);
                     output.blocks.clear(); // free memory (maybe)

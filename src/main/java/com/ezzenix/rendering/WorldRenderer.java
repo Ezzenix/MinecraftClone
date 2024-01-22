@@ -4,7 +4,7 @@ import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.game.world.Chunk;
-import com.ezzenix.game.chunkbuilder.ChunkMesh;
+import com.ezzenix.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Debug;
 import org.joml.Matrix4f;

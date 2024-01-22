@@ -1,5 +1,8 @@
 package com.ezzenix.game;
 
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+
 import java.util.Objects;
 
 public class ChunkPos {
@@ -18,6 +21,10 @@ public class ChunkPos {
 		int chunkY = blockPos.y >> 5; // Divide by chunk size (32)
 		int chunkZ = blockPos.z >> 5; // Divide by chunk size (32)
 		return new ChunkPos(chunkX, chunkY, chunkZ);
+	}
+
+	public static ChunkPos from(Vector3f position) {
+		return ChunkPos.from(BlockPos.from(position));
 	}
 
 	public String toString() {
