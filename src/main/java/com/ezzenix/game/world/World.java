@@ -15,7 +15,7 @@ public class World {
     }
 
     private void loadInitialChunks() {
-        int WORLD_SIZE = 32;
+        int WORLD_SIZE = 4;
         int WORLD_HEIGHT = 3;
         for (int x = 0; x < WORLD_SIZE; x++) {
             for (int y = 0; y < WORLD_HEIGHT; y++) {

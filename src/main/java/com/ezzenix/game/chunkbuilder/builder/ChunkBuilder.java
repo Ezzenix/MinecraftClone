@@ -1,6 +1,7 @@
 package com.ezzenix.game.chunkbuilder.builder;
 
 import com.ezzenix.Game;
+import com.ezzenix.engine.core.Profiler;
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.game.BlockPos;
@@ -28,6 +29,8 @@ public class ChunkBuilder {
     }
 
     public static Mesh createMesh(Chunk chunk, boolean transparentBlocksOnly) {
+        Profiler.begin("createMesh");
+
         long startTime = System.currentTimeMillis();
         List<Float> vertexList = new ArrayList<>();
 
@@ -150,6 +153,7 @@ public class ChunkBuilder {
 
         //System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
         Game.getInstance().TIME_MESH_BUILD += (System.currentTimeMillis() - startTime);
+        Profiler.end();
         return mesh;
     }
 
