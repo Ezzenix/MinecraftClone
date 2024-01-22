@@ -2,6 +2,7 @@ package com.ezzenix.hud;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.rendering.Camera;
@@ -111,7 +112,8 @@ public class Debug {
         for (int x = chunkX - Chunk.CHUNK_SIZE*distance; x <= chunkX + Chunk.CHUNK_SIZE*distance; x += Chunk.CHUNK_SIZE) {
             for (int y = chunkY - Chunk.CHUNK_SIZE*distance; y <= chunkY + Chunk.CHUNK_SIZE*distance; y += Chunk.CHUNK_SIZE) {
                 for (int z = chunkZ - Chunk.CHUNK_SIZE*distance; z <= chunkZ + Chunk.CHUNK_SIZE*distance; z += Chunk.CHUNK_SIZE) {
-                    drawBox(new Vector3f(x, y, z), new Vector3f(x + Chunk.CHUNK_SIZE, y + Chunk.CHUNK_SIZE, z + Chunk.CHUNK_SIZE), new Vector3f((float) 244 /255, (float) 255 /255, (float) 128 /255));
+                    Vector3f color = new Vector3f((float) 244 /255, (float) 255 /255, (float) 128 /255);
+                    drawBox(new Vector3f(x, y, z), new Vector3f(x + Chunk.CHUNK_SIZE, y + Chunk.CHUNK_SIZE, z + Chunk.CHUNK_SIZE), color);
                 }
             }
         }

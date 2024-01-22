@@ -4,6 +4,8 @@ import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.workers.ChunkBuilderThread;
+import com.ezzenix.game.workers.WorldGeneratorThread;
 import com.ezzenix.rendering.chunkbuilder.ChunkMesh;
 import org.joml.Vector3i;
 
@@ -21,6 +23,7 @@ public class Chunk {
 
 	private final byte[] blockIDs = new byte[CHUNK_SIZE_CUBED];
 	public int blockCount = 0;
+	public boolean isBeingGenerated = false;
 	public boolean hasGenerated = false;
 
 
@@ -33,11 +36,12 @@ public class Chunk {
 		this.chunkMesh = new ChunkMesh(this);
 	}
 
-	public void setBlock(BlockPos blockPos, BlockType blockType) {
+
+	public synchronized void setBlock(BlockPos blockPos, BlockType blockType) {
 		int index = getIndex(getLocalPosition(blockPos));
 		if (index == -1) {
 			//System.out.println("setBlock() redirect " + blockPos + " " + this.getPos());
-			//world.setBlock(blockPos, blockType); // not in this chunk, redirect to world
+			world.setBlock(blockPos, blockType); // not in this chunk, redirect to world
 			return;
 		}
 		byte id = blockIDs[index];
@@ -50,14 +54,14 @@ public class Chunk {
 	public BlockType getBlock(BlockPos blockPos) {
 		int blockArrayIndex = getIndex(getLocalPosition(blockPos));
 		if (blockArrayIndex == -1) {
-			//return world.getBlock(blockPos); // not in this chunk, redirect to world
+			return world.getBlock(blockPos); // not in this chunk, redirect to world
 		}
 		return getBlock(blockArrayIndex);
 	}
 	public BlockType getBlock(Vector3i voxel) {
 		return this.getWorld().getBlock(toWorldPos(voxel));
 	}
-	public BlockType getBlock(int index) {
+	public synchronized BlockType getBlock(int index) {
 		if (index == -1) { // invalid index
 			//System.err.println("getBlock() got invalid index!");
 			return null;
@@ -79,7 +83,14 @@ public class Chunk {
 	}
 
 	public void flagMeshForUpdate(boolean dontTriggerUpdatesAround) {
-		chunkMesh.refresh(dontTriggerUpdatesAround);
+		if (!hasGenerated) return;
+		ChunkBuilderThread.scheduleChunkForRemeshing(this);
+	}
+
+	public void generate() {
+		if (hasGenerated || isBeingGenerated) return;
+		this.isBeingGenerated = true;
+		WorldGeneratorThread.scheduleChunkForWorldGeneration(this);
 	}
 
 	/**

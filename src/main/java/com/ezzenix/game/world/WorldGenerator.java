@@ -3,7 +3,7 @@ package com.ezzenix.game.world;
 import com.ezzenix.game.BlockPos;
 import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.threads.WorldGeneratorThread;
+import com.ezzenix.game.workers.WorldGeneratorThread;
 
 import java.util.Random;
 
@@ -31,35 +31,33 @@ public class WorldGenerator {
         return BlockType.OAK_PLANKS;
     }
 
-    public static void placeTree(WorldGeneratorThread.WorldGeneratorOutput output, Chunk chunk, BlockPos blockPos) {
+    public static void placeTree(Chunk chunk, BlockPos blockPos) {
         for (int x = -2; x <= 2; x++) {
             for (int z = -2; z <= 2; z++) {
                 if ((x==-2 && z==-2) || (x==2 && z==2) || (x==-2 && z==2) || (x==2 && z==-2)) continue;
-                output.setBlock(blockPos.add(new BlockPos(x, 3, z)), BlockType.OAK_LEAVES);
-                output.setBlock(blockPos.add(new BlockPos(x, 4, z)), BlockType.OAK_LEAVES);
+                chunk.setBlock(blockPos.add(new BlockPos(x, 3, z)), BlockType.OAK_LEAVES);
+                chunk.setBlock(blockPos.add(new BlockPos(x, 4, z)), BlockType.OAK_LEAVES);
             }
         }
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
-                output.setBlock(blockPos.add(new BlockPos(x, 5, z)), BlockType.OAK_LEAVES);
+                chunk.setBlock(blockPos.add(new BlockPos(x, 5, z)), BlockType.OAK_LEAVES);
 				if ((x != -1 || z != -1) && (x != 1 || z != 1) && (x != -1 || z != 1) && (x != 1 || z != -1)) {
-					output.setBlock(blockPos.add(new BlockPos(x, 6, z)), BlockType.OAK_LEAVES);
+                    chunk.setBlock(blockPos.add(new BlockPos(x, 6, z)), BlockType.OAK_LEAVES);
 				};
             }
         }
 
         // Logs
-        output.setBlock(blockPos.add(new BlockPos(0, 0, 0)), BlockType.OAK_LOG);
-        output.setBlock(blockPos.add(new BlockPos(0, 1, 0)), BlockType.OAK_LOG);
-        output.setBlock(blockPos.add(new BlockPos(0, 2, 0)), BlockType.OAK_LOG);
-        output.setBlock(blockPos.add(new BlockPos(0, 3, 0)), BlockType.OAK_LOG);
-        output.setBlock(blockPos.add(new BlockPos(0, 4, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 0, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 1, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 2, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 3, 0)), BlockType.OAK_LOG);
+        chunk.setBlock(blockPos.add(new BlockPos(0, 4, 0)), BlockType.OAK_LOG);
     }
 
-    public static WorldGeneratorThread.WorldGeneratorOutput generateChunk(Chunk chunk) {
+    public static void generate(Chunk chunk) {
         //long startTime = System.currentTimeMillis();
-
-        WorldGeneratorThread.WorldGeneratorOutput output = new WorldGeneratorThread.WorldGeneratorOutput(chunk);
 
         for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
             for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
@@ -80,10 +78,10 @@ public class WorldGenerator {
                     //}
 
                     if (value > density) {
-                        output.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
+                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
                     } else {
                         if (absoluteY <= 25) {
-                            output.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
+                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
                         }
                     }
                 }
@@ -99,29 +97,20 @@ public class WorldGenerator {
 
                     BlockPos blockPos = new BlockPos(absoluteX, absoluteY, absoluteZ);
                     BlockPos blockPosBelow = new BlockPos(absoluteX, absoluteY-1, absoluteZ);
-                    BlockType blockType = output.getBlock(blockPos);
-                    BlockType blockTypeBelow = output.getBlock(blockPosBelow);
+                    BlockType blockType = chunk.getBlock(blockPos);
+                    BlockType blockTypeBelow = chunk.getBlock(blockPosBelow);
 
                     if (blockTypeBelow == BlockType.GRASS_BLOCK && blockType == BlockType.AIR) {
                         if (Math.random() > 0.78f) {
-                            output.setBlock(blockPos, Math.random() > 0.15f ? BlockType.GRASS : BlockType.POPPY);
+                            chunk.setBlock(blockPos, Math.random() > 0.15f ? BlockType.GRASS : BlockType.POPPY);
                         } else if (Math.random() > 0.97f) {
-                            placeTree(output, chunk, blockPos);
+                            placeTree(chunk, blockPos);
                         }
                     }
-
-                    //if (((localX == 7) && (localZ == 7) && (absoluteY == 50)) || ((localX == 21) && (localZ == 21) && (absoluteY == 50))) {
-                    //    placeTree(output, chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
-                    //}
-
-                    //if (absoluteY == 40 && absoluteX % 2 == 0 && absoluteZ % 2 == 0) {
-                    //    output.blocks.put(new BlockPos(absoluteX, absoluteY, absoluteZ), Math.random() > 0.3f ? BlockType.GRASS : BlockType.POPPY);
-                    //}
                 }
             }
         }
 
         //System.out.println("Chunk generated in " + (System.currentTimeMillis() - startTime) + "ms");
-        return output;
     }
 }

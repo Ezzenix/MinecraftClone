@@ -2,9 +2,10 @@ package com.ezzenix.engine.scheduler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Scheduler {
-    private static final List<SchedulerRunnable> runnables = new ArrayList<>();
+    private static final ConcurrentLinkedQueue<SchedulerRunnable> runnables = new ConcurrentLinkedQueue<>();
     private static float deltaTime = (float) 1 / 60;
     private static long lastUpdate = System.nanoTime();
 

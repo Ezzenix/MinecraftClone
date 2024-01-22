@@ -59,7 +59,7 @@ public class Game {
         this.inputHandler = new InputHandler();
 
         Scheduler.runPeriodic(() -> {
-            //Game.getInstance().getWorld().loadNewChunks();
+            Game.getInstance().getWorld().loadNewChunks();
             //Profiler.dump();
         }, 1000);
 

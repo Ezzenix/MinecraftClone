@@ -3,6 +3,7 @@ package com.ezzenix.hud;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.scheduler.Scheduler;
+import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
@@ -25,6 +26,7 @@ public class Hud {
     TextComponent cameraText;
     TextComponent vertexText;
     TextComponent memoryText;
+    TextComponent chunkPosText;
 
     Shader textShader;
 
@@ -37,6 +39,7 @@ public class Hud {
         cameraText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 2);
         vertexText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 3);
         memoryText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 4);
+        chunkPosText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 5);
 
         Scheduler.runPeriodic(() -> {
             Player player = Game.getInstance().getPlayer();
@@ -45,6 +48,7 @@ public class Hud {
             fpsText.setText("FPS: " + (int) Scheduler.getFps());
             positionText.setText("XYZ: " + (int) position.x + " " + (int) position.y + " " + (int) position.z);
             cameraText.setText(getDirectionString(player.getYaw()) + " (" + (int) player.getYaw() + " / " + (int) player.getPitch() + ")");
+            chunkPosText.setText(ChunkPos.from(position).toString());
 
             int vertexCount = 0;
             World world = Game.getInstance().getWorld();
@@ -86,6 +90,7 @@ public class Hud {
         cameraText.render();
         vertexText.render();
         memoryText.render();
+        chunkPosText.render();
 
         glUseProgram(0);
 

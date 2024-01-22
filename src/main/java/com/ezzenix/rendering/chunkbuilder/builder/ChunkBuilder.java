@@ -1,24 +1,20 @@
 package com.ezzenix.rendering.chunkbuilder.builder;
 
-import com.ezzenix.Game;
-import com.ezzenix.engine.core.Profiler;
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.game.workers.ChunkBuildRequest;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class ChunkBuilder {
@@ -28,11 +24,10 @@ public class ChunkBuilder {
         return blockType.textureUVSides;
     }
 
-    public static Mesh createMesh(Chunk chunk, boolean transparentBlocksOnly) {
-        //Profiler.begin("createMesh");
-
-        long startTime = System.currentTimeMillis();
+    private static List<Float> create(ChunkBuildRequest request, boolean transparentBlocksOnly) {
         List<Float> vertexList = new ArrayList<>();
+
+        Chunk chunk = request.chunk;
 
         // Flowers
         if (transparentBlocksOnly) {
@@ -136,25 +131,18 @@ public class ChunkBuilder {
             addQuad(vertexList, vert1, vert2, vert3, vert4, textureUV[0], textureUV[2], shapeSize, initialVoxel.ao1, initialVoxel.ao2, initialVoxel.ao3, initialVoxel.ao4);
         }
 
+        return vertexList;
+    }
 
-        FloatBuffer buffer = Mesh.convertToBuffer(vertexList);
+    public static void generate(ChunkBuildRequest request) {
+        List<Float> blockVertexList = create(request, false);
+        List<Float> waterVertexList = create(request, true);
 
-        Mesh mesh = new Mesh(buffer, vertexList.size() / 6);
+        request.blockVertexBuffer = Mesh.convertToBuffer(blockVertexList);
+        request.blockVertexLength = blockVertexList.size()/6;
 
-        int stride = 6 * Float.BYTES;
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, 3 * Float.BYTES);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, 1, GL_FLOAT, false, stride, 5 * Float.BYTES);
-        glEnableVertexAttribArray(2);
-
-        mesh.unbind();
-
-        //System.out.println("Chunk mesh built in " + (System.currentTimeMillis() - startTime) + "ms");
-        Game.getInstance().TIME_MESH_BUILD += (System.currentTimeMillis() - startTime);
-        //Profiler.end();
-        return mesh;
+        request.waterVertexBuffer = Mesh.convertToBuffer(waterVertexList);
+        request.waterVertexLength = waterVertexList.size()/6;
     }
 
     private static void addQuad(List<Float> vertexList, Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector2f uvCorner1, Vector2f uvCorner2, Vector2f numTiles, float ao1, float ao2, float ao3, float ao4) {

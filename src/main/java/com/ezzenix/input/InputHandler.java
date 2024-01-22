@@ -5,6 +5,7 @@ import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Player;
+import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.World;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.WorldRenderer;
@@ -51,6 +52,13 @@ public class InputHandler {
                 //System.out.println("Chunk meshing took " + (Game.getInstance().TIME_MESH_BUILD) + "ms");
                 WorldRenderer worldRenderer = Game.getInstance().getRenderer().getWorldRenderer();
                 worldRenderer.drawChunkBorders = !worldRenderer.drawChunkBorders;
+            }
+            if (key == GLFW_KEY_J && action == GLFW_RELEASE) {
+                System.out.println("Reloading all chunks!");
+                World world = Game.getInstance().getWorld();
+                for (Chunk chunk : world.getChunkMap().values()) {
+                    chunk.flagMeshForUpdate(true);
+                }
             }
         });
     }

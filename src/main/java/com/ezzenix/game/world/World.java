@@ -1,21 +1,24 @@
 package com.ezzenix.game.world;
 
+import com.ezzenix.Game;
 import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.threads.WorldGeneratorThread;
+import com.ezzenix.game.workers.WorldGeneratorThread;
+import org.joml.Vector3f;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class World {
-    private final HashMap<ChunkPos, Chunk> chunks = new HashMap<>();
+    private final ConcurrentHashMap<ChunkPos, Chunk> chunks = new ConcurrentHashMap<>();
 
     public World() {
-        loadInitialChunks();
+        //loadInitialChunks();
     }
 
     private void loadInitialChunks() {
-        int WORLD_SIZE = 1;
+        int WORLD_SIZE = 12;
         int WORLD_HEIGHT = 3;
         for (int x = 0; x < WORLD_SIZE; x++) {
             for (int y = 0; y < WORLD_HEIGHT; y++) {
@@ -26,15 +29,26 @@ public class World {
         }
     }
 
-    private Chunk loadChunk(ChunkPos chunkPos) {
+    private synchronized Chunk loadChunk(ChunkPos chunkPos, boolean doNotGenerate) {
         if (chunkPos.y < 0) return null;
-        if (chunks.get(chunkPos) != null) return null;
-        Chunk chunk = new Chunk(chunkPos, this);
+        Chunk chunk = chunks.get(chunkPos);
+        if (chunk != null) { // already exists
+            if (!chunk.hasGenerated && !doNotGenerate && !chunk.isBeingGenerated) {
+                chunk.generate();
+            }
+            return null;
+        };
+        chunk = new Chunk(chunkPos, this);
         chunks.put(chunkPos, chunk);
-        WorldGeneratorThread.scheduleChunkForWorldGeneration(chunk);
+        if (!doNotGenerate) {
+            chunk.generate();
+        }
         return chunk;
     }
-    private Chunk loadChunk(int x, int y, int z) {
+    private synchronized Chunk loadChunk(ChunkPos chunkPos) {
+        return loadChunk(chunkPos, false);
+    }
+    private synchronized Chunk loadChunk(int x, int y, int z) {
         return loadChunk(new ChunkPos(x, y, z));
     }
 
@@ -42,11 +56,11 @@ public class World {
         ChunkPos chunkPos = ChunkPos.from(blockPos);
         Chunk chunk = getChunk(chunkPos);
         if (chunk == null) {
-            chunk = loadChunk(chunkPos);
+            chunk = loadChunk(chunkPos, true);
             if (chunk == null) return;
         };
         chunk.setBlock(blockPos, blockType);
-        chunk.flagMeshForUpdate(true);
+        //chunk.flagMeshForUpdate(true);
     }
 
     public synchronized BlockType getBlock(BlockPos blockPos) {
@@ -65,11 +79,10 @@ public class World {
         return getChunk(ChunkPos.from(blockPos));
     }
 
-    public HashMap<ChunkPos, Chunk> getChunkMap() {
+    public ConcurrentHashMap<ChunkPos, Chunk> getChunkMap() {
         return this.chunks;
     }
 
-    /*
     public void loadNewChunks() {
         Vector3f position = Game.getInstance().getPlayer().getPosition();
         int chunkX = ((int) position.x >> 5);
@@ -81,10 +94,9 @@ public class World {
         for (int x = chunkX - renderDistance; x < chunkX + renderDistance; x++) {
             for (int y = chunkY - renderDistance; y < chunkY + renderDistance; y++) {
                 for (int z = chunkZ - renderDistance; z < chunkZ + renderDistance; z++) {
-                    //loadChunk(x, y, z);
+                    loadChunk(x, y, z);
                 }
             }
         }
     }
-     */
 }

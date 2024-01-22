@@ -10,6 +10,8 @@ import com.ezzenix.hud.Debug;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
+import java.util.Collection;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class WorldRenderer {
@@ -47,6 +49,8 @@ public class WorldRenderer {
         Matrix4f viewMatrix = camera.getViewMatrix();
         Matrix4f viewProjectionMatrix = camera.getViewProjectionMatrix();
 
+        Collection<Chunk> chunks = world.getChunkMap().values();
+
         // Frustum culling
         //for (Chunk chunk : world.getChunks().values()) {
         //    chunk.frustumBoundingBox.isShown = chunk.frustumBoundingBox.isInsideFrustum(viewProjectionMatrix);
@@ -56,7 +60,7 @@ public class WorldRenderer {
         worldShader.uploadMat4f("projectionMatrix", projectionMatrix);
         worldShader.uploadMat4f("viewMatrix", viewMatrix);
         worldShader.uploadVec2f("textureAtlasSize", textureAtlasSize);
-        for (Chunk chunk : world.getChunkMap().values()) {
+        for (Chunk chunk : chunks) {
             //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh chunkMesh = chunk.getChunkMesh();
             worldShader.uploadMat4f("chunkPosition", chunkMesh.getTranslationMatrix());
@@ -72,7 +76,7 @@ public class WorldRenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthMask(false);
-        for (Chunk chunk : world.getChunkMap().values()) {
+        for (Chunk chunk : chunks) {
             //if (!chunk.frustumBoundingBox.isShown) continue;
             ChunkMesh chunkMesh = chunk.getChunkMesh();
             waterShader.uploadMat4f("chunkPosition", chunkMesh.getTranslationMatrix());
