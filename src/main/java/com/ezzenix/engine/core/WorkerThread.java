@@ -1,6 +1,7 @@
 package com.ezzenix.engine.core;
 
 import com.ezzenix.engine.scheduler.Scheduler;
+import com.ezzenix.hud.Debug;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -17,13 +18,20 @@ public class WorkerThread<T> {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(poolSize);
 
         executor.scheduleWithFixedDelay(() -> {
+            //System.out.println("To process " + toProcessQueue.size() + "  To apply " + processedQueue.size());
+
             int count = 0;
             while (!toProcessQueue.isEmpty()) {
                 if (count >= maxPerInterval) return; // cancel and do the rest next interval
                 T obj = toProcessQueue.peek();
                 if (obj == null) break;
                 toProcessQueue.remove(obj);
-                processObject.apply(obj);
+                try {
+                    processObject.apply(obj);
+                } catch (Exception e) {
+                    System.err.println("[WorkerThread] Error on process!");
+                    e.printStackTrace();
+                }
                 processedQueue.add(obj);
                 count++;
             }
@@ -36,7 +44,12 @@ public class WorkerThread<T> {
             if (processedQueue.isEmpty()) return;
             T result;
             while ((result = processedQueue.poll()) != null) {
-                objectProcessed.apply(result);
+                try {
+                    objectProcessed.apply(result);
+                } catch (Exception e) {
+                    System.err.println("[WorkerThread] Error on apply!");
+                    e.printStackTrace();
+                }
             }
         }, interval);
     }

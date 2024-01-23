@@ -40,6 +40,7 @@ public class ChunkMesh {
     }
 
     public void applyRequest(ChunkBuildRequest request) {
+        System.out.println("Applied request");
         if (blockMesh != null) {
             blockMesh.dispose();
             blockMesh = null;
@@ -49,6 +50,7 @@ public class ChunkMesh {
             waterMesh = null;
         }
         if (chunk.blockCount > 0) {
+            System.out.print("creating meshes");
             blockMesh = createMesh(request.blockVertexBuffer, request.blockVertexLength);
             waterMesh = createMesh(request.waterVertexBuffer, request.waterVertexLength);
         }

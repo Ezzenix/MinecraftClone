@@ -27,6 +27,7 @@ public class Hud {
     TextComponent vertexText;
     TextComponent memoryText;
     TextComponent chunkPosText;
+    TextComponent isChunkAtPlayerText;
 
     Shader textShader;
 
@@ -40,6 +41,7 @@ public class Hud {
         vertexText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 3);
         memoryText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 4);
         chunkPosText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 5);
+        isChunkAtPlayerText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 6);
 
         Scheduler.runPeriodic(() -> {
             Player player = Game.getInstance().getPlayer();
@@ -49,6 +51,13 @@ public class Hud {
             positionText.setText("XYZ: " + (int) position.x + " " + (int) position.y + " " + (int) position.z);
             cameraText.setText(getDirectionString(player.getYaw()) + " (" + (int) player.getYaw() + " / " + (int) player.getPitch() + ")");
             chunkPosText.setText(ChunkPos.from(position).toString());
+
+            Chunk c = player.getWorld().getChunk(player.getBlockPos());
+            if (c != null) {
+                isChunkAtPlayerText.setText("Chunk: Yes " + c.blockCount);
+            } else {
+                isChunkAtPlayerText.setText("Chunk: No");
+            }
 
             int vertexCount = 0;
             World world = Game.getInstance().getWorld();
@@ -91,6 +100,7 @@ public class Hud {
         vertexText.render();
         memoryText.render();
         chunkPosText.render();
+        isChunkAtPlayerText.render();
 
         glUseProgram(0);
 

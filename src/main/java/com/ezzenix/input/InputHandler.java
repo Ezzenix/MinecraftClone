@@ -100,7 +100,7 @@ public class InputHandler {
 
         float speed = 7f * Scheduler.getDeltaTime();
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            speed *= 7;
+            speed *= 20;
         }
 
         Vector3f lookVector = new Vector3f(0.0f, 0.0f, -1.0f);

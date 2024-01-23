@@ -5,21 +5,22 @@ import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.WorldGenerator;
 
 public class WorldGeneratorThread {
-    private static final WorkerThread<Chunk> workerThread;
+    private static final WorkerThread<WorldGeneratorRequest> workerThread;
 
     static {
         workerThread = new WorkerThread<>(
                 1,
                 10,
                 100,
-                (chunk) -> {
-                    WorldGenerator.generate(chunk);
+                (request) -> {
+                    WorldGenerator.process(request);
 					return null;
 				},
-                (chunk) -> {
-                    chunk.hasGenerated = true;
-                    chunk.isBeingGenerated = false;
-                    chunk.flagMeshForUpdate(true);
+                (request) -> {
+                    request.apply();
+                    request.chunk.hasGenerated = true;
+                    request.chunk.isGenerating = false;
+                    request.chunk.flagMeshForUpdate(true);
                     return null;
                 }
         );
@@ -27,6 +28,7 @@ public class WorldGeneratorThread {
 
     public static synchronized void scheduleChunkForWorldGeneration(Chunk chunk) {
         if (chunk.hasGenerated) return;
-        workerThread.add(chunk);
+        WorldGeneratorRequest request = new WorldGeneratorRequest(chunk);
+        workerThread.add(request);
     }
 }

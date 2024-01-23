@@ -3,12 +3,12 @@ package com.ezzenix.game.world;
 import com.ezzenix.game.BlockPos;
 import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.workers.WorldGeneratorThread;
+import com.ezzenix.game.workers.WorldGeneratorRequest;
 
 import java.util.Random;
 
 public class WorldGenerator {
-    private static FastNoiseLite noise;
+    private static final FastNoiseLite noise;
 
     static {
         noise = new FastNoiseLite();
@@ -31,33 +31,35 @@ public class WorldGenerator {
         return BlockType.OAK_PLANKS;
     }
 
-    public static void placeTree(Chunk chunk, BlockPos blockPos) {
+    public static void placeTree(WorldGeneratorRequest request, BlockPos blockPos) {
         for (int x = -2; x <= 2; x++) {
             for (int z = -2; z <= 2; z++) {
                 if ((x==-2 && z==-2) || (x==2 && z==2) || (x==-2 && z==2) || (x==2 && z==-2)) continue;
-                chunk.setBlock(blockPos.add(new BlockPos(x, 3, z)), BlockType.OAK_LEAVES);
-                chunk.setBlock(blockPos.add(new BlockPos(x, 4, z)), BlockType.OAK_LEAVES);
+                request.setBlock(blockPos.add(new BlockPos(x, 3, z)), BlockType.OAK_LEAVES);
+                request.setBlock(blockPos.add(new BlockPos(x, 4, z)), BlockType.OAK_LEAVES);
             }
         }
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
-                chunk.setBlock(blockPos.add(new BlockPos(x, 5, z)), BlockType.OAK_LEAVES);
+                request.setBlock(blockPos.add(new BlockPos(x, 5, z)), BlockType.OAK_LEAVES);
 				if ((x != -1 || z != -1) && (x != 1 || z != 1) && (x != -1 || z != 1) && (x != 1 || z != -1)) {
-                    chunk.setBlock(blockPos.add(new BlockPos(x, 6, z)), BlockType.OAK_LEAVES);
+                    request.setBlock(blockPos.add(new BlockPos(x, 6, z)), BlockType.OAK_LEAVES);
 				};
             }
         }
 
         // Logs
-        chunk.setBlock(blockPos.add(new BlockPos(0, 0, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 1, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 2, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 3, 0)), BlockType.OAK_LOG);
-        chunk.setBlock(blockPos.add(new BlockPos(0, 4, 0)), BlockType.OAK_LOG);
+        request.setBlock(blockPos.add(new BlockPos(0, 0, 0)), BlockType.OAK_LOG);
+        request.setBlock(blockPos.add(new BlockPos(0, 1, 0)), BlockType.OAK_LOG);
+        request.setBlock(blockPos.add(new BlockPos(0, 2, 0)), BlockType.OAK_LOG);
+        request.setBlock(blockPos.add(new BlockPos(0, 3, 0)), BlockType.OAK_LOG);
+        request.setBlock(blockPos.add(new BlockPos(0, 4, 0)), BlockType.OAK_LOG);
     }
 
-    public static void generate(Chunk chunk) {
+    public static void process(WorldGeneratorRequest request) {
         //long startTime = System.currentTimeMillis();
+
+        Chunk chunk = request.chunk;
 
         for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
             for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
@@ -78,10 +80,10 @@ public class WorldGenerator {
                     //}
 
                     if (value > density) {
-                        chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
+                        request.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
                     } else {
                         if (absoluteY <= 25) {
-                            chunk.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
+                            request.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
                         }
                     }
                 }
@@ -102,9 +104,9 @@ public class WorldGenerator {
 
                     if (blockTypeBelow == BlockType.GRASS_BLOCK && blockType == BlockType.AIR) {
                         if (Math.random() > 0.78f) {
-                            chunk.setBlock(blockPos, Math.random() > 0.15f ? BlockType.GRASS : BlockType.POPPY);
+                            request.setBlock(blockPos, Math.random() > 0.15f ? BlockType.GRASS : BlockType.POPPY);
                         } else if (Math.random() > 0.97f) {
-                            placeTree(chunk, blockPos);
+                            placeTree(request, blockPos);
                         }
                     }
                 }

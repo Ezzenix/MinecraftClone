@@ -17,6 +17,7 @@ public class ChunkBuilderThread {
 					return null;
 				},
 				(request) -> {
+					if (request.chunk.isDisposed) return null;
 					request.chunk.getChunkMesh().applyRequest(request);
 					return null;
 				}

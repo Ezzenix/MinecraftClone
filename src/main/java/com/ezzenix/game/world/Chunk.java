@@ -23,8 +23,11 @@ public class Chunk {
 
 	private final byte[] blockIDs = new byte[CHUNK_SIZE_CUBED];
 	public int blockCount = 0;
-	public boolean isBeingGenerated = false;
+
+	public boolean isGenerating = false;
 	public boolean hasGenerated = false;
+	public boolean isDisposed = false;
+	public boolean isLoaded = false;
 
 
 	public Chunk(ChunkPos chunkPos, World world) {
@@ -88,8 +91,8 @@ public class Chunk {
 	}
 
 	public void generate() {
-		if (hasGenerated || isBeingGenerated) return;
-		this.isBeingGenerated = true;
+		if (hasGenerated || isGenerating) return;
+		this.isGenerating = true;
 		WorldGeneratorThread.scheduleChunkForWorldGeneration(this);
 	}
 
@@ -104,8 +107,9 @@ public class Chunk {
 	 * Destroys and unloads the chunk
 	 */
 	public void dispose() {
-		this.chunkMesh.dispose();
 		this.world.getChunkMap().remove(chunkPos);
+		isDisposed = true;
+		this.chunkMesh.dispose();
 	}
 
 	// Helper

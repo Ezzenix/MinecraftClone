@@ -2,6 +2,7 @@ package com.ezzenix.rendering.chunkbuilder.builder;
 
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.hud.Debug;
 import org.joml.Vector3i;
 
 import java.util.ArrayList;
@@ -74,6 +75,8 @@ public class GreedyShape {
 
     public static List<GreedyShape> createShapesFrom(Chunk chunk, List<VoxelFace> possibleVoxelFaces) {
         List<GreedyShape> shapes = new ArrayList<>();
+
+        //Debug.print("building chunk");
 
         while (!possibleVoxelFaces.isEmpty()) {
             VoxelFace initalVoxelFace = possibleVoxelFaces.get(0);
