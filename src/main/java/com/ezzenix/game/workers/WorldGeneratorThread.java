@@ -10,8 +10,8 @@ public class WorldGeneratorThread {
     static {
         workerThread = new WorkerThread<>(
                 1,
-                10,
-                100,
+                5,
+                200,
                 (request) -> {
                     WorldGenerator.process(request);
 					return null;

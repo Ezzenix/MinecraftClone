@@ -23,6 +23,7 @@ public class ChunkBuilder {
 	}
 
 	private static List<Float> create(ChunkBuildRequest request, boolean transparentBlocksOnly) {
+		//long start = System.currentTimeMillis();
 		List<Float> vertexList = new ArrayList<>();
 
 		Chunk chunk = request.chunk;
@@ -128,6 +129,13 @@ public class ChunkBuilder {
 			VoxelFace initialVoxel = shape.initialVoxelFace;
 			addQuad(vertexList, vert1, vert2, vert3, vert4, textureUV[0], textureUV[2], shapeSize, initialVoxel.ao1, initialVoxel.ao2, initialVoxel.ao3, initialVoxel.ao4);
 		}
+
+		/*
+		long time = System.currentTimeMillis() - start;
+		if (time > 3) {
+			System.out.println("CreateMesh took " + (System.currentTimeMillis() - start) + " ms");
+		}
+		*/
 
 		return vertexList;
 	}

@@ -10,8 +10,8 @@ public class ChunkBuilderThread {
 	static {
 		workerThread = new WorkerThread<>(
 				1,
-				10,
-				100,
+				5,
+				200,
 				(request) -> {
 					ChunkBuilder.generate(request);
 					return null;

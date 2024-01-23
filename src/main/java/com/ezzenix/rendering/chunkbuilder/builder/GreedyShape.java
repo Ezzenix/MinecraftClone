@@ -76,9 +76,7 @@ public class GreedyShape {
     public static List<GreedyShape> createShapesFrom(Chunk chunk, List<VoxelFace> possibleVoxelFaces) {
         List<GreedyShape> shapes = new ArrayList<>();
 
-        //Debug.print("building chunk");
-
-        while (!possibleVoxelFaces.isEmpty()) {
+        while (!possibleVoxelFaces.isEmpty() && !chunk.isDisposed) {
             VoxelFace initalVoxelFace = possibleVoxelFaces.get(0);
 
             GreedyShape shape = new GreedyShape(chunk, initalVoxelFace);
