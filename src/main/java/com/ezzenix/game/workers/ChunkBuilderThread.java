@@ -13,6 +13,7 @@ public class ChunkBuilderThread {
 				5,
 				200,
 				(request) -> {
+					if (request.chunk.isDisposed) return null;
 					ChunkBuilder.generate(request);
 					return null;
 				},

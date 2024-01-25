@@ -13,6 +13,7 @@ public class WorldGeneratorThread {
                 5,
                 200,
                 (request) -> {
+                    if (request.chunk.isDisposed || request.chunk.hasGenerated) return null;
                     WorldGenerator.process(request);
 					return null;
 				},
