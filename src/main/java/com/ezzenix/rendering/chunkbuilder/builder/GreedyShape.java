@@ -93,6 +93,10 @@ public class GreedyShape {
                 }
 
                 while (true) {
+                    if (chunk.isDisposed) {
+                        return shapes;
+                    }
+
                     List<VoxelFace> voxelsToExpandTo = shape.getNextVoxelsInDirection(direction, voxelsAtEdge, possibleVoxelFaces);
                     if (voxelsToExpandTo == null) {
                         break;

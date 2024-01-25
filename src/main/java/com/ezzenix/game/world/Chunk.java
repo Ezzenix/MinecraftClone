@@ -19,9 +19,9 @@ public class Chunk {
 
 	private final ChunkPos chunkPos;
 	private final ChunkMesh chunkMesh;
-	private final World world;
+	private World world;
 
-	private final byte[] blockIDs = new byte[CHUNK_SIZE_CUBED];
+	private byte[] blockIDs = new byte[CHUNK_SIZE_CUBED];
 	public int blockCount = 0;
 
 	public boolean isGenerating = false;
@@ -62,7 +62,7 @@ public class Chunk {
 		return getBlock(blockArrayIndex);
 	}
 	public BlockType getBlock(Vector3i voxel) {
-		return this.getWorld().getBlock(toWorldPos(voxel));
+		return world.getBlock(toWorldPos(voxel));
 	}
 	public synchronized BlockType getBlock(int index) {
 		if (index == -1) { // invalid index
@@ -108,7 +108,7 @@ public class Chunk {
 	 */
 	public void dispose() {
 		this.world.getChunkMap().remove(chunkPos);
-		isDisposed = true;
+		this.isDisposed = true;
 		this.chunkMesh.dispose();
 	}
 

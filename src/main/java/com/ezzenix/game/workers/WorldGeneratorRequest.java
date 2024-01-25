@@ -30,5 +30,7 @@ public class WorldGeneratorRequest {
 
 			chunk.setBlock(blockPos, blockType);
 		}
+
+		blocks.clear();
 	}
 }

@@ -180,12 +180,8 @@ public class ChunkBuilder {
 		Vector3i faceNormal = face.getNormal();
 		BlockPos neighborPos = blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
 		BlockType neighborType = chunk.getWorld().getBlock(neighborPos);
-		if (neighborType == null) {
-			neighborType = BlockType.AIR;
-		};
-
-		if (blockType == neighborType) return false; // do not render face if same block
-
+		if (neighborType == null) return true;
+		if (blockType == neighborType) return false;
 		return neighborType == BlockType.AIR || !neighborType.isSolid();
 	}
 
@@ -222,6 +218,7 @@ public class ChunkBuilder {
 		HashMap<Face, List<VoxelFace>> voxelFaces = generateVoxelFaces(chunk, transparentBlocksOnly);
 
 		List<GreedyShape> shapes = new ArrayList<>();
+		if (voxelFaces.isEmpty()) return shapes; // no faces for chunk, cancel here
 
 		for (Face face : Face.values()) {
 			List<VoxelFace> possibleVoxels = voxelFaces.get(face);

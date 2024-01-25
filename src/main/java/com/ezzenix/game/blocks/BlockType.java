@@ -1,6 +1,7 @@
 package com.ezzenix.game.blocks;
 
 import com.ezzenix.Game;
+import com.ezzenix.game.BlockPos;
 import org.joml.Vector2f;
 
 public class BlockType {
@@ -94,4 +95,11 @@ public class BlockType {
     public boolean isTransparent() {return this.transparent; }
 
     public boolean isFlower() {return this.isFlower; }
+
+    public boolean equals(Object v) {
+        if (this == v) return true;
+        if (v == null || this.getClass() != v.getClass()) return false;
+        BlockType other = (BlockType) v;
+        return this.id == other.id;
+    }
 }

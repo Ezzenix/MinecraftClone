@@ -55,8 +55,6 @@ public class WorkerThread<T> {
     }
 
     public void add(T obj) {
-        if (!toProcessQueue.contains(obj)) {
-            toProcessQueue.add(obj);
-        };
+        toProcessQueue.offer(obj);
     }
 }
