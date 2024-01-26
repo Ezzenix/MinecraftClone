@@ -1,8 +1,8 @@
-package com.ezzenix.game.workers;
+package com.ezzenix.game.chunkbuilder;
 
 import com.ezzenix.engine.core.WorkerThread;
 import com.ezzenix.game.world.Chunk;
-import com.ezzenix.rendering.chunkbuilder.builder.ChunkBuilder;
+import com.ezzenix.game.chunkbuilder.builder.ChunkBuilder;
 
 public class ChunkBuilderThread {
 	private static final WorkerThread<ChunkBuildRequest> workerThread;
@@ -25,7 +25,7 @@ public class ChunkBuilderThread {
 		);
 	}
 
-	public static synchronized void scheduleChunkForRemeshing(Chunk chunk) {
+	public static void scheduleChunkForRemeshing(Chunk chunk) {
 		ChunkBuildRequest request = new ChunkBuildRequest(chunk);
 		workerThread.add(request);
 	}

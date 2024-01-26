@@ -1,11 +1,10 @@
-package com.ezzenix.rendering.chunkbuilder;
+package com.ezzenix.game.chunkbuilder;
 
-import com.ezzenix.game.workers.ChunkBuildRequest;
+import com.ezzenix.game.chunkbuilder.ChunkBuildRequest;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 

@@ -1,4 +1,4 @@
-package com.ezzenix.game.workers;
+package com.ezzenix.game.chunkbuilder;
 
 import com.ezzenix.game.world.Chunk;
 

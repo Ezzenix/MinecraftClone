@@ -1,10 +1,9 @@
-package com.ezzenix.game.workers;
+package com.ezzenix.game.worldgenerator;
 
 import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.world.Chunk;
 
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 
 public class WorldGeneratorRequest {

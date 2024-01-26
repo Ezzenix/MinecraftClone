@@ -4,9 +4,9 @@ import com.ezzenix.game.BlockPos;
 import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.workers.ChunkBuilderThread;
-import com.ezzenix.game.workers.WorldGeneratorThread;
-import com.ezzenix.rendering.chunkbuilder.ChunkMesh;
+import com.ezzenix.game.chunkbuilder.ChunkBuilderThread;
+import com.ezzenix.game.worldgenerator.WorldGeneratorThread;
+import com.ezzenix.game.chunkbuilder.ChunkMesh;
 import org.joml.Vector3i;
 
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class Chunk {
 	}
 
 
-	public synchronized void setBlock(BlockPos blockPos, BlockType blockType) {
+	public void setBlock(BlockPos blockPos, BlockType blockType) {
 		int index = getIndex(getLocalPosition(blockPos));
 		if (index == -1) {
 			//System.out.println("setBlock() redirect " + blockPos + " " + this.getPos());
@@ -64,7 +64,7 @@ public class Chunk {
 	public BlockType getBlock(Vector3i voxel) {
 		return world.getBlock(toWorldPos(voxel));
 	}
-	public synchronized BlockType getBlock(int index) {
+	public BlockType getBlock(int index) {
 		if (index == -1) { // invalid index
 			//System.err.println("getBlock() got invalid index!");
 			return null;

@@ -1,8 +1,7 @@
-package com.ezzenix.game.workers;
+package com.ezzenix.game.worldgenerator;
 
 import com.ezzenix.engine.core.WorkerThread;
 import com.ezzenix.game.world.Chunk;
-import com.ezzenix.game.world.WorldGenerator;
 
 public class WorldGeneratorThread {
     private static final WorkerThread<WorldGeneratorRequest> workerThread;
