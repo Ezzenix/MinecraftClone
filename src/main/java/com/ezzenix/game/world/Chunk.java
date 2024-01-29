@@ -1,6 +1,7 @@
 package com.ezzenix.game.world;
 
 import com.ezzenix.game.BlockPos;
+import com.ezzenix.game.ChunkColumnPos;
 import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
@@ -91,9 +92,8 @@ public class Chunk {
 	}
 
 	public void generate() {
-		if (hasGenerated || isGenerating) return;
-		this.isGenerating = true;
-		WorldGeneratorThread.scheduleChunkForWorldGeneration(this);
+		if (this.isGenerating || this.hasGenerated) return;
+		WorldGeneratorThread.scheduleWorldGeneration(getWorld(), ChunkColumnPos.from(chunkPos));
 	}
 
 	/**

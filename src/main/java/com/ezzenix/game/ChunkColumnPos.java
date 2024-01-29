@@ -19,6 +19,10 @@ public class ChunkColumnPos {
 		return new ChunkColumnPos(chunkX, chunkZ);
 	}
 
+	public static ChunkColumnPos from(ChunkPos chunkPos) {
+		return new ChunkColumnPos(chunkPos.x, chunkPos.z);
+	}
+
 	public static ChunkColumnPos from(Vector3f position) {
 		return ChunkColumnPos.from(BlockPos.from(position));
 	}

@@ -11,6 +11,8 @@ import java.util.Random;
 public class WorldGenerator {
     private static final FastNoiseLite noise;
 
+    public static int WORLD_GENERATION_HEIGHT = 50;
+
     static {
         noise = new FastNoiseLite();
         noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
@@ -60,14 +62,11 @@ public class WorldGenerator {
     public static void process(WorldGeneratorRequest request) {
         //long startTime = System.currentTimeMillis();
 
-        Chunk chunk = request.chunk;
-
         for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
-            for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
+            for (int absoluteY = 0; absoluteY < WORLD_GENERATION_HEIGHT; absoluteY++) {
                 for (int localZ = 0; localZ < Chunk.CHUNK_SIZE; localZ++) {
-                    int absoluteX = chunk.getPos().x * Chunk.CHUNK_SIZE + localX;
-                    int absoluteY = chunk.getPos().y * Chunk.CHUNK_SIZE + localY;
-                    int absoluteZ = chunk.getPos().z * Chunk.CHUNK_SIZE + localZ;
+                    int absoluteX = request.chunkColumnPos.x * Chunk.CHUNK_SIZE + localX;
+                    int absoluteZ = request.chunkColumnPos.z * Chunk.CHUNK_SIZE + localZ;
 
                     float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
                     float density = (float) absoluteY / (16 * 4);
@@ -92,16 +91,15 @@ public class WorldGenerator {
         }
 
         for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
-            for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
+            for (int absoluteY = 0; absoluteY < WORLD_GENERATION_HEIGHT; absoluteY++) {
                 for (int localZ = 0; localZ < Chunk.CHUNK_SIZE; localZ++) {
-                    int absoluteX = chunk.getPos().x * Chunk.CHUNK_SIZE + localX;
-                    int absoluteY = chunk.getPos().y * Chunk.CHUNK_SIZE + localY;
-                    int absoluteZ = chunk.getPos().z * Chunk.CHUNK_SIZE + localZ;
+                    int absoluteX = request.chunkColumnPos.x * Chunk.CHUNK_SIZE + localX;
+                    int absoluteZ = request.chunkColumnPos.z * Chunk.CHUNK_SIZE + localZ;
 
                     BlockPos blockPos = new BlockPos(absoluteX, absoluteY, absoluteZ);
                     BlockPos blockPosBelow = new BlockPos(absoluteX, absoluteY-1, absoluteZ);
-                    BlockType blockType = chunk.getBlock(blockPos);
-                    BlockType blockTypeBelow = chunk.getBlock(blockPosBelow);
+                    BlockType blockType = request.getBlock(blockPos);
+                    BlockType blockTypeBelow = request.getBlock(blockPosBelow);
 
                     if (blockTypeBelow == BlockType.GRASS_BLOCK && blockType == BlockType.AIR) {
                         if (Math.random() > 0.78f) {

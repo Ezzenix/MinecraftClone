@@ -2,8 +2,10 @@ package com.ezzenix.game.world;
 
 import com.ezzenix.Game;
 import com.ezzenix.game.BlockPos;
+import com.ezzenix.game.ChunkColumnPos;
 import com.ezzenix.game.ChunkPos;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.worldgenerator.WorldGeneratorThread;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -23,13 +25,13 @@ public class World {
         for (int x = 0; x < WORLD_SIZE; x++) {
             for (int y = 0; y < WORLD_HEIGHT; y++) {
                 for (int z = 0; z < WORLD_SIZE; z++) {
-                    createChunk(x, y, z);
+                    getOrLoadChunk(x, y, z);
                 }
             }
         }
     }
 
-    private Chunk createChunk(ChunkPos chunkPos, boolean doNotGenerate) {
+    public Chunk getOrLoadChunk(ChunkPos chunkPos, boolean doNotGenerate) {
         if (chunkPos.y < 0) return null;
         Chunk chunk = chunks.get(chunkPos);
         if (chunk != null) { // already exists
@@ -45,18 +47,22 @@ public class World {
         }
         return chunk;
     }
-    private Chunk createChunk(ChunkPos chunkPos) {
-        return createChunk(chunkPos, false);
+    public Chunk getOrLoadChunk(ChunkPos chunkPos) {
+        return getOrLoadChunk(chunkPos, false);
     }
-    private Chunk createChunk(int x, int y, int z) {
-        return createChunk(new ChunkPos(x, y, z));
+    public Chunk getOrLoadChunk(int x, int y, int z) {
+        return getOrLoadChunk(new ChunkPos(x, y, z));
+    }
+
+    public void scheduleColumnForGeneration(ChunkColumnPos chunkColumnPos) {
+        WorldGeneratorThread.scheduleWorldGeneration(this, chunkColumnPos);
     }
 
     public void setBlock(BlockPos blockPos, BlockType blockType) {
         ChunkPos chunkPos = ChunkPos.from(blockPos);
         Chunk chunk = getChunk(chunkPos);
         if (chunk == null) {
-            chunk = createChunk(chunkPos, true);
+            chunk = getOrLoadChunk(chunkPos, true);
             if (chunk == null) return;
         };
         chunk.setBlock(blockPos, blockType);
@@ -97,7 +103,7 @@ public class World {
             for (int y = chunkY - renderDistance; y < chunkY + renderDistance; y++) {
                 for (int z = chunkZ - renderDistance; z < chunkZ + renderDistance; z++) {
                     ChunkPos chunkPos = new ChunkPos(x, y, z);
-                    createChunk(chunkPos);
+                    getOrLoadChunk(chunkPos);
                     chunksToShow.add(chunkPos);
                 }
             }

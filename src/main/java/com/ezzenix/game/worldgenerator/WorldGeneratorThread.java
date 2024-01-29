@@ -1,7 +1,9 @@
 package com.ezzenix.game.worldgenerator;
 
 import com.ezzenix.engine.core.WorkerThread;
+import com.ezzenix.game.ChunkColumnPos;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.game.world.World;
 
 public class WorldGeneratorThread {
     private static final WorkerThread<WorldGeneratorRequest> workerThread;
@@ -12,23 +14,19 @@ public class WorldGeneratorThread {
                 5,
                 200,
                 (request) -> {
-                    if (request.chunk.isDisposed || request.chunk.hasGenerated) return null;
                     WorldGenerator.process(request);
 					return null;
 				},
                 (request) -> {
                     request.apply();
-                    request.chunk.hasGenerated = true;
-                    request.chunk.isGenerating = false;
-                    request.chunk.flagMeshForUpdate(true);
                     return null;
                 }
         );
     }
 
-    public static synchronized void scheduleChunkForWorldGeneration(Chunk chunk) {
-        if (chunk.hasGenerated) return;
-        WorldGeneratorRequest request = new WorldGeneratorRequest(chunk);
+    public static synchronized void scheduleWorldGeneration(World world, ChunkColumnPos chunkColumnPos) {
+        WorldGeneratorRequest request = new WorldGeneratorRequest(world, chunkColumnPos);
+        if (!request.hasAnyChunks()) return;
         workerThread.add(request);
     }
 }
