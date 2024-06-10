@@ -2,11 +2,12 @@ package com.ezzenix.game.chunkbuilder.builder;
 
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.engine.opengl.Mesh;
-import com.ezzenix.game.BlockPos;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunkbuilder.ChunkBuildRequest;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.math.LocalPosition;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -30,8 +31,8 @@ public class ChunkBuilder {
 
 		// Flowers
 		if (transparentBlocksOnly) {
-			for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
-				Vector3i localPosition = chunk.getLocalPosition(i);
+			for (int i = 0; i < Chunk.CHUNK_WIDTH * Chunk.CHUNK_HEIGHT; i++) {
+				LocalPosition localPosition = LocalPosition.fromIndex(i);
 				BlockType blockType = chunk.getBlock(localPosition);
 				if (blockType == null || !blockType.isFlower()) continue;
 				Vector3f midPos = new Vector3f(localPosition.x + 0.5f, localPosition.y, localPosition.z + 0.5f);
@@ -141,6 +142,8 @@ public class ChunkBuilder {
 	}
 
 	public static void generate(ChunkBuildRequest request) {
+		//long startTime = System.currentTimeMillis();
+
 		List<Float> blockVertexList = create(request, false);
 		List<Float> waterVertexList = create(request, true);
 
@@ -149,6 +152,8 @@ public class ChunkBuilder {
 
 		request.waterVertexBuffer = Mesh.convertToBuffer(waterVertexList);
 		request.waterVertexLength = waterVertexList.size() / 6;
+
+		//System.out.println("Chunk built in " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
 	private static void addQuad(List<Float> vertexList, Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector2f uvCorner1, Vector2f uvCorner2, Vector2f numTiles, float ao1, float ao2, float ao3, float ao4) {
@@ -193,17 +198,17 @@ public class ChunkBuilder {
 
 		byte[] blockArray = chunk.getBlockIDs();
 
-		for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++) {
+		for (int i = 0; i < chunk.getBlockIDs().length; i++) {
 			byte blockId = blockArray[i];
 			if (blockId == 1) continue; // air
 			BlockType type = BlockRegistry.getBlockFromId(blockId);
 			if (type.isFlower()) continue;
 
-			Vector3i localPosition = chunk.getLocalPosition(i);
+			LocalPosition localPosition = LocalPosition.fromIndex(i);
 
 			for (Face face : Face.values()) {
 				if ((type.isTransparent() && transparentBlocksOnly) || (!type.isTransparent() && !transparentBlocksOnly)) {
-					if (shouldRenderFace(chunk, type, chunk.toWorldPos(localPosition), face)) {
+					if (shouldRenderFace(chunk, type, localPosition.toWorldPosition(chunk), face)) {
 						VoxelFace voxelFace = new VoxelFace(localPosition, face, type.getId());
 						voxelFace.calculateAO(chunk);
 						voxelFaces.get(face).add(voxelFace);

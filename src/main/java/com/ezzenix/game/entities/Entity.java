@@ -1,7 +1,7 @@
 package com.ezzenix.game.entities;
 
 import com.ezzenix.Game;
-import com.ezzenix.game.BlockPos;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.physics.AABB;
 import com.ezzenix.game.world.World;
 import org.joml.Vector3f;

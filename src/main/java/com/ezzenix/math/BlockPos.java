@@ -1,5 +1,6 @@
-package com.ezzenix.game;
+package com.ezzenix.math;
 
+import com.ezzenix.game.world.Chunk;
 import org.joml.Vector3f;
 
 import java.util.Objects;
@@ -24,6 +25,10 @@ public class BlockPos {
 
     public Vector3f toVector3f(BlockPos v) {
         return new Vector3f(v.x + 0.5f, v.y + 0.5f, v.z + 0.5f);
+    }
+
+    public LocalPosition toLocalPosition(Chunk chunk) {
+        return chunk.getPos().toLocalPosition(this);
     }
 
     public static BlockPos from(Vector3f vec) {

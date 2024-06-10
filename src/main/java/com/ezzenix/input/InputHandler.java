@@ -2,7 +2,9 @@ package com.ezzenix.input;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.BlockPos;
+import com.ezzenix.game.physics.Physics;
+import com.ezzenix.game.physics.RaycastResult;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.Chunk;
@@ -11,6 +13,7 @@ import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.WorldRenderer;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -24,6 +27,30 @@ public class InputHandler {
 
     public InputHandler() {
         handleMouse();
+
+        glfwSetMouseButtonCallback(Game.getInstance().getWindow().getId(), (window, button, action, mods) -> {
+            if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+                World world = Game.getInstance().getWorld();
+                Vector3f origin = Game.getInstance().getCamera().getPosition();
+                Vector3f direction = Game.getInstance().getCamera().getLookVector().mul(250);
+
+                RaycastResult result = Physics.raycast(world, origin, direction);
+                if (result != null) {
+                    Vector3i faceNormal = result.hitFace.getNormal();
+                    world.setBlock(result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z), BlockType.GRASS_BLOCK);
+                }
+            }
+            if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+                World world = Game.getInstance().getWorld();
+                Vector3f origin = Game.getInstance().getCamera().getPosition();
+                Vector3f direction = Game.getInstance().getCamera().getLookVector().mul(250);
+
+                RaycastResult result = Physics.raycast(world, origin, direction);
+                if (result != null) {
+                    world.setBlock(result.blockPos, BlockType.AIR);
+                }
+            }
+        });
 
         AtomicBoolean wireframeMode = new AtomicBoolean(false);
         glfwSetKeyCallback(Game.getInstance().getWindow().getId(), (window, key, scancode, action, mods) -> {
@@ -43,11 +70,6 @@ public class InputHandler {
                     glEnable(GL_CULL_FACE);
                 }
             }
-            if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
-                BlockPos blockPos = Game.getInstance().getPlayer().getBlockPos();
-                World world = Game.getInstance().getWorld();
-                world.setBlock(blockPos, BlockType.AIR);
-            }
             if (key == GLFW_KEY_G && action == GLFW_RELEASE) {
                 //System.out.println("Chunk meshing took " + (Game.getInstance().TIME_MESH_BUILD) + "ms");
                 WorldRenderer worldRenderer = Game.getInstance().getRenderer().getWorldRenderer();
@@ -57,7 +79,7 @@ public class InputHandler {
                 System.out.println("Reloading all chunks!");
                 World world = Game.getInstance().getWorld();
                 for (Chunk chunk : world.getChunkMap().values()) {
-                    chunk.flagMeshForUpdate(true);
+                    chunk.flagMeshForUpdate();
                 }
             }
         });

@@ -5,6 +5,7 @@ import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.math.ChunkPos;
 import com.ezzenix.rendering.Camera;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
@@ -103,16 +104,14 @@ public class Debug {
 
 	public static void drawChunkBorders() {
 		Player player = Game.getInstance().getPlayer();
-		int chunkX = (player.getBlockPos().x >> 5) * Chunk.CHUNK_SIZE;
-		int chunkY = (player.getBlockPos().y >> 5) * Chunk.CHUNK_SIZE;
-		int chunkZ = (player.getBlockPos().z >> 5) * Chunk.CHUNK_SIZE;
-		int distance = 1;
-		for (int x = chunkX - Chunk.CHUNK_SIZE * distance; x <= chunkX + Chunk.CHUNK_SIZE * distance; x += Chunk.CHUNK_SIZE) {
-			for (int y = chunkY - Chunk.CHUNK_SIZE * distance; y <= chunkY + Chunk.CHUNK_SIZE * distance; y += Chunk.CHUNK_SIZE) {
-				for (int z = chunkZ - Chunk.CHUNK_SIZE * distance; z <= chunkZ + Chunk.CHUNK_SIZE * distance; z += Chunk.CHUNK_SIZE) {
-					Vector3f color = new Vector3f((float) 244 / 255, (float) 255 / 255, (float) 128 / 255);
-					drawBox(new Vector3f(x, y, z), new Vector3f(x + Chunk.CHUNK_SIZE, y + Chunk.CHUNK_SIZE, z + Chunk.CHUNK_SIZE), color);
-				}
+		ChunkPos chunkPos = ChunkPos.from(player.getBlockPos());
+
+		int viewDistance = 1;
+
+		for (int x = chunkPos.x * Chunk.CHUNK_WIDTH - Chunk.CHUNK_WIDTH * viewDistance; x <= chunkPos.x * Chunk.CHUNK_WIDTH + Chunk.CHUNK_WIDTH * viewDistance; x += Chunk.CHUNK_WIDTH) {
+			for (int z = chunkPos.z * Chunk.CHUNK_WIDTH - Chunk.CHUNK_WIDTH * viewDistance; z <= chunkPos.z * Chunk.CHUNK_WIDTH + Chunk.CHUNK_WIDTH * viewDistance; z += Chunk.CHUNK_WIDTH) {
+				Vector3f color = new Vector3f((float) 244 / 255, (float) 255 / 255, (float) 128 / 255);
+				drawBox(new Vector3f(x, 0, z), new Vector3f(x + Chunk.CHUNK_WIDTH, Chunk.CHUNK_HEIGHT, z + Chunk.CHUNK_WIDTH), color);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package com.ezzenix.engine.core.enums;
 
+import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 public enum Face {
@@ -17,5 +18,24 @@ public enum Face {
 
 	public Vector3i getNormal() {
 		return this.normal;
+	}
+
+	public static Face getClosestFromNormal(Vector3f normal) {
+		normal = normal.normalize();
+
+		Face closestFace = null;
+		float highestDot = -1;
+
+		for (Face face : Face.values()) {
+			Vector3f faceNormal = new Vector3f(face.getNormal());
+
+			float dot = faceNormal.dot(normal);
+			if (dot > highestDot) {
+				highestDot = dot;
+				closestFace = face;
+			}
+		}
+
+		return closestFace;
 	}
 }

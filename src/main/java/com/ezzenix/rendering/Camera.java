@@ -43,7 +43,7 @@ public class Camera {
     public Matrix4f getViewMatrix() {
         float yaw = ((entity.getYaw() + 180) + 90) % 360;
         float pitch = entity.getPitch();
-        Vector3f position = new Vector3f(entity.getPosition()).add(0, entity.eyeHeight, 0);
+        Vector3f position = getPosition();
 
         if (thirdPerson) {
             Vector3f lookVector = getLookVector();
@@ -59,6 +59,10 @@ public class Camera {
                 ),
                 new Vector3f(0.0f, 1.0f, 0.0f)
         );
+    }
+
+    public Vector3f getPosition() {
+        return new Vector3f(entity.getPosition()).add(0, entity.eyeHeight, 0);
     }
 
     public Matrix4f getViewProjectionMatrix() {

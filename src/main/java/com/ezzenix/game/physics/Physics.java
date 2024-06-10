@@ -1,12 +1,14 @@
 package com.ezzenix.game.physics;
 
+import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.BlockPos;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Debug;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import java.text.DecimalFormat;
 
@@ -74,5 +76,86 @@ public class Physics {
 		//for (Entity entity : Game.getInstance().getEntities()) {
 		//	stepEntity(entity);
 		//}
+	}
+
+	public static RaycastResult raycast(World world, Vector3f origin, Vector3f direction) {
+		float maxDistance = direction.length();
+
+		Vector3f rayOrigin = new Vector3f(origin);
+		Vector3f rayDirection = new Vector3f(direction).normalize();
+
+		Vector3i currentVoxel = new Vector3i((int)Math.floor(rayOrigin.x), (int)Math.floor(rayOrigin.y), (int)Math.floor(rayOrigin.z));
+		Vector3f step = new Vector3f(Math.signum(rayDirection.x), Math.signum(rayDirection.y), Math.signum(rayDirection.z));
+
+		Vector3f tMax = new Vector3f(
+				intBound(rayOrigin.x, rayDirection.x),
+				intBound(rayOrigin.y, rayDirection.y),
+				intBound(rayOrigin.z, rayDirection.z)
+		);
+		Vector3f tDelta = new Vector3f(
+				step.x / rayDirection.x,
+				step.y / rayDirection.y,
+				step.z / rayDirection.z
+		);
+
+		float distance = 0.0f;
+
+		while (distance < maxDistance) {
+			BlockPos voxelBlockPos = new BlockPos(currentVoxel.x, currentVoxel.y, currentVoxel.z);
+			BlockType voxelBlockType = world.getBlock(voxelBlockPos);
+			if (voxelBlockType != BlockType.AIR) {
+				Face hitFace = Face.getClosestFromNormal(direction.mul(-1));
+				return new RaycastResult(voxelBlockPos, voxelBlockType, hitFace);
+			}
+
+			if (tMax.x < tMax.y) {
+				if (tMax.x < tMax.z) {
+					currentVoxel.x += step.x;
+					distance = tMax.x;
+					tMax.x += tDelta.x;
+				} else {
+					currentVoxel.z += step.z;
+					distance = tMax.z;
+					tMax.z += tDelta.z;
+				}
+			} else {
+				if (tMax.y < tMax.z) {
+					currentVoxel.y += step.y;
+					distance = tMax.y;
+					tMax.y += tDelta.y;
+				} else {
+					currentVoxel.z += step.z;
+					distance = tMax.z;
+					tMax.z += tDelta.z;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private static float intBound(float s, float ds) {
+		if (ds > 0) {
+			return (float)(Math.ceil(s) - s) / ds;
+		} else if (ds < 0) {
+			return (float)(s - Math.floor(s)) / -ds;
+		}
+		return Float.POSITIVE_INFINITY;
+	}
+
+	private static Face getHitFace(Vector3f rayDirection, Vector3f hitPosition, BlockPos blockPos) {
+		// Calculate the fractional parts of hitPosition
+		float fx = hitPosition.x - blockPos.x;
+		float fy = hitPosition.y - blockPos.y;
+		float fz = hitPosition.z - blockPos.z;
+
+		// Determine which face was hit based on the largest component of the direction vector
+		if (Math.abs(rayDirection.x) > Math.abs(rayDirection.y) && Math.abs(rayDirection.x) > Math.abs(rayDirection.z)) {
+			return (rayDirection.x > 0) ? Face.LEFT : Face.RIGHT;
+		} else if (Math.abs(rayDirection.y) > Math.abs(rayDirection.z)) {
+			return (rayDirection.y > 0) ? Face.BOTTOM : Face.TOP;
+		} else {
+			return (rayDirection.z > 0) ? Face.FRONT : Face.BACK;
+		}
 	}
 }

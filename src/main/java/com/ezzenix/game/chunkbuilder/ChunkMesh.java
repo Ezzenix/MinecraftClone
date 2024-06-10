@@ -20,7 +20,7 @@ public class ChunkMesh {
 
     public ChunkMesh(Chunk chunk) {
         this.chunk = chunk;
-        this.translationMatrix = new Matrix4f().translate(new Vector3f(chunk.getPos().x * Chunk.CHUNK_SIZE, chunk.getPos().y * Chunk.CHUNK_SIZE, chunk.getPos().z * Chunk.CHUNK_SIZE));
+        this.translationMatrix = new Matrix4f().translate(new Vector3f(chunk.getPos().x * Chunk.CHUNK_WIDTH, 0, chunk.getPos().z * Chunk.CHUNK_WIDTH));
     }
 
     private Mesh createMesh(FloatBuffer buffer, int length) {

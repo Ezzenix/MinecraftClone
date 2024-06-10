@@ -1,7 +1,6 @@
 package com.ezzenix.game.blocks;
 
 import com.ezzenix.Game;
-import com.ezzenix.game.BlockPos;
 import org.joml.Vector2f;
 
 public class BlockType {

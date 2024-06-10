@@ -2,8 +2,10 @@ package com.ezzenix.hud;
 
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.ChunkPos;
+import com.ezzenix.math.BlockPos;
+import com.ezzenix.math.ChunkPos;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
@@ -28,6 +30,7 @@ public class Hud {
     TextComponent memoryText;
     TextComponent chunkPosText;
     TextComponent isChunkAtPlayerText;
+    TextComponent crosshair;
 
     Shader textShader;
 
@@ -43,12 +46,15 @@ public class Hud {
         chunkPosText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 5);
         isChunkAtPlayerText = new TextComponent(fontRenderer, "", 6, 6 + 18 * 6);
 
+        crosshair = new TextComponent(fontRenderer, "+", Game.getInstance().getWindow().getWidth()/2 - fontRenderer.getGlyph('+').width/2, Game.getInstance().getWindow().getHeight()/2 - fontRenderer.getGlyph('+').height/2);
+
         Scheduler.runPeriodic(() -> {
             Player player = Game.getInstance().getPlayer();
             Vector3f position = player.getPosition();
+            BlockPos blockPos = BlockPos.from(position);
 
             fpsText.setText("FPS: " + (int) Scheduler.getFps());
-            positionText.setText("XYZ: " + (int) position.x + " " + (int) position.y + " " + (int) position.z);
+            positionText.setText("XYZ: " + blockPos.x + " " + blockPos.y + " " + blockPos.z);
             cameraText.setText(getDirectionString(player.getYaw()) + " (" + (int) player.getYaw() + " / " + (int) player.getPitch() + ")");
             chunkPosText.setText(ChunkPos.from(position).toString());
 
@@ -101,6 +107,7 @@ public class Hud {
         memoryText.render();
         chunkPosText.render();
         isChunkAtPlayerText.render();
+        crosshair.render();
 
         glUseProgram(0);
 

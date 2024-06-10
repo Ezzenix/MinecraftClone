@@ -1,6 +1,6 @@
 package com.ezzenix.game.worldgenerator;
 
-import com.ezzenix.game.BlockPos;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.world.Chunk;
 
@@ -19,7 +19,7 @@ public class WorldGeneratorRequest {
 		blocks.put(blockPos, blockType);
 	}
 
-	public BlockType getBlock(BlockPos blockPos, BlockType blockType) {
+	public BlockType getBlock(BlockPos blockPos) {
 		return blocks.get(blockPos);
 	}
 

@@ -1,10 +1,9 @@
 package com.ezzenix.game.worldgenerator;
 
-import com.ezzenix.game.BlockPos;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.world.Chunk;
-import com.ezzenix.game.worldgenerator.WorldGeneratorRequest;
 
 import java.util.Random;
 
@@ -62,15 +61,14 @@ public class WorldGenerator {
 
         Chunk chunk = request.chunk;
 
-        for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
-            for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
-                for (int localZ = 0; localZ < Chunk.CHUNK_SIZE; localZ++) {
-                    int absoluteX = chunk.getPos().x * Chunk.CHUNK_SIZE + localX;
-                    int absoluteY = chunk.getPos().y * Chunk.CHUNK_SIZE + localY;
-                    int absoluteZ = chunk.getPos().z * Chunk.CHUNK_SIZE + localZ;
+        for (int localX = 0; localX < Chunk.CHUNK_WIDTH; localX++) {
+            for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
+                for (int localZ = 0; localZ < Chunk.CHUNK_WIDTH; localZ++) {
+                    int absoluteX = chunk.getPos().x * Chunk.CHUNK_WIDTH + localX;
+					int absoluteZ = chunk.getPos().z * Chunk.CHUNK_WIDTH + localZ;
 
-                    float value = (noise.GetNoise(absoluteX, absoluteY, absoluteZ) + 1) / 2;
-                    float density = (float) absoluteY / (16 * 4);
+                    float value = (noise.GetNoise(absoluteX, y, absoluteZ) + 1) / 2;
+                    float density = (float) y / (16 * 4);
 
                     //if (((localX == 7) && (localZ == 7) && (absoluteY == 50)) || ((localX == 21) && (localZ == 21) && (absoluteY == 50))) {
                     //    placeTree(output, chunk, new BlockPos(absoluteX, absoluteY, absoluteZ));
@@ -81,27 +79,26 @@ public class WorldGenerator {
                     //}
 
                     if (value > density) {
-                        request.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), (absoluteY <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
+                        request.setBlock(new BlockPos(absoluteX, y, absoluteZ), (y <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
                     } else {
-                        if (absoluteY <= 25) {
-                            request.setBlock(new BlockPos(absoluteX, absoluteY, absoluteZ), BlockType.WATER);
+                        if (y <= 25) {
+                            request.setBlock(new BlockPos(absoluteX, y, absoluteZ), BlockType.WATER);
                         }
                     }
                 }
             }
         }
 
-        for (int localX = 0; localX < Chunk.CHUNK_SIZE; localX++) {
-            for (int localY = 0; localY < Chunk.CHUNK_SIZE; localY++) {
-                for (int localZ = 0; localZ < Chunk.CHUNK_SIZE; localZ++) {
-                    int absoluteX = chunk.getPos().x * Chunk.CHUNK_SIZE + localX;
-                    int absoluteY = chunk.getPos().y * Chunk.CHUNK_SIZE + localY;
-                    int absoluteZ = chunk.getPos().z * Chunk.CHUNK_SIZE + localZ;
+        for (int localX = 0; localX < Chunk.CHUNK_WIDTH; localX++) {
+            for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
+                for (int localZ = 0; localZ < Chunk.CHUNK_WIDTH; localZ++) {
+                    int absoluteX = chunk.getPos().x * Chunk.CHUNK_WIDTH + localX;
+                    int absoluteZ = chunk.getPos().z * Chunk.CHUNK_WIDTH + localZ;
 
-                    BlockPos blockPos = new BlockPos(absoluteX, absoluteY, absoluteZ);
-                    BlockPos blockPosBelow = new BlockPos(absoluteX, absoluteY-1, absoluteZ);
-                    BlockType blockType = chunk.getBlock(blockPos);
-                    BlockType blockTypeBelow = chunk.getBlock(blockPosBelow);
+                    BlockPos blockPos = new BlockPos(absoluteX, y, absoluteZ);
+                    BlockPos blockPosBelow = blockPos.add(0, -1, 0);
+                    BlockType blockType = request.getBlock(blockPos);
+                    BlockType blockTypeBelow = request.getBlock(blockPosBelow);
 
                     if (blockTypeBelow == BlockType.GRASS_BLOCK && blockType == BlockType.AIR) {
                         if (Math.random() > 0.78f) {

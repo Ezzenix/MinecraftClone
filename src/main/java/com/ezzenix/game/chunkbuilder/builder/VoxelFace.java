@@ -1,24 +1,25 @@
 package com.ezzenix.game.chunkbuilder.builder;
 
-import com.ezzenix.game.BlockPos;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.math.LocalPosition;
 import org.joml.Vector3i;
 
 public class VoxelFace {
     public Face face;
     public byte blockId;
 
-    public Vector3i position;
+    public LocalPosition position;
 
     public float ao1 = 0;
     public float ao2 = 0;
     public float ao3 = 0;
     public float ao4 = 0;
 
-    public VoxelFace(Vector3i position, Face face, byte blockId) {
+    public VoxelFace(LocalPosition position, Face face, byte blockId) {
         this.position = position;
         this.face = face;
         this.blockId = blockId;
@@ -27,7 +28,7 @@ public class VoxelFace {
     private int isBlockAt(Chunk chunk, Face face, Vector3i offset) {
         applyOffsetRotation(face, offset);
 
-        BlockPos worldPos = chunk.toWorldPos(this.position.x + offset.x, this.position.y + offset.y, this.position.z + offset.z);
+        BlockPos worldPos = position.add(offset.x, offset.y, offset.z).toWorldPosition(chunk);
         BlockType blockType = chunk.getWorld().getBlock(worldPos);
 
         return blockType == BlockType.AIR || !blockType.isSolid() ? 0 : 1;

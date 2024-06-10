@@ -2,6 +2,7 @@ package com.ezzenix.game.chunkbuilder.builder;
 
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.math.LocalPosition;
 import org.joml.Vector3i;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class GreedyShape {
     private List<VoxelFace> getNextVoxelsInDirection(Vector3i direction, List<VoxelFace> voxelsAtEdge, List<VoxelFace> possibleVoxels) {
         List<VoxelFace> voxels = new ArrayList<>();
         for (VoxelFace edgeVoxel : voxelsAtEdge) {
-            Vector3i newVoxelPos = new Vector3i(edgeVoxel.position).add(direction);
+            LocalPosition newVoxelPos = edgeVoxel.position.add(direction.x, direction.y, direction.z);
             VoxelFace newVoxel = getVoxelAt(newVoxelPos, possibleVoxels);
             if (newVoxel != null && canMergeWith(newVoxel)) {
                 voxels.add(newVoxel);
@@ -54,7 +55,7 @@ public class GreedyShape {
         return voxels;
     }
 
-    private VoxelFace getVoxelAt(Vector3i position, List<VoxelFace> possibleVoxels) {
+    private VoxelFace getVoxelAt(LocalPosition position, List<VoxelFace> possibleVoxels) {
         for (VoxelFace voxel : possibleVoxels) {
             if (voxel.position.equals(position)) {
                 return voxel;

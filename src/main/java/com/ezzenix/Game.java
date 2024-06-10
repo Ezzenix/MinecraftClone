@@ -10,6 +10,9 @@ import com.ezzenix.game.physics.Physics;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Hud;
 import com.ezzenix.input.InputHandler;
+import com.ezzenix.math.BlockPos;
+import com.ezzenix.math.ChunkPos;
+import com.ezzenix.math.LocalPosition;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Renderer;
 import org.joml.Vector3f;
@@ -34,14 +37,12 @@ public class Game {
 
     public final TextureAtlas<String> blockTextures;
 
-    public long TIME_MESH_BUILD = 0;
-
     public Game() {
         INSTANCE = this;
 
         // Create a window and initialize OpenGL & glfw
         window = new Window();
-        window.setTitle("Minecraft that is better than normal Minecraft");
+        window.setTitle("Minecraft");
         window.centerWindow();
         window.setVSync(true);
         window.setIcon("src/main/resources/icon.png");

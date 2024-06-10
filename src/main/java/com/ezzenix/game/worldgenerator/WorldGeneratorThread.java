@@ -20,7 +20,7 @@ public class WorldGeneratorThread {
                     request.apply();
                     request.chunk.hasGenerated = true;
                     request.chunk.isGenerating = false;
-                    request.chunk.flagMeshForUpdate(true);
+                    request.chunk.flagMeshForUpdate();
                     return null;
                 }
         );
