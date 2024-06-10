@@ -1,8 +1,11 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.Game;
+import com.ezzenix.game.physics.Physics;
+import com.ezzenix.game.physics.RaycastResult;
 import com.ezzenix.hud.Debug;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.opengl.GL11.*;
@@ -22,6 +25,12 @@ public class Renderer {
         Debug.drawLine(new Vector3f(0, 0, 0), new Vector3f(0, 10, 0), new Vector3f(0, 1, 0)); // y
         Debug.drawLine(new Vector3f(0, 0, 0), new Vector3f(0, 0, -10), new Vector3f(0, 0, 1)); // z
         Debug.drawLine(new Vector3f(0, 0, 0), new Vector3f(10, 0, 0), new Vector3f(1, 0, 0)); // x
+
+        // Highlight target block
+        RaycastResult result = Game.getInstance().getCamera().raycast(5);
+        if (result != null) {
+            Debug.highlightVoxel(new Vector3f(result.blockPos.x, result.blockPos.y, result.blockPos.z), new Vector3f(0f, 0f, 0f));
+        }
 
         worldRenderer.render(window);
         Game.getInstance().getHud().render();

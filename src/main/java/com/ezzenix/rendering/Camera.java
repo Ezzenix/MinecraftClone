@@ -2,6 +2,8 @@ package com.ezzenix.rendering;
 
 import com.ezzenix.Game;
 import com.ezzenix.game.entities.Entity;
+import com.ezzenix.game.physics.Physics;
+import com.ezzenix.game.physics.RaycastResult;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -63,6 +65,10 @@ public class Camera {
 
     public Vector3f getPosition() {
         return new Vector3f(entity.getPosition()).add(0, entity.eyeHeight, 0);
+    }
+
+    public RaycastResult raycast(float maxDistance) {
+        return Physics.raycast(this.entity.getWorld(), this.getPosition(), this.getLookVector().mul(maxDistance));
     }
 
     public Matrix4f getViewProjectionMatrix() {

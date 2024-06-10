@@ -30,24 +30,16 @@ public class InputHandler {
 
         glfwSetMouseButtonCallback(Game.getInstance().getWindow().getId(), (window, button, action, mods) -> {
             if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-                World world = Game.getInstance().getWorld();
-                Vector3f origin = Game.getInstance().getCamera().getPosition();
-                Vector3f direction = Game.getInstance().getCamera().getLookVector().mul(250);
-
-                RaycastResult result = Physics.raycast(world, origin, direction);
+                RaycastResult result = Game.getInstance().getCamera().raycast(5);
                 if (result != null) {
                     Vector3i faceNormal = result.hitFace.getNormal();
-                    world.setBlock(result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z), BlockType.GRASS_BLOCK);
+                    Game.getInstance().getWorld().setBlock(result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z), BlockType.GRASS_BLOCK);
                 }
             }
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-                World world = Game.getInstance().getWorld();
-                Vector3f origin = Game.getInstance().getCamera().getPosition();
-                Vector3f direction = Game.getInstance().getCamera().getLookVector().mul(250);
-
-                RaycastResult result = Physics.raycast(world, origin, direction);
+                RaycastResult result = Game.getInstance().getCamera().raycast(5);
                 if (result != null) {
-                    world.setBlock(result.blockPos, BlockType.AIR);
+                    Game.getInstance().getWorld().setBlock(result.blockPos, BlockType.AIR);
                 }
             }
         });
