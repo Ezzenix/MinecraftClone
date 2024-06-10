@@ -60,7 +60,7 @@ public class Hud {
 
             Chunk c = player.getWorld().getChunk(player.getBlockPos());
             if (c != null) {
-                isChunkAtPlayerText.setText("Chunk: Yes " + c.blockCount + " " + c.isGenerating + " " + c.hasGenerated);
+                isChunkAtPlayerText.setText("Chunk: Yes " + c.blockCount);
             } else {
                 isChunkAtPlayerText.setText("Chunk: No");
             }
