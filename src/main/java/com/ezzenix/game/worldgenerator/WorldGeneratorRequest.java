@@ -1,8 +1,8 @@
 package com.ezzenix.game.worldgenerator;
 
-import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.math.BlockPos;
 
 import java.util.HashMap;
 

@@ -2,11 +2,11 @@ package com.ezzenix.game.physics;
 
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Debug;
+import com.ezzenix.math.BlockPos;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -84,7 +84,7 @@ public class Physics {
 		Vector3f rayOrigin = new Vector3f(origin);
 		Vector3f rayDirection = new Vector3f(direction).normalize();
 
-		Vector3i currentVoxel = new Vector3i((int)Math.floor(rayOrigin.x), (int)Math.floor(rayOrigin.y), (int)Math.floor(rayOrigin.z));
+		Vector3i currentVoxel = new Vector3i((int) Math.floor(rayOrigin.x), (int) Math.floor(rayOrigin.y), (int) Math.floor(rayOrigin.z));
 		Vector3f step = new Vector3f(Math.signum(rayDirection.x), Math.signum(rayDirection.y), Math.signum(rayDirection.z));
 
 		Vector3f tMax = new Vector3f(
@@ -136,9 +136,9 @@ public class Physics {
 
 	private static float intBound(float s, float ds) {
 		if (ds > 0) {
-			return (float)(Math.ceil(s) - s) / ds;
+			return (float) (Math.ceil(s) - s) / ds;
 		} else if (ds < 0) {
-			return (float)(s - Math.floor(s)) / -ds;
+			return (float) (s - Math.floor(s)) / -ds;
 		}
 		return Float.POSITIVE_INFINITY;
 	}

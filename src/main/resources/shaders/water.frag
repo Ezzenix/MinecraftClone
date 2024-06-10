@@ -15,9 +15,9 @@ void main() {
         numTiles = vec2(1, 1);
     }
     vec2 atlasUV = fract(texCoord);
-    vec2 atlasTileSizeNormalized = 16.0 / textureAtlasSize; // how big one tile of atlas is
-    vec2 topLeftUV = floor(atlasUV / atlasTileSizeNormalized) * atlasTileSizeNormalized; // the UV coordinates at the top-left of the texture in the atlas
-    vec2 uv = texCoord - numTiles - topLeftUV; // uv coordinates relative to the top-left corner
+    vec2 atlasTileSizeNormalized = 16.0 / textureAtlasSize;// how big one tile of atlas is
+    vec2 topLeftUV = floor(atlasUV / atlasTileSizeNormalized) * atlasTileSizeNormalized;// the UV coordinates at the top-left of the texture in the atlas
+    vec2 uv = texCoord - numTiles - topLeftUV;// uv coordinates relative to the top-left corner
     vec2 uvAlpha = uv / atlasTileSizeNormalized;
     vec2 repeatedUVAlpha = mod(uvAlpha * numTiles, 1);
     vec2 final = topLeftUV + repeatedUVAlpha * atlasTileSizeNormalized;

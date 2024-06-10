@@ -1,9 +1,8 @@
 package com.ezzenix.game.chunkbuilder;
 
 import com.ezzenix.engine.core.WorkerThread;
-import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.chunkbuilder.builder.ChunkBuilder;
-import com.ezzenix.math.LocalPosition;
+import com.ezzenix.game.world.Chunk;
 
 public class ChunkBuilderThread {
 	private static final WorkerThread<ChunkBuildRequest> workerThread;

@@ -1,14 +1,13 @@
 package com.ezzenix.game.world;
 
-import com.ezzenix.math.BlockPos;
-import com.ezzenix.math.ChunkPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunkbuilder.ChunkBuilderThread;
-import com.ezzenix.game.worldgenerator.WorldGeneratorThread;
 import com.ezzenix.game.chunkbuilder.ChunkMesh;
+import com.ezzenix.game.worldgenerator.WorldGeneratorThread;
+import com.ezzenix.math.BlockPos;
+import com.ezzenix.math.ChunkPos;
 import com.ezzenix.math.LocalPosition;
-import org.joml.Vector3i;
 
 import java.util.Arrays;
 

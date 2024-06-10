@@ -2,7 +2,6 @@ package com.ezzenix.math;
 
 import com.ezzenix.game.world.Chunk;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.util.Objects;
 

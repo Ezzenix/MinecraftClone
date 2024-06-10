@@ -1,8 +1,8 @@
 package com.ezzenix.game.physics;
 
-import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.hud.Debug;
+import com.ezzenix.math.BlockPos;
 import org.joml.Vector3f;
 
 public class AABB {

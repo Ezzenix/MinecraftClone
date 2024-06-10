@@ -2,11 +2,11 @@ package com.ezzenix.game.chunkbuilder.builder;
 
 import com.ezzenix.engine.core.enums.Face;
 import com.ezzenix.engine.opengl.Mesh;
-import com.ezzenix.math.BlockPos;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.chunkbuilder.ChunkBuildRequest;
 import com.ezzenix.game.world.Chunk;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.LocalPosition;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
