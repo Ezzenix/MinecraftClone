@@ -26,8 +26,8 @@ public class WorldRenderer {
 	public WorldRenderer() {
 		blockTexture = new Texture(Game.getInstance().blockTextures.getAtlasImage());
 		textureAtlasSize = new Vector2f(
-				Game.getInstance().blockTextures.getAtlasImage().getWidth(),
-				Game.getInstance().blockTextures.getAtlasImage().getHeight()
+			Game.getInstance().blockTextures.getAtlasImage().getWidth(),
+			Game.getInstance().blockTextures.getAtlasImage().getHeight()
 		);
 		//blockTexture.generateMipmap();
 		//blockTexture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

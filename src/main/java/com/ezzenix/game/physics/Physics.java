@@ -25,9 +25,9 @@ public class Physics {
 
 		// get the position player will be next frame based on velocity
 		Vector3f nextPosition = new Vector3f(
-				entity.getPosition()
+			entity.getPosition()
 		).add(
-				new Vector3f(entity.getVelocity()).mul(deltaTime).mul(gameSpeed)
+			new Vector3f(entity.getVelocity()).mul(deltaTime).mul(gameSpeed)
 		);
 
 		World world = entity.getWorld();
@@ -88,14 +88,14 @@ public class Physics {
 		Vector3f step = new Vector3f(Math.signum(rayDirection.x), Math.signum(rayDirection.y), Math.signum(rayDirection.z));
 
 		Vector3f tMax = new Vector3f(
-				intBound(rayOrigin.x, rayDirection.x),
-				intBound(rayOrigin.y, rayDirection.y),
-				intBound(rayOrigin.z, rayDirection.z)
+			intBound(rayOrigin.x, rayDirection.x),
+			intBound(rayOrigin.y, rayDirection.y),
+			intBound(rayOrigin.z, rayDirection.z)
 		);
 		Vector3f tDelta = new Vector3f(
-				step.x / rayDirection.x,
-				step.y / rayDirection.y,
-				step.z / rayDirection.z
+			step.x / rayDirection.x,
+			step.y / rayDirection.y,
+			step.z / rayDirection.z
 		);
 
 		float distance = 0.0f;

@@ -17,14 +17,14 @@ public class FrustumBoundingBox {
 
 	public boolean isInsideFrustum(Matrix4f viewProjectionMatrix) {
 		Vector4f[] corners = {
-				new Vector4f(min.x, min.y, min.z, 1.0f),
-				new Vector4f(min.x, min.y, max.z, 1.0f),
-				new Vector4f(min.x, max.y, min.z, 1.0f),
-				new Vector4f(min.x, max.y, max.z, 1.0f),
-				new Vector4f(max.x, min.y, min.z, 1.0f),
-				new Vector4f(max.x, min.y, max.z, 1.0f),
-				new Vector4f(max.x, max.y, min.z, 1.0f),
-				new Vector4f(max.x, max.y, max.z, 1.0f)
+			new Vector4f(min.x, min.y, min.z, 1.0f),
+			new Vector4f(min.x, min.y, max.z, 1.0f),
+			new Vector4f(min.x, max.y, min.z, 1.0f),
+			new Vector4f(min.x, max.y, max.z, 1.0f),
+			new Vector4f(max.x, min.y, min.z, 1.0f),
+			new Vector4f(max.x, min.y, max.z, 1.0f),
+			new Vector4f(max.x, max.y, min.z, 1.0f),
+			new Vector4f(max.x, max.y, max.z, 1.0f)
 		};
 
 		for (Vector4f corner : corners) {

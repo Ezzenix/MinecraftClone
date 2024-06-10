@@ -33,9 +33,9 @@ public class BlockPos {
 
 	public static BlockPos from(Vector3f vec) {
 		return new BlockPos(
-				(int) Math.floor(vec.x),
-				(int) Math.floor(vec.y),
-				(int) Math.floor(vec.z)
+			(int) Math.floor(vec.x),
+			(int) Math.floor(vec.y),
+			(int) Math.floor(vec.z)
 		);
 	}
 

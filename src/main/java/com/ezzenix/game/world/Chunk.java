@@ -17,15 +17,14 @@ public class Chunk {
 
 	private final ChunkPos chunkPos;
 	private final ChunkMesh chunkMesh;
-	private World world;
+	private final World world;
 
-	private byte[] blockIDs = new byte[CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT];
+	private final byte[] blockIDs = new byte[CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT];
 	public int blockCount = 0;
 
 	public boolean isGenerating = false;
 	public boolean hasGenerated = false;
 	public boolean isDisposed = false;
-	public boolean isLoaded = false;
 
 
 	public Chunk(ChunkPos chunkPos, World world) {
@@ -41,8 +40,7 @@ public class Chunk {
 	public void setBlock(BlockPos blockPos, BlockType blockType) {
 		int index = blockPos.toLocalPosition(this).toIndex();
 		if (index == -1) {
-			//System.out.println("setBlock() redirect " + blockPos + " " + this.getPos());
-			world.setBlock(blockPos, blockType); // not in this chunk, redirect to world
+			world.setBlock(blockPos, blockType);
 			return;
 		}
 

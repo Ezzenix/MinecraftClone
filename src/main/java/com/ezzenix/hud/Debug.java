@@ -27,7 +27,7 @@ public class Debug {
 
 	public static void renderBatch() {
 		try (
-				MemoryStack stack = MemoryStack.stackPush()
+			MemoryStack stack = MemoryStack.stackPush()
 		) {
 			Camera camera = Game.getInstance().getCamera();
 

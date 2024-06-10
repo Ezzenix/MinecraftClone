@@ -8,21 +8,21 @@ public class WorldGeneratorThread {
 
 	static {
 		workerThread = new WorkerThread<>(
-				1,
-				5,
-				200,
-				(request) -> {
-					if (request.chunk.isDisposed || request.chunk.hasGenerated) return null;
-					WorldGenerator.process(request);
-					return null;
-				},
-				(request) -> {
-					request.apply();
-					request.chunk.hasGenerated = true;
-					request.chunk.isGenerating = false;
-					request.chunk.flagMeshForUpdate();
-					return null;
-				}
+			1,
+			5,
+			200,
+			(request) -> {
+				if (request.chunk.isDisposed || request.chunk.hasGenerated) return null;
+				WorldGenerator.process(request);
+				return null;
+			},
+			(request) -> {
+				request.apply();
+				request.chunk.hasGenerated = true;
+				request.chunk.isGenerating = false;
+				request.chunk.flagMeshForUpdate();
+				return null;
+			}
 		);
 	}
 

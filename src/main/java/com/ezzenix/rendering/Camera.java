@@ -33,8 +33,8 @@ public class Camera {
 		Vector3f lookVector = new Vector3f(0.0f, 0.0f, -1.0f);
 		Vector3f upVector = new Vector3f(0.0f, 1.0f, 0.0f);
 		Quaternionf orientation = new Quaternionf()
-				.rotateAxis((float) Math.toRadians(entity.getYaw() + 180), upVector)
-				.rotateAxis((float) Math.toRadians(entity.getPitch()), new Vector3f(1.0f, 0.0f, 0.0f));
+			.rotateAxis((float) Math.toRadians(entity.getYaw() + 180), upVector)
+			.rotateAxis((float) Math.toRadians(entity.getPitch()), new Vector3f(1.0f, 0.0f, 0.0f));
 		lookVector.set(0.0f, 0.0f, -1.0f).rotate(orientation);
 		upVector.set(0.0f, 1.0f, 0.0f);
 		Vector3f rightVector = new Vector3f();
@@ -53,13 +53,13 @@ public class Camera {
 		}
 
 		return new Matrix4f().setLookAt(
-				position,
-				new Vector3f(
-						(float) (position.x + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))),
-						(float) (position.y + Math.sin(Math.toRadians(entity.getPitch()))),
-						(float) (position.z - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)))
-				),
-				new Vector3f(0.0f, 1.0f, 0.0f)
+			position,
+			new Vector3f(
+				(float) (position.x + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))),
+				(float) (position.y + Math.sin(Math.toRadians(entity.getPitch()))),
+				(float) (position.z - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)))
+			),
+			new Vector3f(0.0f, 1.0f, 0.0f)
 		);
 	}
 

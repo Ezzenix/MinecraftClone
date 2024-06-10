@@ -41,9 +41,9 @@ public class LocalPosition {
 
 	public static LocalPosition from(Vector3f vec) {
 		return new LocalPosition(
-				(int) Math.floor(vec.x),
-				(int) Math.floor(vec.y),
-				(int) Math.floor(vec.z)
+			(int) Math.floor(vec.x),
+			(int) Math.floor(vec.y),
+			(int) Math.floor(vec.z)
 		);
 	}
 

@@ -9,19 +9,19 @@ public class ChunkBuilderThread {
 
 	static {
 		workerThread = new WorkerThread<>(
-				1,
-				5,
-				200,
-				(request) -> {
-					if (request.chunk.isDisposed) return null;
-					ChunkBuilder.generate(request);
-					return null;
-				},
-				(request) -> {
-					if (request.chunk.isDisposed) return null;
-					request.chunk.getChunkMesh().applyRequest(request);
-					return null;
-				}
+			1,
+			5,
+			200,
+			(request) -> {
+				if (request.chunk.isDisposed) return null;
+				ChunkBuilder.generate(request);
+				return null;
+			},
+			(request) -> {
+				if (request.chunk.isDisposed) return null;
+				request.chunk.getChunkMesh().applyRequest(request);
+				return null;
+			}
 		);
 	}
 
