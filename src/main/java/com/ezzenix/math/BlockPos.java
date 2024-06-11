@@ -27,16 +27,16 @@ public class BlockPos {
 		return new Vector3f(v.x + 0.5f, v.y + 0.5f, v.z + 0.5f);
 	}
 
-	public LocalPosition toLocalPosition(Chunk chunk) {
-		return chunk.getPos().toLocalPosition(this);
-	}
-
 	public static BlockPos from(Vector3f vec) {
 		return new BlockPos(
 			(int) Math.floor(vec.x),
 			(int) Math.floor(vec.y),
 			(int) Math.floor(vec.z)
 		);
+	}
+
+	public static BlockPos from(Chunk chunk, LocalPosition localPosition) {
+		return new BlockPos(chunk.getPos().x * Chunk.CHUNK_WIDTH + localPosition.x, localPosition.y, chunk.getPos().z * Chunk.CHUNK_WIDTH + localPosition.z);
 	}
 
 	public String toString() {

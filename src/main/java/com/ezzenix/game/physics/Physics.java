@@ -103,7 +103,7 @@ public class Physics {
 		while (distance < maxDistance) {
 			BlockPos voxelBlockPos = new BlockPos(currentVoxel.x, currentVoxel.y, currentVoxel.z);
 			BlockType voxelBlockType = world.getBlock(voxelBlockPos);
-			if (voxelBlockType != BlockType.AIR) {
+			if (voxelBlockType != BlockType.AIR && voxelBlockType != null) {
 				Face hitFace = Face.getClosestFromNormal(direction.mul(-1));
 				return new RaycastResult(voxelBlockPos, voxelBlockType, hitFace);
 			}

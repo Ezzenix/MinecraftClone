@@ -66,7 +66,7 @@ public class Hud {
 
 			int vertexCount = 0;
 			World world = Game.getInstance().getWorld();
-			for (Chunk chunk : world.getChunkMap().values()) {
+			for (Chunk chunk : world.getChunks().values()) {
 				if (chunk.getChunkMesh().getBlockMesh() != null)
 					vertexCount += chunk.getChunkMesh().getBlockMesh().vertexCount;
 				//if (chunk.getChunkMesh() != null) vertexCount += chunk.waterMesh.vertexCount;

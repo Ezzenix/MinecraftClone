@@ -3,6 +3,7 @@ package com.ezzenix.rendering;
 import com.ezzenix.Game;
 import com.ezzenix.game.physics.RaycastResult;
 import com.ezzenix.hud.Debug;
+import com.ezzenix.skybox.Skybox;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -11,9 +12,13 @@ import static org.lwjgl.opengl.GL11.*;
 public class Renderer {
 	private WorldRenderer worldRenderer;
 
+	Skybox skybox;
+
 	public Renderer() {
 		this.worldRenderer = new WorldRenderer();
 		glClearColor(110f / 255f, 177f / 255f, 1.0f, 0.0f);
+
+		skybox = new Skybox();
 	}
 
 	public void render(long window) {
@@ -30,11 +35,13 @@ public class Renderer {
 			Debug.highlightVoxel(new Vector3f(result.blockPos.x, result.blockPos.y, result.blockPos.z), new Vector3f(0f, 0f, 0f));
 		}
 
+		skybox.render();
+
 		worldRenderer.render(window);
 		Game.getInstance().getHud().render();
 		Debug.renderBatch();
 
-		glfwSwapBuffers(window); // swap the color buffers
+		glfwSwapBuffers(window);
 	}
 
 	public WorldRenderer getWorldRenderer() {

@@ -23,28 +23,28 @@ public class GreedyShape {
 		this.initialVoxelFace = initialVoxelFace;
 		voxels.add(initialVoxelFace);
 		this.chunk = chunk;
-		minX = initialVoxelFace.position.x;
-		maxX = initialVoxelFace.position.x;
-		minY = initialVoxelFace.position.y;
-		maxY = initialVoxelFace.position.y;
-		minZ = initialVoxelFace.position.z;
-		maxZ = initialVoxelFace.position.z;
+		minX = initialVoxelFace.localPosition.x;
+		maxX = initialVoxelFace.localPosition.x;
+		minY = initialVoxelFace.localPosition.y;
+		maxY = initialVoxelFace.localPosition.y;
+		minZ = initialVoxelFace.localPosition.z;
+		maxZ = initialVoxelFace.localPosition.z;
 	}
 
 	private boolean isAtEdgeInDirection(Vector3i direction, VoxelFace voxel) {
-		if (direction.x < 0) return voxel.position.x == minX;
-		if (direction.x > 0) return voxel.position.x == maxX;
-		if (direction.y < 0) return voxel.position.y == minY;
-		if (direction.y > 0) return voxel.position.y == maxY;
-		if (direction.z < 0) return voxel.position.z == minZ;
-		if (direction.z > 0) return voxel.position.z == maxZ;
+		if (direction.x < 0) return voxel.localPosition.x == minX;
+		if (direction.x > 0) return voxel.localPosition.x == maxX;
+		if (direction.y < 0) return voxel.localPosition.y == minY;
+		if (direction.y > 0) return voxel.localPosition.y == maxY;
+		if (direction.z < 0) return voxel.localPosition.z == minZ;
+		if (direction.z > 0) return voxel.localPosition.z == maxZ;
 		return false;
 	}
 
 	private List<VoxelFace> getNextVoxelsInDirection(Vector3i direction, List<VoxelFace> voxelsAtEdge, List<VoxelFace> possibleVoxels) {
 		List<VoxelFace> voxels = new ArrayList<>();
 		for (VoxelFace edgeVoxel : voxelsAtEdge) {
-			LocalPosition newVoxelPos = edgeVoxel.position.add(direction.x, direction.y, direction.z);
+			LocalPosition newVoxelPos = edgeVoxel.localPosition.add(direction.x, direction.y, direction.z);
 			VoxelFace newVoxel = getVoxelAt(newVoxelPos, possibleVoxels);
 			if (newVoxel != null && canMergeWith(newVoxel)) {
 				voxels.add(newVoxel);
@@ -57,7 +57,7 @@ public class GreedyShape {
 
 	private VoxelFace getVoxelAt(LocalPosition position, List<VoxelFace> possibleVoxels) {
 		for (VoxelFace voxel : possibleVoxels) {
-			if (voxel.position.equals(position)) {
+			if (voxel.localPosition.equals(position)) {
 				return voxel;
 			}
 		}

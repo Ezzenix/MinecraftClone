@@ -24,11 +24,6 @@ public class ChunkPos {
 		return ChunkPos.from(BlockPos.from(position));
 	}
 
-	public LocalPosition toLocalPosition(BlockPos blockPos) {
-		return new LocalPosition(blockPos.x - this.x * Chunk.CHUNK_WIDTH, blockPos.y, blockPos.z - this.z * Chunk.CHUNK_WIDTH);
-	}
-
-
 	public String toString() {
 		return "ChunkPos(" + x + " " + z + ")";
 	}

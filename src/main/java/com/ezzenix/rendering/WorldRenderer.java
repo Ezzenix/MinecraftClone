@@ -49,7 +49,7 @@ public class WorldRenderer {
 		Matrix4f viewMatrix = camera.getViewMatrix();
 		Matrix4f viewProjectionMatrix = camera.getViewProjectionMatrix();
 
-		Collection<Chunk> chunks = world.getChunkMap().values();
+		Collection<Chunk> chunks = world.getChunks().values();
 
 		// Frustum culling
 		//for (Chunk chunk : world.getChunks().values()) {

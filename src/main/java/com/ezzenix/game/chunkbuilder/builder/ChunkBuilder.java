@@ -31,7 +31,7 @@ public class ChunkBuilder {
 
 		// Flowers
 		if (transparentBlocksOnly) {
-			for (int i = 0; i < Chunk.CHUNK_WIDTH * Chunk.CHUNK_HEIGHT; i++) {
+			for (int i = 0; i < chunk.getBlockIDs().length; i++) {
 				LocalPosition localPosition = LocalPosition.fromIndex(i);
 				BlockType blockType = chunk.getBlock(localPosition);
 				if (blockType == null || !blockType.isFlower()) continue;
@@ -185,7 +185,7 @@ public class ChunkBuilder {
 		Vector3i faceNormal = face.getNormal();
 		BlockPos neighborPos = blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
 		BlockType neighborType = chunk.getWorld().getBlock(neighborPos);
-		if (neighborType == null) return true;
+		if (neighborType == null) return false;
 		if (blockType == neighborType) return false;
 		return neighborType == BlockType.AIR || !neighborType.isSolid();
 	}
@@ -208,7 +208,7 @@ public class ChunkBuilder {
 
 			for (Face face : Face.values()) {
 				if ((type.isTransparent() && transparentBlocksOnly) || (!type.isTransparent() && !transparentBlocksOnly)) {
-					if (shouldRenderFace(chunk, type, localPosition.toWorldPosition(chunk), face)) {
+					if (shouldRenderFace(chunk, type, BlockPos.from(chunk, localPosition), face)) {
 						VoxelFace voxelFace = new VoxelFace(localPosition, face, type.getId());
 						voxelFace.calculateAO(chunk);
 						voxelFaces.get(face).add(voxelFace);

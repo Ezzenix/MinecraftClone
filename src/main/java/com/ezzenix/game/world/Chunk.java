@@ -38,14 +38,14 @@ public class Chunk {
 
 
 	public void setBlock(BlockPos blockPos, BlockType blockType) {
-		int index = blockPos.toLocalPosition(this).toIndex();
+		int index = LocalPosition.from(this, blockPos).toIndex();
 		if (index == -1) {
 			world.setBlock(blockPos, blockType);
 			return;
 		}
 
 		if (index >= blockIDs.length) {
-			System.out.println("Index out of bounds: " + index + "  " + blockPos.toLocalPosition(this));
+			System.out.println("Index out of bounds: " + index + "  " + LocalPosition.from(this, blockPos));
 		}
 
 		byte id = blockIDs[index];
@@ -57,14 +57,14 @@ public class Chunk {
 	}
 
 	public BlockType getBlock(BlockPos blockPos) {
-		int index = blockPos.toLocalPosition(this).toIndex();
+		int index = LocalPosition.from(this, blockPos).toIndex();
 		if (index == -1) {
 			return world.getBlock(blockPos); // not in this chunk, redirect to world
 		}
 		return getBlock(index);
 	}
 	public BlockType getBlock(LocalPosition localPosition) {
-		return getBlock(localPosition.toWorldPosition(this));
+		return getBlock(BlockPos.from(this, localPosition));
 	}
 	public BlockType getBlock(int index) {
 		if (index == -1) { // invalid index
@@ -109,7 +109,7 @@ public class Chunk {
 	 * Destroys and unloads the chunk
 	 */
 	public void dispose() {
-		this.world.getChunkMap().remove(chunkPos);
+		this.world.getChunks().remove(chunkPos);
 		this.isDisposed = true;
 		this.chunkMesh.dispose();
 	}

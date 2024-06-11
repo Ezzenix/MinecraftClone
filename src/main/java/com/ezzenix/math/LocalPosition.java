@@ -47,8 +47,8 @@ public class LocalPosition {
 		);
 	}
 
-	public BlockPos toWorldPosition(Chunk chunk) {
-		return new BlockPos(chunk.getPos().x * Chunk.CHUNK_WIDTH + x, y, chunk.getPos().z * Chunk.CHUNK_WIDTH + z);
+	public static LocalPosition from(Chunk chunk, BlockPos blockPos) {
+		return new LocalPosition(blockPos.x - chunk.getPos().x * Chunk.CHUNK_WIDTH, blockPos.y, blockPos.z - chunk.getPos().z * Chunk.CHUNK_WIDTH);
 	}
 
 	public String toString() {

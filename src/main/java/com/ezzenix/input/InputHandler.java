@@ -67,7 +67,7 @@ public class InputHandler {
 			if (key == GLFW_KEY_J && action == GLFW_RELEASE) {
 				System.out.println("Reloading all chunks!");
 				World world = Game.getInstance().getWorld();
-				for (Chunk chunk : world.getChunkMap().values()) {
+				for (Chunk chunk : world.getChunks().values()) {
 					chunk.flagMeshForUpdate();
 				}
 			}

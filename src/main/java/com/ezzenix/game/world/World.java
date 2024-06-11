@@ -62,7 +62,7 @@ public class World {
 
 	public BlockType getBlock(BlockPos blockPos) {
 		Chunk chunk = getChunk(blockPos);
-		if (chunk == null) return BlockType.AIR;
+		if (chunk == null) return null;
 		return chunk.getBlock(blockPos);
 	}
 
@@ -78,27 +78,36 @@ public class World {
 		return getChunk(ChunkPos.from(blockPos));
 	}
 
-	public ConcurrentHashMap<ChunkPos, Chunk> getChunkMap() {
+	public ConcurrentHashMap<ChunkPos, Chunk> getChunks() {
 		return this.chunks;
 	}
 
 	public void loadNewChunks() {
 		ChunkPos chunkPos = ChunkPos.from(Game.getInstance().getPlayer().getBlockPos());
 
-		int renderDistance = 6;
+		int renderDistance = 8;
 
-		List<ChunkPos> chunksToShow = new ArrayList<>();
-
-		for (int x = chunkPos.x - renderDistance; x < chunkPos.x + renderDistance; x++) {
-			for (int z = chunkPos.z - renderDistance; z < chunkPos.z + renderDistance; z++) {
-				ChunkPos pos = new ChunkPos(x, z);
-				createChunk(pos);
-				chunksToShow.add(pos);
+		// get chunk positions in a spiral
+		List<ChunkPos> chunkPositions = new ArrayList<>();
+		for (int r = 0; r < renderDistance; r++) {
+			for (int i = -r; i <= r; i++) {
+				chunkPositions.add(new ChunkPos(chunkPos.x + i, chunkPos.z + r));
+				if (r != 0) chunkPositions.add(new ChunkPos(chunkPos.x + i, chunkPos.z - r));
+			}
+			for (int j = -r + 1; j < r; j++) {
+				chunkPositions.add(new ChunkPos(chunkPos.x + r, chunkPos.z + j));
+				if (r != 0) chunkPositions.add(new ChunkPos(chunkPos.x - r, chunkPos.z + j));
 			}
 		}
 
+		// create chunks
+		for (ChunkPos pos : chunkPositions) {
+			createChunk(pos);
+		}
+
+		// dispose chunks outside of view distance
 		for (Chunk chunk : chunks.values()) {
-			if (!chunksToShow.contains(chunk.getPos())) {
+			if (!chunkPositions.contains(chunk.getPos())) {
 				chunk.dispose();
 			}
 		}

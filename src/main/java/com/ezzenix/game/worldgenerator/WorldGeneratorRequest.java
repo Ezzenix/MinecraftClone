@@ -20,7 +20,7 @@ public class WorldGeneratorRequest {
 	}
 
 	public BlockType getBlock(BlockPos blockPos) {
-		return blocks.get(blockPos);
+		return blocks.getOrDefault(blockPos, BlockType.AIR);
 	}
 
 	public void apply() {

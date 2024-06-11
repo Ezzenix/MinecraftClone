@@ -80,7 +80,7 @@ public class WorldGenerator {
 					//}
 
 					if (value > density) {
-						request.setBlock(new BlockPos(absoluteX, y, absoluteZ), (y <= 26) ? BlockType.SAND : BlockType.GRASS_BLOCK);
+						request.setBlock(new BlockPos(absoluteX, y, absoluteZ), (y <= 26) ? ((y <= 18) ? BlockType.STONE : BlockType.SAND) : BlockType.GRASS_BLOCK);
 					} else {
 						if (y <= 25) {
 							request.setBlock(new BlockPos(absoluteX, y, absoluteZ), BlockType.WATER);
@@ -104,7 +104,7 @@ public class WorldGenerator {
 					if (blockTypeBelow == BlockType.GRASS_BLOCK && blockType == BlockType.AIR) {
 						if (Math.random() > 0.78f) {
 							request.setBlock(blockPos, Math.random() > 0.15f ? BlockType.GRASS : BlockType.POPPY);
-						} else if (Math.random() > 0.97f) {
+						} else if (Math.random() > 0.98f) {
 							placeTree(request, blockPos);
 						}
 					}

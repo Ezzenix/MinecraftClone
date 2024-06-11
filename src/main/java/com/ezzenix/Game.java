@@ -48,7 +48,7 @@ public class Game {
 
 		this.entities = new ArrayList<>();
 		this.world = new World();
-		this.player = new Player(this.world, new Vector3f(0, 100, 0));
+		this.player = new Player(this.world, new Vector3f(0, 50, 0));
 		this.camera = new Camera();
 
 		this.hud = new Hud();
@@ -58,7 +58,7 @@ public class Game {
 		Scheduler.runPeriodic(() -> {
 			Game.getInstance().getWorld().loadNewChunks();
 			//Profiler.dump();
-		}, 1000);
+		}, 500);
 
 		//FrustumBoundingBox test = new FrustumBoundingBox(new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
 

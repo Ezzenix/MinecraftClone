@@ -12,15 +12,15 @@ public class VoxelFace {
 	public Face face;
 	public byte blockId;
 
-	public LocalPosition position;
+	public LocalPosition localPosition;
 
 	public float ao1 = 0;
 	public float ao2 = 0;
 	public float ao3 = 0;
 	public float ao4 = 0;
 
-	public VoxelFace(LocalPosition position, Face face, byte blockId) {
-		this.position = position;
+	public VoxelFace(LocalPosition localPosition, Face face, byte blockId) {
+		this.localPosition = localPosition;
 		this.face = face;
 		this.blockId = blockId;
 	}
@@ -28,9 +28,10 @@ public class VoxelFace {
 	private int isBlockAt(Chunk chunk, Face face, Vector3i offset) {
 		applyOffsetRotation(face, offset);
 
-		BlockPos worldPos = position.add(offset.x, offset.y, offset.z).toWorldPosition(chunk);
+		BlockPos worldPos = BlockPos.from(chunk, localPosition.add(offset.x, offset.y, offset.z));
 		BlockType blockType = chunk.getWorld().getBlock(worldPos);
 
+		if (blockType == null) return 0;
 		return blockType == BlockType.AIR || !blockType.isSolid() ? 0 : 1;
 	}
 
