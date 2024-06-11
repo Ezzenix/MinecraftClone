@@ -39,6 +39,10 @@ public class BlockPos {
 		return new BlockPos(chunk.getPos().x * Chunk.CHUNK_WIDTH + localPosition.x, localPosition.y, chunk.getPos().z * Chunk.CHUNK_WIDTH + localPosition.z);
 	}
 
+	public boolean isValid() {
+		return this.y >= 0 && this.y <= Chunk.CHUNK_HEIGHT;
+	}
+
 	public String toString() {
 		return "BlockPos(" + x + " " + y + " " + z + ")";
 	}

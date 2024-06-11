@@ -1,12 +1,14 @@
 package com.ezzenix.input;
 
 import com.ezzenix.Game;
+import com.ezzenix.engine.core.Profiler;
 import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.physics.RaycastResult;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.World;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.WorldRenderer;
 import org.joml.Quaternionf;
@@ -30,7 +32,10 @@ public class InputHandler {
 				RaycastResult result = Game.getInstance().getCamera().raycast(5);
 				if (result != null) {
 					Vector3i faceNormal = result.hitFace.getNormal();
-					Game.getInstance().getWorld().setBlock(result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z), BlockType.GRASS_BLOCK);
+					BlockPos blockPos = result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
+					if (blockPos.isValid()) {
+						Game.getInstance().getWorld().setBlock(blockPos, BlockType.GRASS_BLOCK);
+					}
 				}
 			}
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -70,6 +75,21 @@ public class InputHandler {
 				for (Chunk chunk : world.getChunks().values()) {
 					chunk.flagMeshForUpdate();
 				}
+			}
+
+			if (key == GLFW_KEY_F4 && action == GLFW_RELEASE) {
+				Profiler.dump();
+			}
+
+			if (key == GLFW_KEY_KP_1 && action == GLFW_RELEASE) {
+				BlockPos blockPos = Game.getInstance().getPlayer().getBlockPos();
+				if (blockPos.isValid()) {
+					Game.getInstance().getWorld().setBlock(blockPos, BlockType.STONE);
+				}
+			}
+
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+				glfwSetWindowShouldClose(Game.getInstance().getWindow().getId(), true);
 			}
 		});
 	}

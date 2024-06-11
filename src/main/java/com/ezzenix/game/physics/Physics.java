@@ -1,6 +1,6 @@
 package com.ezzenix.game.physics;
 
-import com.ezzenix.engine.core.enums.Face;
+import com.ezzenix.game.enums.Face;
 import com.ezzenix.engine.scheduler.Scheduler;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Entity;
@@ -151,11 +151,11 @@ public class Physics {
 
 		// Determine which face was hit based on the largest component of the direction vector
 		if (Math.abs(rayDirection.x) > Math.abs(rayDirection.y) && Math.abs(rayDirection.x) > Math.abs(rayDirection.z)) {
-			return (rayDirection.x > 0) ? Face.LEFT : Face.RIGHT;
+			return (rayDirection.x > 0) ? Face.WEST : Face.EAST;
 		} else if (Math.abs(rayDirection.y) > Math.abs(rayDirection.z)) {
 			return (rayDirection.y > 0) ? Face.BOTTOM : Face.TOP;
 		} else {
-			return (rayDirection.z > 0) ? Face.FRONT : Face.BACK;
+			return (rayDirection.z > 0) ? Face.NORTH : Face.SOUTH;
 		}
 	}
 }

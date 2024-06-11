@@ -1,6 +1,6 @@
 package com.ezzenix.game.chunkbuilder.builder;
 
-import com.ezzenix.engine.core.enums.Face;
+import com.ezzenix.game.enums.Face;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.world.Chunk;
@@ -38,10 +38,10 @@ public class VoxelFace {
 	private void applyOffsetRotation(Face face, Vector3i offset) {
 		switch (face) {
 			case BOTTOM -> offset.set(-offset.x, -offset.y, -offset.z);
-			case FRONT -> offset.set(offset.x, offset.z, -offset.y);
-			case BACK -> offset.set(-offset.x, -offset.z, offset.y);
-			case RIGHT -> offset.set(offset.y, -offset.x, offset.z);
-			case LEFT -> offset.set(-offset.y, offset.x, -offset.z);
+			case NORTH -> offset.set(offset.x, offset.z, -offset.y);
+			case SOUTH -> offset.set(-offset.x, -offset.z, offset.y);
+			case EAST -> offset.set(offset.y, -offset.x, offset.z);
+			case WEST -> offset.set(-offset.y, offset.x, -offset.z);
 		}
 		;
 	}
@@ -84,25 +84,25 @@ public class VoxelFace {
 				this.ao3 = ao2;
 				this.ao4 = ao1;
 				break;
-			case FRONT:
+			case NORTH:
 				this.ao1 = ao3;
 				this.ao2 = ao4;
 				this.ao3 = ao1;
 				this.ao4 = ao2;
 				break;
-			case BACK:
+			case SOUTH:
 				this.ao1 = ao4;
 				this.ao2 = ao3;
 				this.ao3 = ao2;
 				this.ao4 = ao1;
 				break;
-			case RIGHT:
+			case EAST:
 				this.ao1 = ao2;
 				this.ao2 = ao3;
 				this.ao3 = ao4;
 				this.ao4 = ao1;
 				break;
-			case LEFT:
+			case WEST:
 				this.ao1 = ao3;
 				this.ao2 = ao2;
 				this.ao3 = ao1;

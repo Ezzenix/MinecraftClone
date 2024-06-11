@@ -8,18 +8,19 @@ import com.ezzenix.game.worldgenerator.WorldGeneratorThread;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.math.LocalPosition;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
 public class Chunk {
 	public static final int CHUNK_WIDTH = 16;
-	public static final int CHUNK_HEIGHT = 256;
+	public static final int CHUNK_HEIGHT = 255;
 
 	private final ChunkPos chunkPos;
 	private final ChunkMesh chunkMesh;
 	private final World world;
 
-	private final byte[] blockIDs = new byte[CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT];
+	private final byte[] blockIDs = new byte[CHUNK_WIDTH * CHUNK_WIDTH * (CHUNK_HEIGHT + 1)];
 	public int blockCount = 0;
 
 	public boolean isGenerating = false;
@@ -44,9 +45,8 @@ public class Chunk {
 			return;
 		}
 
-		if (index >= blockIDs.length) {
-			System.out.println("Index out of bounds: " + index + "  " + LocalPosition.from(this, blockPos));
-		}
+		if (index >= blockIDs.length)
+			throw new RuntimeException("Index out of bounds: " + index + "  " + LocalPosition.from(this, blockPos));
 
 		byte id = blockIDs[index];
 		if (id != blockType.getId()) {
@@ -67,16 +67,17 @@ public class Chunk {
 		return getBlock(BlockPos.from(this, localPosition));
 	}
 	public BlockType getBlock(int index) {
-		if (index == -1) { // invalid index
-			//System.err.println("getBlock() got invalid index!");
-			return null;
-		}
+		if (index == -1 || index >= blockIDs.length) return null;
 		BlockType type = BlockRegistry.getBlockFromId(blockIDs[index]);
 		return type != null ? type : BlockType.AIR;
 	}
 
 	public ChunkPos getPos() {
 		return chunkPos;
+	}
+
+	public Vector3f getWorldPos() {
+		return new Vector3f(chunkPos.x * Chunk.CHUNK_WIDTH, 0, chunkPos.z * Chunk.CHUNK_WIDTH);
 	}
 
 	public byte[] getBlockIDs() {

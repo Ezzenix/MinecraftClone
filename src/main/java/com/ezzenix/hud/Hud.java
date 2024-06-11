@@ -69,6 +69,8 @@ public class Hud {
 			for (Chunk chunk : world.getChunks().values()) {
 				if (chunk.getChunkMesh().getBlockMesh() != null)
 					vertexCount += chunk.getChunkMesh().getBlockMesh().vertexCount;
+				if (chunk.getChunkMesh().getWaterMesh() != null)
+					vertexCount += chunk.getChunkMesh().getWaterMesh().vertexCount;
 				//if (chunk.getChunkMesh() != null) vertexCount += chunk.waterMesh.vertexCount;
 			}
 			vertexText.setText("Vertices: " + vertexCount);

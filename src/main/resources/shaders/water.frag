@@ -24,7 +24,7 @@ void main() {
     vec4 textureColor = texture(textureSampler, final);
 
     // apply ambient occlusion
-    textureColor.rgb *= (1.0 - ambientOcclusion*0.8f);
+    textureColor.rgb *= (1.0 - ambientOcclusion*0.75f);
 
     fragColor = textureColor;
 }

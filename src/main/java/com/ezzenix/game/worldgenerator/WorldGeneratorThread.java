@@ -8,7 +8,7 @@ public class WorldGeneratorThread {
 
 	static {
 		workerThread = new WorkerThread<>(
-			1,
+			2,
 			5,
 			200,
 			(request) -> {

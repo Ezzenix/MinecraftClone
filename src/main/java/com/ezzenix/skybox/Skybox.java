@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
 
 public class Skybox {
 	Texture texture;
@@ -31,8 +33,7 @@ public class Skybox {
 	}
 
 	private Mesh createMesh() {
-		float[] vertices = {
-			// positions        // texture Coords
+		float[] vertices = new float[]{
 			-1.0f, 1.0f, -1.0f,// 0.0f, 0.0f,
 			-1.0f, -1.0f, -1.0f,// 0.0f, 1.0f,
 			1.0f, -1.0f, -1.0f,// 1.0f, 1.0f,
@@ -78,7 +79,10 @@ public class Skybox {
 
 		Mesh mesh = new Mesh(Mesh.convertToBuffer(vertices), 36, GL_TRIANGLES);
 
-		System.out.println("Created skybox mesh");
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 3, 0);
+		glEnableVertexAttribArray(0);
+
+		mesh.unbind();
 
 		return mesh;
 	}
@@ -86,14 +90,14 @@ public class Skybox {
 	public void render() {
 		glDisable(GL_CULL_FACE);
 
-		glDepthFunc(GL_LEQUAL);
+		glDepthFunc(GL_ALWAYS);
 
 		texture.bind();
 		shader.use();
 
 		Camera camera = Game.getInstance().getCamera();
-		shader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
-		shader.uploadMat4f("viewMatrix", new Matrix4f(camera.getViewMatrix()).m30(0).m31(0).m32(0)); // Zero translation
+		shader.setUniform("projectionMatrix", camera.getProjectionMatrix());
+		shader.setUniform("viewMatrix", new Matrix4f(camera.getViewMatrix()).m30(0).m31(0).m32(0));
 
 		mesh.render();
 

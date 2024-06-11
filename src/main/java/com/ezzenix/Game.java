@@ -9,6 +9,7 @@ import com.ezzenix.game.physics.Physics;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Hud;
 import com.ezzenix.input.InputHandler;
+import com.ezzenix.math.LocalPosition;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Renderer;
 import org.joml.Vector3f;
@@ -57,10 +58,7 @@ public class Game {
 
 		Scheduler.runPeriodic(() -> {
 			Game.getInstance().getWorld().loadNewChunks();
-			//Profiler.dump();
 		}, 500);
-
-		//FrustumBoundingBox test = new FrustumBoundingBox(new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
 
 		// Game loop
 		while (!window.shouldWindowClose()) {
@@ -70,17 +68,14 @@ public class Game {
 
 			this.getRenderer().render(window.getId());
 
-			//boolean isViewingTest = test.isInsideFrustum(camera.getViewProjectionMatrix());
-			//System.out.println(isViewingTest);
-
 			glfwPollEvents();
 			int glError = glGetError();
 			if (glError != GL_NO_ERROR) System.err.println("OpenGL Error: " + glError);
-
 		}
 
 		// Shutdown
 		window.cleanup();
+		System.exit(0);
 	}
 
 

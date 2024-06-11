@@ -34,7 +34,7 @@ public class LocalPosition {
 	}
 
 	public int toIndex() {
-		if (x < 0 || x >= 16 || y < 0 || y > 255 || z < 0 || z >= 16)
+		if (x < 0 || x >= Chunk.CHUNK_WIDTH || y < 0 || y > Chunk.CHUNK_HEIGHT || z < 0 || z >= Chunk.CHUNK_WIDTH)
 			return -1; // validate
 		return (x & 0xF) | ((y & 0xFF) << 4) | ((z & 0xF) << 12);
 	}

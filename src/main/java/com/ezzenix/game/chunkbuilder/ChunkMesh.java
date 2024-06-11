@@ -8,11 +8,11 @@ import org.joml.Vector3f;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
 
 public class ChunkMesh {
-	private Chunk chunk;
+	private final Chunk chunk;
 	private final Matrix4f translationMatrix;
 	public Mesh blockMesh;
 	public Mesh waterMesh;

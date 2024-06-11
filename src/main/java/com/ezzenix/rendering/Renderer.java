@@ -32,7 +32,7 @@ public class Renderer {
 		// Highlight target block
 		RaycastResult result = Game.getInstance().getCamera().raycast(5);
 		if (result != null) {
-			Debug.highlightVoxel(new Vector3f(result.blockPos.x, result.blockPos.y, result.blockPos.z), new Vector3f(0f, 0f, 0f));
+			Debug.highlightVoxel(new Vector3f(result.blockPos.x, result.blockPos.y, result.blockPos.z), new Vector3f(0.2f, 0.2f, 0.2f));
 		}
 
 		skybox.render();

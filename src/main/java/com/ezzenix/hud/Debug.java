@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL15.GL_FLOAT;
-import static org.lwjgl.opengl.GL15.GL_LINES;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glVertexAttribPointer;
 
@@ -32,8 +31,8 @@ public class Debug {
 			Camera camera = Game.getInstance().getCamera();
 
 			debugShader.use();
-			debugShader.uploadMat4f("projectionMatrix", camera.getProjectionMatrix());
-			debugShader.uploadMat4f("viewMatrix", camera.getViewMatrix());
+			debugShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
+			debugShader.setUniform("viewMatrix", camera.getViewMatrix());
 
 			FloatBuffer buffer = Mesh.convertToBuffer(vertexBatch, stack);
 			Mesh mesh = new Mesh(buffer, vertexBatch.size() / 6, GL_LINES);
@@ -45,8 +44,13 @@ public class Debug {
 			glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
 			glEnableVertexAttribArray(1);
 
+			glLineWidth(3f);
+			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+			glEnable(GL_LINE_SMOOTH);
 			mesh.render();
+			glDepthFunc(GL_LESS);
 			mesh.dispose();
+			glLineWidth(1f);
 		}
 	}
 

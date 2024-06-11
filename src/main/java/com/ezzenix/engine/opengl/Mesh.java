@@ -72,10 +72,7 @@ public class Mesh {
 	}
 
 	public static FloatBuffer convertToBuffer(float[] floats) {
-		FloatBuffer buffer = MemoryUtil.memAllocFloat(floats.length);
-		buffer.put(floats);
-		buffer.flip();
-		return buffer;
+		return MemoryUtil.memAllocFloat(floats.length).put(floats).flip();
 	}
 
 	public static FloatBuffer convertToBuffer(List<Float> floats) {

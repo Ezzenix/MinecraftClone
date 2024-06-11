@@ -1,6 +1,6 @@
 package com.ezzenix.game.physics;
 
-import com.ezzenix.engine.core.enums.Face;
+import com.ezzenix.game.enums.Face;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.math.BlockPos;
 

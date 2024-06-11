@@ -1,6 +1,6 @@
 package com.ezzenix.game.chunkbuilder.builder;
 
-import com.ezzenix.engine.core.enums.Face;
+import com.ezzenix.game.enums.Face;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
@@ -10,7 +10,6 @@ import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.LocalPosition;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,7 +92,7 @@ public class ChunkBuilder {
 					shapeSize.set(shape.maxX - shape.minX, shape.maxZ - shape.minZ);
 					break;
 				}
-				case FRONT: {
+				case NORTH: {
 					vert1.set(shape.maxX, shape.maxY, shape.minZ);
 					vert2.set(shape.maxX, shape.minY, shape.minZ);
 					vert3.set(shape.minX, shape.minY, shape.minZ);
@@ -101,7 +100,7 @@ public class ChunkBuilder {
 					shapeSize.set(shape.maxX - shape.minX, shape.maxY - shape.minY);
 					break;
 				}
-				case BACK: {
+				case SOUTH: {
 					vert1.set(shape.minX, shape.maxY, shape.maxZ);
 					vert2.set(shape.minX, shape.minY, shape.maxZ);
 					vert3.set(shape.maxX, shape.minY, shape.maxZ);
@@ -109,7 +108,7 @@ public class ChunkBuilder {
 					shapeSize.set(shape.maxX - shape.minX, shape.maxY - shape.minY);
 					break;
 				}
-				case LEFT: {
+				case WEST: {
 					vert1.set(shape.minX, shape.maxY, shape.minZ);
 					vert2.set(shape.minX, shape.minY, shape.minZ);
 					vert3.set(shape.minX, shape.minY, shape.maxZ);
@@ -117,7 +116,7 @@ public class ChunkBuilder {
 					shapeSize.set(shape.maxZ - shape.minZ, shape.maxY - shape.minY);
 					break;
 				}
-				case RIGHT: {
+				case EAST: {
 					vert1.set(shape.maxX, shape.maxY, shape.maxZ);
 					vert2.set(shape.maxX, shape.minY, shape.maxZ);
 					vert3.set(shape.maxX, shape.minY, shape.minZ);
@@ -182,12 +181,16 @@ public class ChunkBuilder {
 
 	private static boolean shouldRenderFace(Chunk chunk, BlockType blockType, BlockPos blockPos, Face face) {
 		if (blockType == BlockType.AIR) return false;
-		Vector3i faceNormal = face.getNormal();
-		BlockPos neighborPos = blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
-		BlockType neighborType = chunk.getWorld().getBlock(neighborPos);
-		if (neighborType == null) return false;
-		if (blockType == neighborType) return false;
-		return neighborType == BlockType.AIR || !neighborType.isSolid();
+
+		BlockType neighborType = chunk.getBlock(blockPos.add(face.getNormal().x, face.getNormal().y, face.getNormal().z));
+
+		if (neighborType == null) return (face == Face.TOP || face == Face.BOTTOM);
+		if (neighborType == BlockType.AIR) return true;
+
+		if (neighborType == blockType && blockType.isFluid()) return false;
+
+		if (neighborType.isTransparent()) return true;
+		return !neighborType.isSolid();
 	}
 
 	private static HashMap<Face, List<VoxelFace>> generateVoxelFaces(Chunk chunk, boolean transparentBlocksOnly) {

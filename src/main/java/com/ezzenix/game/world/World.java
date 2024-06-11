@@ -2,6 +2,7 @@ package com.ezzenix.game.world;
 
 import com.ezzenix.Game;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.chunkbuilder.ChunkBuilderQueue;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 
@@ -39,6 +40,8 @@ public class World {
 		if (!doNotGenerate) {
 			chunk.generate();
 		}
+		ChunkBuilderQueue.addChunk(chunk);
+		ChunkBuilderQueue.processNext();
 		return chunk;
 	}
 	private Chunk createChunk(ChunkPos chunkPos) {
@@ -49,15 +52,16 @@ public class World {
 	}
 
 	public void setBlock(BlockPos blockPos, BlockType blockType) {
+		if (!blockPos.isValid())
+			throw new RuntimeException("Attempt to place block outside of world");
+
 		ChunkPos chunkPos = ChunkPos.from(blockPos);
 		Chunk chunk = getChunk(chunkPos);
 		if (chunk == null) {
 			chunk = createChunk(chunkPos, true);
 			if (chunk == null) return;
 		}
-		;
 		chunk.setBlock(blockPos, blockType);
-		//chunk.flagMeshForUpdate(true);
 	}
 
 	public BlockType getBlock(BlockPos blockPos) {
@@ -73,8 +77,7 @@ public class World {
 		return getChunk(new ChunkPos(x, z));
 	}
 	public Chunk getChunk(BlockPos blockPos) {
-		if (blockPos.y < 0) return null;
-		if (blockPos.y >= Chunk.CHUNK_HEIGHT) return null;
+		if (!blockPos.isValid()) return null;
 		return getChunk(ChunkPos.from(blockPos));
 	}
 

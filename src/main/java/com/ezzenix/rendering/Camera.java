@@ -12,13 +12,13 @@ public class Camera {
 	private final Entity entity;
 	public boolean thirdPerson = false;
 
-	private Matrix4f projectionMatrix;
+	private final Matrix4f projectionMatrix;
 
 	public Camera() {
 		this.entity = Game.getInstance().getPlayer();
 
 		// Initialize projection matrix
-		float fov = 70.0f;
+		float fov = (float) Math.toRadians(75);
 		float aspectRatio = 16.0f / 9.0f;
 		float near = 0.1f;
 		float far = 2000.0f;

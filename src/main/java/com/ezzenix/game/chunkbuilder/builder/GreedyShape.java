@@ -1,6 +1,6 @@
 package com.ezzenix.game.chunkbuilder.builder;
 
-import com.ezzenix.engine.core.enums.Face;
+import com.ezzenix.game.enums.Face;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.math.LocalPosition;
 import org.joml.Vector3i;
@@ -113,16 +113,16 @@ public class GreedyShape {
 						case BOTTOM:
 							shape.minY += 1;
 							break;
-						case FRONT:
+						case NORTH:
 							shape.minZ += 1;
 							break;
-						case BACK:
+						case SOUTH:
 							shape.maxZ += 1;
 							break;
-						case RIGHT:
+						case EAST:
 							shape.maxX += 1;
 							break;
-						case LEFT:
+						case WEST:
 							shape.minX += 1;
 							break;
 					}
