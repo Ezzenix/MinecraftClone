@@ -3,6 +3,7 @@ package com.ezzenix;
 import com.ezzenix.engine.core.TextureAtlas;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.engine.scheduler.Scheduler;
+import com.ezzenix.game.chunkbuilder.ChunkBuilderQueue;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.physics.Physics;
@@ -59,6 +60,8 @@ public class Game {
 		Scheduler.runPeriodic(() -> {
 			Game.getInstance().getWorld().loadNewChunks();
 		}, 500);
+
+		ChunkBuilderQueue.initialize();
 
 		// Game loop
 		while (!window.shouldWindowClose()) {

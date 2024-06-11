@@ -7,6 +7,7 @@ import com.ezzenix.game.chunkbuilder.ChunkMesh;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.Debug;
+import com.ezzenix.math.ChunkPos;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -49,12 +50,9 @@ public class WorldRenderer {
 		Matrix4f projectionMatrix = camera.getProjectionMatrix();
 		Matrix4f viewMatrix = camera.getViewMatrix();
 
+		ChunkPos cameraChunkPos = ChunkPos.from(camera.getPosition());
 		List<Chunk> chunks = new ArrayList<>(world.getChunks().values().stream().toList());
-		chunks.sort((a, b) -> {
-			float dA = camera.getPosition().distance(a.getWorldPos().add((float) Chunk.CHUNK_WIDTH / 2, 0, (float) Chunk.CHUNK_WIDTH / 2));
-			float dB = camera.getPosition().distance(b.getWorldPos().add((float) Chunk.CHUNK_WIDTH / 2, 0, (float) Chunk.CHUNK_WIDTH / 2));
-			return Float.compare(dB, dA);
-		});
+		chunks.sort((a, b) -> Float.compare(cameraChunkPos.distanceTo(b.getPos()), cameraChunkPos.distanceTo(a.getPos())));
 
 		worldShader.use();
 		worldShader.setUniform("projectionMatrix", projectionMatrix);

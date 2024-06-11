@@ -24,6 +24,12 @@ public class ChunkPos {
 		return ChunkPos.from(BlockPos.from(position));
 	}
 
+	public float distanceTo(ChunkPos other) {
+		float dx = this.x - other.x;
+		float dy = this.z - other.z;
+		return (float) Math.sqrt(dx * dx + dy * dy);
+	}
+
 	public String toString() {
 		return "ChunkPos(" + x + " " + z + ")";
 	}

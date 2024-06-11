@@ -97,7 +97,7 @@ public class FontRenderer {
 		g2d.dispose();
 
 		try {
-			ImageIO.write(img, "PNG", new File("temp\\fontAtlas.png"));
+			ImageIO.write(img, "PNG", new File("fontAtlas.png"));
 		} catch (IOException ignored) {
 		}
 

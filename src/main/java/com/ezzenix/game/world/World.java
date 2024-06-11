@@ -40,8 +40,6 @@ public class World {
 		if (!doNotGenerate) {
 			chunk.generate();
 		}
-		ChunkBuilderQueue.addChunk(chunk);
-		ChunkBuilderQueue.processNext();
 		return chunk;
 	}
 	private Chunk createChunk(ChunkPos chunkPos) {
@@ -88,7 +86,7 @@ public class World {
 	public void loadNewChunks() {
 		ChunkPos chunkPos = ChunkPos.from(Game.getInstance().getPlayer().getBlockPos());
 
-		int renderDistance = 8;
+		int renderDistance = 16;
 
 		// get chunk positions in a spiral
 		List<ChunkPos> chunkPositions = new ArrayList<>();

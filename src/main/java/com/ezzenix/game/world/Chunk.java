@@ -2,7 +2,7 @@ package com.ezzenix.game.world;
 
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunkbuilder.ChunkBuilderThread;
+import com.ezzenix.game.chunkbuilder.ChunkBuilderQueue;
 import com.ezzenix.game.chunkbuilder.ChunkMesh;
 import com.ezzenix.game.worldgenerator.WorldGeneratorThread;
 import com.ezzenix.math.BlockPos;
@@ -26,6 +26,9 @@ public class Chunk {
 	public boolean isGenerating = false;
 	public boolean hasGenerated = false;
 	public boolean isDisposed = false;
+
+	public boolean shouldMeshRebuild = false;
+	public boolean isMeshRebuilding = false;
 
 
 	public Chunk(ChunkPos chunkPos, World world) {
@@ -90,7 +93,7 @@ public class Chunk {
 
 	public void flagMeshForUpdate() {
 		if (!hasGenerated) return;
-		ChunkBuilderThread.scheduleChunkForRemeshing(this);
+		shouldMeshRebuild = true;
 	}
 
 	public void generate() {
