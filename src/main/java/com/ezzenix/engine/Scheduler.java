@@ -1,4 +1,4 @@
-package com.ezzenix.engine.scheduler;
+package com.ezzenix.engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,22 +39,10 @@ public class Scheduler {
 		return schedulerRunnable;
 	}
 
-	public static SchedulerRunnable runPeriodic(Runnable runnable, long interval) {
+	public static SchedulerRunnable setInterval(Runnable runnable, long interval) {
 		SchedulerRunnable schedulerRunnable = new SchedulerRunnable(runnable, interval);
 		runnables.add(schedulerRunnable);
 		return schedulerRunnable;
-	}
-
-	private static void removeRunnable(SchedulerRunnable schedulerRunnable) {
-		runnables.remove(schedulerRunnable);
-	}
-
-	public static void sleep(float ms) {
-		try {
-			Thread.sleep((long) ms);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
 	}
 
 	public static class SchedulerRunnable {
@@ -73,8 +61,8 @@ public class Scheduler {
 		}
 
 		public void run() {
-			lastRun = System.nanoTime();
-			runnable.run();
+			this.lastRun = System.nanoTime();
+			this.runnable.run();
 		}
 
 		public boolean canRun() {
@@ -82,7 +70,7 @@ public class Scheduler {
 		}
 
 		public void dispose() {
-			Scheduler.removeRunnable(this);
+			runnables.remove(this);
 		}
 	}
 }

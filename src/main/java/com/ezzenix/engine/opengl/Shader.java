@@ -6,12 +6,17 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 
 public class Shader {
 	private final int programId;
+	private final HashMap<String, Integer> uniformLocations = new HashMap<>();
 
 	public Shader(String vertexShaderPath, String fragmentShaderPath) {
 		// create shader program
@@ -33,6 +38,9 @@ public class Shader {
 		if (GL20.glGetProgrami(programId, GL20.GL_VALIDATE_STATUS) == GL_FALSE)
 			throw new RuntimeException("Error validating shader: " + glGetProgramInfoLog(programId, 1024));
 
+		initializeUniforms(vertexShaderPath);
+		initializeUniforms(fragmentShaderPath);
+
 		// cleanup
 		glDetachShader(programId, vertexShader);
 		glDetachShader(programId, fragmentShader);
@@ -40,10 +48,36 @@ public class Shader {
 		glDeleteShader(fragmentShader);
 	}
 
-	private int loadShader(String path, int type) {
-		String shaderSource = FileUtil.readResourceSource("shaders/" + path);
+	private String readShader(String shaderPath) {
+		String shaderSource = FileUtil.readResourceSource("shaders/" + shaderPath);
 		if (shaderSource == null)
-			throw new RuntimeException("Could not read shader " + path);
+			throw new RuntimeException("Could not read shader " + shaderPath);
+		return shaderSource;
+	}
+
+	private void initializeUniforms(String shaderPath) {
+		String shaderSource = readShader(shaderPath);
+
+		String[] lines = shaderSource.split("\n");
+		for (String line : lines) {
+			if (line.startsWith("uniform")) {
+				String[] tokens = line.split("\\s+");
+				if (tokens.length >= 3) {
+					String uniformName = tokens[2].replaceAll(";", "");
+					int location = glGetUniformLocation(programId, uniformName);
+					if (location != -1) {
+						uniformLocations.put(uniformName, location);
+						//System.out.println("Added uniform " + uniformName + " at location " + location);
+					} else {
+						System.err.println("Uniform " + uniformName + " is defined in shader/" + shaderPath + " but is never used");
+					}
+				}
+			}
+		}
+	}
+
+	private int loadShader(String path, int type) {
+		String shaderSource = readShader(path);
 
 		int shaderId = glCreateShader(type);
 		if (shaderId == 0)
@@ -60,56 +94,57 @@ public class Shader {
 		return shaderId;
 	}
 
-	public void use() {
+	public void bind() {
 		glUseProgram(programId);
+	}
+
+	public int getLocation(String uniformName) {
+		return uniformLocations.get(uniformName);
 	}
 
 	public void setUniform(String uniformName, Matrix4f value) {
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			use();
 			FloatBuffer matBuffer = stack.mallocFloat(16);
 			value.get(matBuffer);
-			glUniformMatrix4fv(glGetUniformLocation(programId, uniformName), false, matBuffer);
+			glUniformMatrix4fv(getLocation(uniformName), false, matBuffer);
 		}
 	}
 
 	public void setUniform(String uniformName, Matrix3f value) {
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			use();
 			FloatBuffer matBuffer = stack.mallocFloat(9);
 			value.get(matBuffer);
-			glUniformMatrix3fv(glGetUniformLocation(programId, uniformName), false, matBuffer);
+			glUniformMatrix3fv(getLocation(uniformName), false, matBuffer);
 		}
 	}
 
 	public void setUniform(String uniformName, Vector4f value) {
-		use();
-		glUniform4f(glGetUniformLocation(programId, uniformName), value.x, value.y, value.z, value.w);
+		glUniform4f(getLocation(uniformName), value.x, value.y, value.z, value.w);
 	}
 
 	public void setUniform(String uniformName, Vector3f value) {
-		use();
-		glUniform3f(glGetUniformLocation(programId, uniformName), value.x, value.y, value.z);
+		glUniform3f(getLocation(uniformName), value.x, value.y, value.z);
 	}
 
 	public void setUniform(String uniformName, Vector2f value) {
-		use();
-		glUniform2f(glGetUniformLocation(programId, uniformName), value.x, value.y);
+		glUniform2f(getLocation(uniformName), value.x, value.y);
 	}
 
 	public void setUniform(String uniformName, float value) {
-		use();
-		glUniform1f(glGetUniformLocation(programId, uniformName), value);
+		glUniform1f(getLocation(uniformName), value);
 	}
 
 	public void setUniform(String uniformName, int value) {
-		int varLocation = glGetUniformLocation(programId, uniformName);
-		use();
-		glUniform1i(glGetUniformLocation(programId, uniformName), value);
+		glUniform1i(getLocation(uniformName), value);
 	}
 
 	public void setUniform(String uniformName, int[] value) {
-		use();
-		glUniform1iv(glGetUniformLocation(programId, uniformName), value);
+		glUniform1iv(getLocation(uniformName), value);
+	}
+
+	public void cleanup() {
+		glUseProgram(0);
+		glDeleteProgram(programId);
+		uniformLocations.clear();
 	}
 }

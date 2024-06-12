@@ -2,7 +2,6 @@ package com.ezzenix.game.world;
 
 import com.ezzenix.Game;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunkbuilder.ChunkBuilderQueue;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 
@@ -29,17 +28,10 @@ public class World {
 	private Chunk createChunk(ChunkPos chunkPos, boolean doNotGenerate) {
 		Chunk chunk = chunks.get(chunkPos);
 		if (chunk != null) { // already exists
-			if (!chunk.hasGenerated && !doNotGenerate && !chunk.isGenerating) {
-				chunk.generate();
-			}
 			return null;
 		}
-		;
 		chunk = new Chunk(chunkPos, this);
 		chunks.put(chunkPos, chunk);
-		if (!doNotGenerate) {
-			chunk.generate();
-		}
 		return chunk;
 	}
 	private Chunk createChunk(ChunkPos chunkPos) {
@@ -64,7 +56,7 @@ public class World {
 
 	public BlockType getBlock(BlockPos blockPos) {
 		Chunk chunk = getChunk(blockPos);
-		if (chunk == null) return null;
+		if (chunk == null || !chunk.hasGenerated) return null;
 		return chunk.getBlock(blockPos);
 	}
 

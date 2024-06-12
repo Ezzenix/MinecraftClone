@@ -1,8 +1,8 @@
-package com.ezzenix.game.chunkbuilder;
+package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.Game;
-import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.chunkbuilder.builder.ChunkBuilder;
+import com.ezzenix.engine.Scheduler;
+import com.ezzenix.rendering.chunkbuilder.builder.ChunkBuilder;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.math.ChunkPos;
 
@@ -18,8 +18,10 @@ public class ChunkBuilderQueue {
 	public static void initialize() {
 		Runtime.getRuntime().addShutdownHook(new Thread(executorService::shutdownNow));
 
-		Scheduler.runPeriodic(ChunkBuilderQueue::processNext, 10);
-		Scheduler.runPeriodic(ChunkBuilderQueue::processMainThreadTasks, 10);
+		Scheduler.bindToUpdate(() -> {
+			ChunkBuilderQueue.processNext();
+			ChunkBuilderQueue.processMainThreadTasks();
+		});
 	}
 
 	private static Chunk getNextChunk() {
@@ -32,7 +34,7 @@ public class ChunkBuilderQueue {
 		float closestDistance = Float.MAX_VALUE;
 
 		for (Chunk chunk : chunks.values()) {
-			if (!chunk.shouldMeshRebuild || chunk.isMeshRebuilding) continue;
+			if (!chunk.shouldMeshRebuild || chunk.isMeshRebuilding || !chunk.hasGenerated) continue;
 
 			float distance = cameraChunkPos.distanceTo(chunk.getPos());
 			if (distance < closestDistance) {
@@ -48,21 +50,17 @@ public class ChunkBuilderQueue {
 		Chunk chunk = getNextChunk();
 		if (chunk == null) return;
 
-
 		chunk.shouldMeshRebuild = false;
 		chunk.isMeshRebuilding = true;
 
 		executorService.submit(() -> {
-			//System.out.println("Building chunk " + chunk.getPos() + " on thread " + Thread.currentThread().getName());
-
 			ChunkBuildRequest request = new ChunkBuildRequest(chunk);
 			ChunkBuilder.generate(request);
 
 			mainThreadTasks.add(() -> {
-				//System.out.println("Applying chunk " + chunk.getPos() + " on main thread");
+				if (chunk.isDisposed) return;
 
 				request.chunk.getChunkMesh().applyRequest(request);
-
 				chunk.isMeshRebuilding = false;
 			});
 		});

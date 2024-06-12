@@ -29,7 +29,12 @@ public class TextComponent {
 	private Vector2f toNormalizedDeviceCoordinates(Vector2f pixelCoordinates) {
 		int width = Game.getInstance().getWindow().getWidth();
 		int height = Game.getInstance().getWindow().getHeight();
-		return new Vector2f((pixelCoordinates.x / width) * 2 - 1, (pixelCoordinates.y / height) * 2 - 1);
+
+		// Convert pixel coordinates to normalized device coordinates with (0, 0) as top-left corner
+		float normalizedX = (pixelCoordinates.x / width) * 2 - 1;
+		float normalizedY = 1 - (pixelCoordinates.y / height) * 2; // Adjust to ensure correct inversion
+
+		return new Vector2f(normalizedX, normalizedY);
 	}
 
 	public void setText(String text) {
@@ -57,12 +62,12 @@ public class TextComponent {
 				Vector2f vertBottomRight = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x + glyph.width, this.y + glyph.height));
 				Vector2f vertTopRight = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x + glyph.width, this.y));
 
-				addVertex(vertexList, vertTopLeft, uvCoords[0]);
-				addVertex(vertexList, vertBottomLeft, uvCoords[1]);
-				addVertex(vertexList, vertBottomRight, uvCoords[2]);
-				addVertex(vertexList, vertTopRight, uvCoords[3]);
-				addVertex(vertexList, vertTopLeft, uvCoords[0]);
-				addVertex(vertexList, vertBottomRight, uvCoords[2]);
+				addVertex(vertexList, vertTopLeft, uvCoords[1]);
+				addVertex(vertexList, vertBottomLeft, uvCoords[0]);
+				addVertex(vertexList, vertBottomRight, uvCoords[3]);
+				addVertex(vertexList, vertTopRight, uvCoords[2]);
+				addVertex(vertexList, vertTopLeft, uvCoords[1]);
+				addVertex(vertexList, vertBottomRight, uvCoords[3]);
 
 				offsetX += glyph.width;
 			}

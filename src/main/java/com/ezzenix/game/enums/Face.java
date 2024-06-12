@@ -20,6 +20,13 @@ public enum Face {
 		return this.normal;
 	}
 
+	public static Face getFace(Vector3i normal) {
+		for (Face face : Face.values()) {
+			if (face.normal.equals(normal)) return face;
+		}
+		return null;
+	}
+
 	public static Face getClosestFromNormal(Vector3f normal) {
 		normal = normal.normalize();
 

@@ -3,11 +3,12 @@ package com.ezzenix.rendering;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
-import com.ezzenix.game.chunkbuilder.ChunkMesh;
+import com.ezzenix.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.World;
-import com.ezzenix.hud.Debug;
+import com.ezzenix.hud.LineRenderer;
 import com.ezzenix.math.ChunkPos;
+import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -22,8 +23,6 @@ public class WorldRenderer {
 	private final Texture blockTexture;
 
 	private final Vector2f textureAtlasSize;
-
-	public boolean drawChunkBorders = false;
 
 	public WorldRenderer() {
 		blockTexture = new Texture(Game.getInstance().blockTextures.getAtlasImage());
@@ -40,47 +39,55 @@ public class WorldRenderer {
 		World world = Game.getInstance().getWorld();
 		if (world == null) return;
 
-		if (drawChunkBorders) {
-			Debug.drawChunkBorders();
-		}
-
 		blockTexture.bind();
 
 		Camera camera = Game.getInstance().getCamera();
+		ChunkPos cameraChunkPos = ChunkPos.from(camera.getPosition());
+
 		Matrix4f projectionMatrix = camera.getProjectionMatrix();
 		Matrix4f viewMatrix = camera.getViewMatrix();
 
-		ChunkPos cameraChunkPos = ChunkPos.from(camera.getPosition());
-		List<Chunk> chunks = new ArrayList<>(world.getChunks().values().stream().toList());
+		FrustumIntersection frustumIntersection = new FrustumIntersection().set(new Matrix4f().set(projectionMatrix).mul(viewMatrix));
+
+		// Get chunks in frustum and sort them by distance to camera
+		List<Chunk> chunks = new ArrayList<>(world.getChunks().values().stream().filter(chunk -> chunk.getBoundingBox().checkFrustum(frustumIntersection)).toList());
 		chunks.sort((a, b) -> Float.compare(cameraChunkPos.distanceTo(b.getPos()), cameraChunkPos.distanceTo(a.getPos())));
 
-		worldShader.use();
+		worldShader.bind();
 		worldShader.setUniform("projectionMatrix", projectionMatrix);
 		worldShader.setUniform("viewMatrix", viewMatrix);
 		worldShader.setUniform("textureAtlasSize", textureAtlasSize);
 		for (Chunk chunk : chunks) {
-			//if (!chunk.frustumBoundingBox.isShown) continue;
 			ChunkMesh chunkMesh = chunk.getChunkMesh();
 			worldShader.setUniform("chunkPosition", chunkMesh.getTranslationMatrix());
 			chunkMesh.renderBlocks();
 		}
 
-		waterShader.use();
+		waterShader.bind();
 		waterShader.setUniform("projectionMatrix", projectionMatrix);
 		waterShader.setUniform("viewMatrix", viewMatrix);
 		waterShader.setUniform("textureAtlasSize", textureAtlasSize);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 		glDepthMask(false);
 		for (Chunk chunk : chunks) {
-			//if (!chunk.frustumBoundingBox.isShown) continue;
 			ChunkMesh chunkMesh = chunk.getChunkMesh();
 			waterShader.setUniform("chunkPosition", chunkMesh.getTranslationMatrix());
 			chunkMesh.renderWater();
 		}
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glDisable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(true);
+	}
+
+	public void reloadAllChunks() {
+		System.out.println("Reloading all chunks!");
+		World world = Game.getInstance().getWorld();
+		for (Chunk chunk : world.getChunks().values()) {
+			chunk.getChunkMesh().dispose();
+			chunk.flagMeshForUpdate();
+		}
 	}
 }

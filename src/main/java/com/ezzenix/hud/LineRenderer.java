@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glVertexAttribPointer;
 
-public class Debug {
+public class LineRenderer {
 	private static final Shader debugShader = new Shader("debugLine.vert", "debugLine.frag");
 
 	private static final List<Float> vertexBatch = new ArrayList<>();
@@ -30,7 +30,7 @@ public class Debug {
 		) {
 			Camera camera = Game.getInstance().getCamera();
 
-			debugShader.use();
+			debugShader.bind();
 			debugShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
 			debugShader.setUniform("viewMatrix", camera.getViewMatrix());
 
@@ -104,25 +104,5 @@ public class Debug {
 
 	public static void highlightVoxel(Vector3f voxel) {
 		highlightVoxel(voxel, new Vector3f(1, 1, 1));
-	}
-
-	public static void drawChunkBorders() {
-		Player player = Game.getInstance().getPlayer();
-		ChunkPos chunkPos = ChunkPos.from(player.getBlockPos());
-
-		int viewDistance = 1;
-
-		for (int x = chunkPos.x * Chunk.CHUNK_WIDTH - Chunk.CHUNK_WIDTH * viewDistance; x <= chunkPos.x * Chunk.CHUNK_WIDTH + Chunk.CHUNK_WIDTH * viewDistance; x += Chunk.CHUNK_WIDTH) {
-			for (int z = chunkPos.z * Chunk.CHUNK_WIDTH - Chunk.CHUNK_WIDTH * viewDistance; z <= chunkPos.z * Chunk.CHUNK_WIDTH + Chunk.CHUNK_WIDTH * viewDistance; z += Chunk.CHUNK_WIDTH) {
-				Vector3f color = new Vector3f((float) 244 / 255, (float) 255 / 255, (float) 128 / 255);
-				drawBox(new Vector3f(x, 0, z), new Vector3f(x + Chunk.CHUNK_WIDTH, Chunk.CHUNK_HEIGHT, z + Chunk.CHUNK_WIDTH), color);
-			}
-		}
-	}
-
-	public static void print(String string) {
-		if (glfwGetKey(Game.getInstance().getWindow().getId(), GLFW_KEY_U) == GLFW_PRESS) {
-			System.out.println("[Debug] " + string);
-		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.ezzenix.game.chunkbuilder.builder;
+package com.ezzenix.rendering.chunkbuilder.builder;
 
 import com.ezzenix.game.enums.Face;
 import com.ezzenix.game.world.Chunk;
@@ -93,10 +93,6 @@ public class GreedyShape {
 				}
 
 				while (true) {
-					if (chunk.isDisposed) {
-						return shapes;
-					}
-
 					List<VoxelFace> voxelsToExpandTo = shape.getNextVoxelsInDirection(direction, voxelsAtEdge, possibleVoxelFaces);
 					if (voxelsToExpandTo == null) {
 						break;

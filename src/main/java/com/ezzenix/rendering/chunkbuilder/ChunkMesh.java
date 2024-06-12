@@ -1,10 +1,9 @@
-package com.ezzenix.game.chunkbuilder;
+package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.game.world.Chunk;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 
@@ -40,14 +39,8 @@ public class ChunkMesh {
 
 	public void applyRequest(ChunkBuildRequest request) {
 		//System.out.println("Applied request");
-		if (blockMesh != null) {
-			blockMesh.dispose();
-			blockMesh = null;
-		}
-		if (waterMesh != null) {
-			waterMesh.dispose();
-			waterMesh = null;
-		}
+		dispose();
+
 		if (chunk.blockCount > 0) {
 			//System.out.print("creating meshes");
 			blockMesh = createMesh(request.blockVertexBuffer, request.blockVertexLength);
@@ -89,7 +82,14 @@ public class ChunkMesh {
 	}
 
 	public void dispose() {
-		if (blockMesh != null) blockMesh.dispose();
-		if (waterMesh != null) waterMesh.dispose();
+		if (blockMesh != null) {
+			blockMesh.dispose();
+			blockMesh = null;
+		}
+		if (waterMesh != null) {
+			waterMesh.dispose();
+			waterMesh = null;
+		}
+		;
 	}
 }

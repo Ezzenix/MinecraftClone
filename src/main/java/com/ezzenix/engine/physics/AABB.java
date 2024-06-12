@@ -1,7 +1,7 @@
-package com.ezzenix.game.physics;
+package com.ezzenix.engine.physics;
 
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.hud.Debug;
+import com.ezzenix.hud.LineRenderer;
 import com.ezzenix.math.BlockPos;
 import org.joml.Vector3f;
 
@@ -24,20 +24,20 @@ public class AABB {
 		float maxZ = position.z + width / 2;
 
 		Vector3f color = new Vector3f(0, 1, 0);
-		Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(maxX, minY, minZ), color);
-		Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, minY, maxZ), color);
-		Debug.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, minY, maxZ), color);
-		Debug.drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(maxX, minY, maxZ), color);
+		LineRenderer.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(maxX, minY, minZ), color);
+		LineRenderer.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, minY, maxZ), color);
+		LineRenderer.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, minY, maxZ), color);
+		LineRenderer.drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(maxX, minY, maxZ), color);
 
-		Debug.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, maxY, minZ), color);
-		Debug.drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(minX, maxY, maxZ), color);
-		Debug.drawLine(new Vector3f(maxX, minY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
-		Debug.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, maxY, minZ), color);
+		LineRenderer.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, maxY, minZ), color);
+		LineRenderer.drawLine(new Vector3f(minX, minY, maxZ), new Vector3f(minX, maxY, maxZ), color);
+		LineRenderer.drawLine(new Vector3f(maxX, minY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
+		LineRenderer.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, maxY, minZ), color);
 
-		Debug.drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(maxX, maxY, minZ), color);
-		Debug.drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(minX, maxY, maxZ), color);
-		Debug.drawLine(new Vector3f(maxX, maxY, minZ), new Vector3f(maxX, maxY, maxZ), color);
-		Debug.drawLine(new Vector3f(minX, maxY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
+		LineRenderer.drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(maxX, maxY, minZ), color);
+		LineRenderer.drawLine(new Vector3f(minX, maxY, minZ), new Vector3f(minX, maxY, maxZ), color);
+		LineRenderer.drawLine(new Vector3f(maxX, maxY, minZ), new Vector3f(maxX, maxY, maxZ), color);
+		LineRenderer.drawLine(new Vector3f(minX, maxY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
 
 		// Calculate the bounds of the block
 		float blockMinX = blockPos.x;

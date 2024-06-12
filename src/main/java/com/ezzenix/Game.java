@@ -1,16 +1,15 @@
 package com.ezzenix;
 
+import com.ezzenix.engine.Input;
 import com.ezzenix.engine.core.TextureAtlas;
 import com.ezzenix.engine.opengl.Window;
-import com.ezzenix.engine.scheduler.Scheduler;
-import com.ezzenix.game.chunkbuilder.ChunkBuilderQueue;
+import com.ezzenix.engine.Scheduler;
+import com.ezzenix.game.worldgen.WorldGeneratorQueue;
+import com.ezzenix.rendering.chunkbuilder.ChunkBuilderQueue;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.entities.Player;
-import com.ezzenix.game.physics.Physics;
+import com.ezzenix.engine.physics.Physics;
 import com.ezzenix.game.world.World;
-import com.ezzenix.hud.Hud;
-import com.ezzenix.input.InputHandler;
-import com.ezzenix.math.LocalPosition;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Renderer;
 import org.joml.Vector3f;
@@ -29,7 +28,6 @@ public class Game {
 	private final Camera camera;
 	private final Player player;
 	private final InputHandler inputHandler;
-	private final Hud hud;
 	private final World world;
 	private final List<Entity> entities;
 
@@ -45,6 +43,9 @@ public class Game {
 		window.setVSync(true);
 		window.setIcon("src/main/resources/icon.png");
 
+		// Initialize
+		Input.initialize(window);
+
 		// Initialize game
 		this.blockTextures = TextureAtlas.fromDirectory("src/main/resources/textures");
 
@@ -53,15 +54,16 @@ public class Game {
 		this.player = new Player(this.world, new Vector3f(0, 50, 0));
 		this.camera = new Camera();
 
-		this.hud = new Hud();
 		this.renderer = new Renderer();
 		this.inputHandler = new InputHandler();
 
-		Scheduler.runPeriodic(() -> {
+		Scheduler.setInterval(() -> {
 			Game.getInstance().getWorld().loadNewChunks();
 		}, 500);
 
+		// Initialize thread workers
 		ChunkBuilderQueue.initialize();
+		WorldGeneratorQueue.initialize();
 
 		// Game loop
 		while (!window.shouldWindowClose()) {
@@ -94,9 +96,6 @@ public class Game {
 	}
 	public World getWorld() {
 		return this.world;
-	}
-	public Hud getHud() {
-		return this.hud;
 	}
 	public Camera getCamera() {
 		return this.camera;

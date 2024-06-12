@@ -21,10 +21,11 @@ public class BlockType {
 	//
 	private final String name;
 	private final byte id;
-	private boolean transparent;
-	private boolean isFlower;
-	private boolean isSolid;
-	private boolean isFluid;
+
+	private boolean transparent = false;
+	private boolean isFlower = false;
+	private boolean isSolid = true;
+	private boolean isFluid = false;
 
 	public Vector2f[] textureUVTop;
 	public Vector2f[] textureUVSides;
@@ -32,10 +33,6 @@ public class BlockType {
 
 	public BlockType(String name) {
 		this.name = name;
-		this.transparent = false;
-		this.isFlower = false;
-		this.isSolid = true;
-		this.isFluid = false;
 		this.setTexture("stone");
 		this.id = BlockRegistry.registerBlock(this);
 	}

@@ -1,4 +1,4 @@
-package com.ezzenix.game.worldgenerator;
+package com.ezzenix.game.worldgen;
 
 import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.game.blocks.BlockType;

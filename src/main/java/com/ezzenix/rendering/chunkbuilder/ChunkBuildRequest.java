@@ -1,4 +1,4 @@
-package com.ezzenix.game.chunkbuilder;
+package com.ezzenix.rendering.chunkbuilder;
 
 import com.ezzenix.game.world.Chunk;
 

@@ -2,9 +2,8 @@ package com.ezzenix.game.world;
 
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.chunkbuilder.ChunkBuilderQueue;
-import com.ezzenix.game.chunkbuilder.ChunkMesh;
-import com.ezzenix.game.worldgenerator.WorldGeneratorThread;
+import com.ezzenix.math.BoundingBox;
+import com.ezzenix.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.math.LocalPosition;
@@ -23,12 +22,14 @@ public class Chunk {
 	private final byte[] blockIDs = new byte[CHUNK_WIDTH * CHUNK_WIDTH * (CHUNK_HEIGHT + 1)];
 	public int blockCount = 0;
 
-	public boolean isGenerating = false;
-	public boolean hasGenerated = false;
 	public boolean isDisposed = false;
 
+	public boolean hasGenerated = false;
+	public boolean isGenerating = false;
 	public boolean shouldMeshRebuild = false;
 	public boolean isMeshRebuilding = false;
+
+	private BoundingBox boundingBox;
 
 
 	public Chunk(ChunkPos chunkPos, World world) {
@@ -38,11 +39,13 @@ public class Chunk {
 		Arrays.fill(this.blockIDs, (byte) 1);
 
 		this.chunkMesh = new ChunkMesh(this);
+
+		this.boundingBox = new BoundingBox(getWorldPos(), getWorldPos().add(CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_WIDTH));
 	}
 
-
 	public void setBlock(BlockPos blockPos, BlockType blockType) {
-		int index = LocalPosition.from(this, blockPos).toIndex();
+		LocalPosition localPosition = LocalPosition.from(this, blockPos);
+		int index = localPosition.toIndex();
 		if (index == -1) {
 			world.setBlock(blockPos, blockType);
 			return;
@@ -51,12 +54,37 @@ public class Chunk {
 		if (index >= blockIDs.length)
 			throw new RuntimeException("Index out of bounds: " + index + "  " + LocalPosition.from(this, blockPos));
 
+		// if block above is flower then break it
+		BlockPos blockAbovePos = blockPos.add(0, 1, 0);
+		BlockType blockAbove = getBlock(blockAbovePos);
+		if (blockAbove != null && blockAbove.isFlower()) {
+			setBlock(blockAbovePos, BlockType.AIR);
+		}
+
 		byte id = blockIDs[index];
 		if (id != blockType.getId()) {
 			blockIDs[index] = blockType.getId();
 			this.blockCount += (blockType != BlockType.AIR ? 1 : -1);
 		}
 		this.flagMeshForUpdate();
+
+		if (localPosition.x == 0) {
+			Chunk chunk = world.getChunk(chunkPos.x - 1, chunkPos.z);
+			if (chunk != null) chunk.flagMeshForUpdate();
+		}
+		if (localPosition.x == Chunk.CHUNK_WIDTH - 1) {
+			Chunk chunk = world.getChunk(chunkPos.x + 1, chunkPos.z);
+			if (chunk != null) chunk.flagMeshForUpdate();
+		}
+		if (localPosition.z == 0) {
+			Chunk chunk = world.getChunk(chunkPos.x, chunkPos.z - 1);
+			if (chunk != null) chunk.flagMeshForUpdate();
+		}
+		if (localPosition.z == Chunk.CHUNK_WIDTH - 1) {
+			Chunk chunk = world.getChunk(chunkPos.x, chunkPos.z + 1);
+			if (chunk != null) chunk.flagMeshForUpdate();
+		}
+
 	}
 
 	public BlockType getBlock(BlockPos blockPos) {
@@ -92,14 +120,11 @@ public class Chunk {
 	}
 
 	public void flagMeshForUpdate() {
-		if (!hasGenerated) return;
 		shouldMeshRebuild = true;
 	}
 
-	public void generate() {
-		if (hasGenerated || isGenerating) return;
-		this.isGenerating = true;
-		WorldGeneratorThread.scheduleChunkForWorldGeneration(this);
+	public BoundingBox getBoundingBox() {
+		return this.boundingBox;
 	}
 
 	/**

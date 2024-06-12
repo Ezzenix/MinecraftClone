@@ -1,16 +1,21 @@
-package com.ezzenix.input;
+package com.ezzenix;
 
 import com.ezzenix.Game;
+import com.ezzenix.engine.Input;
 import com.ezzenix.engine.core.Profiler;
-import com.ezzenix.engine.scheduler.Scheduler;
+import com.ezzenix.engine.physics.Physics;
+import com.ezzenix.engine.physics.Raycast;
+import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.entities.Player;
-import com.ezzenix.game.physics.RaycastResult;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.World;
 import com.ezzenix.math.BlockPos;
+import com.ezzenix.math.BoundingBox;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.WorldRenderer;
+import org.joml.Math;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -27,70 +32,50 @@ public class InputHandler {
 	public InputHandler() {
 		handleMouse();
 
-		glfwSetMouseButtonCallback(Game.getInstance().getWindow().getId(), (window, button, action, mods) -> {
-			if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-				RaycastResult result = Game.getInstance().getCamera().raycast(5);
-				if (result != null) {
-					Vector3i faceNormal = result.hitFace.getNormal();
-					BlockPos blockPos = result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
-					if (blockPos.isValid()) {
-						Game.getInstance().getWorld().setBlock(blockPos, BlockType.GRASS_BLOCK);
+		Input.mouseButton2Down(() -> {
+			Raycast result = Game.getInstance().getPlayer().raycast();
+			if (result != null && result.hitFace != null) {
+				Vector3i faceNormal = result.hitFace.getNormal();
+				BlockPos blockPos = result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
+				if (blockPos.isValid()) {
+
+					BoundingBox blockBoundingBox = Physics.getBlockBoundingBox(blockPos);
+					for (Entity entity : Game.getInstance().getEntities()) {
+						if (entity.boundingBox.getIntersection(blockBoundingBox).length() > 0) return;
 					}
-				}
-			}
-			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-				RaycastResult result = Game.getInstance().getCamera().raycast(5);
-				if (result != null) {
-					Game.getInstance().getWorld().setBlock(result.blockPos, BlockType.AIR);
+
+					Game.getInstance().getWorld().setBlock(blockPos, BlockType.GRASS_BLOCK);
 				}
 			}
 		});
 
-		AtomicBoolean wireframeMode = new AtomicBoolean(false);
-		glfwSetKeyCallback(Game.getInstance().getWindow().getId(), (window, key, scancode, action, mods) -> {
-			if (key == GLFW_KEY_F5 && action == GLFW_RELEASE) {
-				Camera camera = Game.getInstance().getCamera();
-				camera.thirdPerson = !camera.thirdPerson;
+		Input.mouseButton1Down(() -> {
+			Raycast result = Game.getInstance().getPlayer().raycast();
+			if (result != null) {
+				Game.getInstance().getWorld().setBlock(result.blockPos, BlockType.AIR);
 			}
-			if (key == GLFW_KEY_Z && action == GLFW_RELEASE) {
-				wireframeMode.set(!wireframeMode.get());
-				if (wireframeMode.get()) {
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					glDisable(GL_DEPTH_TEST);
-					glDisable(GL_CULL_FACE);
-				} else {
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-					glEnable(GL_DEPTH_TEST);
-					glEnable(GL_CULL_FACE);
-				}
-			}
-			if (key == GLFW_KEY_G && action == GLFW_RELEASE) {
-				//System.out.println("Chunk meshing took " + (Game.getInstance().TIME_MESH_BUILD) + "ms");
-				WorldRenderer worldRenderer = Game.getInstance().getRenderer().getWorldRenderer();
-				worldRenderer.drawChunkBorders = !worldRenderer.drawChunkBorders;
-			}
-			if (key == GLFW_KEY_J && action == GLFW_RELEASE) {
-				System.out.println("Reloading all chunks!");
-				World world = Game.getInstance().getWorld();
-				for (Chunk chunk : world.getChunks().values()) {
-					chunk.flagMeshForUpdate();
-				}
-			}
+		});
 
-			if (key == GLFW_KEY_F4 && action == GLFW_RELEASE) {
-				Profiler.dump();
-			}
+		Input.keyUp(GLFW_KEY_F5, () -> {
+			Camera camera = Game.getInstance().getCamera();
+			camera.thirdPerson = !camera.thirdPerson;
+		});
 
-			if (key == GLFW_KEY_KP_1 && action == GLFW_RELEASE) {
-				BlockPos blockPos = Game.getInstance().getPlayer().getBlockPos();
-				if (blockPos.isValid()) {
-					Game.getInstance().getWorld().setBlock(blockPos, BlockType.STONE);
-				}
-			}
+		Input.keyUp(GLFW_KEY_F4, Profiler::dump);
 
-			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-				glfwSetWindowShouldClose(Game.getInstance().getWindow().getId(), true);
+		Input.keyUp(GLFW_KEY_KP_1, () -> {
+			BlockPos blockPos = Game.getInstance().getPlayer().getBlockPos();
+			if (blockPos.isValid()) {
+				Game.getInstance().getWorld().setBlock(blockPos, BlockType.STONE);
 			}
+		});
+
+		Input.keyUp(GLFW_KEY_ESCAPE, () -> {
+			glfwSetWindowShouldClose(Game.getInstance().getWindow().getId(), true);
+		});
+
+		Input.keyDown(GLFW_KEY_SPACE, () -> {
+			Game.getInstance().getPlayer().applyImpulse(new Vector3f(0, 5, 0));
 		});
 	}
 
@@ -148,25 +133,33 @@ public class InputHandler {
 
 		Vector3f movementVector = new Vector3f();
 
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		if (Input.getKey(GLFW_KEY_W)) {
 			movementVector.add(new Vector3f(lookVector.x, 0, lookVector.z).mul(speed));
 		}
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		if (Input.getKey(GLFW_KEY_A)) {
 			movementVector.add(new Vector3f(rightVector.x, 0, rightVector.z).mul(-speed));
 		}
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		if (Input.getKey(GLFW_KEY_S)) {
 			movementVector.add(new Vector3f(lookVector.x, 0, lookVector.z).mul(-speed));
 		}
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		if (Input.getKey(GLFW_KEY_D)) {
 			movementVector.add(new Vector3f(rightVector.x, 0, rightVector.z).mul(speed));
 		}
+
+		/*
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 			player.getPosition().add(new Vector3f(0, speed, 0));
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
 			player.getPosition().add(new Vector3f(0, -speed, 0));
 		}
+		 */
 
-		player.getPosition().add(movementVector);
+		//Vector3f velocity = player.getVelocity();
+		//velocity.set(Math.max(movementVector.x, velocity.x), velocity.y, Math.max(movementVector.z, velocity.z));
+
+		player.applyImpulse(movementVector);
+
+		//player.setPosition(player.getPosition().add(movementVector));
 	}
 }

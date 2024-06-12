@@ -1,4 +1,4 @@
-package com.ezzenix.game.chunkbuilder.builder;
+package com.ezzenix.rendering.chunkbuilder.builder;
 
 import com.ezzenix.game.enums.Face;
 import com.ezzenix.game.blocks.BlockRegistry;
@@ -29,7 +29,7 @@ public class VoxelFace {
 		applyOffsetRotation(face, offset);
 
 		BlockPos worldPos = BlockPos.from(chunk, localPosition.add(offset.x, offset.y, offset.z));
-		BlockType blockType = chunk.getWorld().getBlock(worldPos);
+		BlockType blockType = chunk.getBlock(worldPos);
 
 		if (blockType == null) return 0;
 		return blockType == BlockType.AIR || !blockType.isSolid() ? 0 : 1;

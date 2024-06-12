@@ -1,8 +1,9 @@
 package com.ezzenix.rendering;
 
+import com.ezzenix.Debug;
 import com.ezzenix.Game;
-import com.ezzenix.game.physics.RaycastResult;
-import com.ezzenix.hud.Debug;
+import com.ezzenix.engine.physics.Raycast;
+import com.ezzenix.hud.LineRenderer;
 import com.ezzenix.skybox.Skybox;
 import org.joml.Vector3f;
 
@@ -25,21 +26,21 @@ public class Renderer {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw axis lines
-		Debug.drawLine(new Vector3f(0, 0, 0), new Vector3f(0, 10, 0), new Vector3f(0, 1, 0)); // y
-		Debug.drawLine(new Vector3f(0, 0, 0), new Vector3f(0, 0, -10), new Vector3f(0, 0, 1)); // z
-		Debug.drawLine(new Vector3f(0, 0, 0), new Vector3f(10, 0, 0), new Vector3f(1, 0, 0)); // x
+		LineRenderer.drawLine(new Vector3f(0, 0, 0), new Vector3f(0, 10, 0), new Vector3f(0, 1, 0)); // y
+		LineRenderer.drawLine(new Vector3f(0, 0, 0), new Vector3f(0, 0, -10), new Vector3f(0, 0, 1)); // z
+		LineRenderer.drawLine(new Vector3f(0, 0, 0), new Vector3f(10, 0, 0), new Vector3f(1, 0, 0)); // x
 
 		// Highlight target block
-		RaycastResult result = Game.getInstance().getCamera().raycast(5);
+		Raycast result = Game.getInstance().getPlayer().raycast();
 		if (result != null) {
-			Debug.highlightVoxel(new Vector3f(result.blockPos.x, result.blockPos.y, result.blockPos.z), new Vector3f(0.2f, 0.2f, 0.2f));
+			LineRenderer.highlightVoxel(new Vector3f(result.blockPos.x, result.blockPos.y, result.blockPos.z), new Vector3f(0.2f, 0.2f, 0.2f));
 		}
 
 		skybox.render();
 
 		worldRenderer.render(window);
-		Game.getInstance().getHud().render();
-		Debug.renderBatch();
+		Debug.render();
+		LineRenderer.renderBatch();
 
 		glfwSwapBuffers(window);
 	}

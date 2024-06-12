@@ -93,7 +93,7 @@ public class Skybox {
 		glDepthFunc(GL_ALWAYS);
 
 		texture.bind();
-		shader.use();
+		shader.bind();
 
 		Camera camera = Game.getInstance().getCamera();
 		shader.setUniform("projectionMatrix", camera.getProjectionMatrix());

@@ -1,6 +1,6 @@
 package com.ezzenix.engine.core;
 
-import com.ezzenix.engine.scheduler.Scheduler;
+import com.ezzenix.engine.Scheduler;
 
 import java.util.Queue;
 import java.util.concurrent.*;
@@ -36,7 +36,7 @@ public class WorkerThread<T> {
 
 		Runtime.getRuntime().addShutdownHook(new Thread(executor::shutdown));
 
-		Scheduler.runPeriodic(() -> {
+		Scheduler.setInterval(() -> {
 			if (processedQueue.isEmpty()) return;
 			T result;
 			while ((result = processedQueue.poll()) != null) {
