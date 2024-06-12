@@ -1,6 +1,8 @@
-package com.ezzenix.hud.font;
+package com.ezzenix.engine.gui;
 
 import com.ezzenix.engine.opengl.Texture;
+import org.joml.Math;
+import org.joml.Vector2f;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,7 +17,7 @@ public class FontRenderer {
 	private final Font font;
 	private final int fontSize;
 	private final Texture texture;
-	private HashMap<Character, Glyph> characterMap = new HashMap<>();
+	private final HashMap<Character, Glyph> characterMap = new HashMap<>();
 	private int width, height, lineHeight;
 
 	public FontRenderer(Font font) {
@@ -108,5 +110,50 @@ public class FontRenderer {
 		texture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		return texture;
+	}
+
+	public Vector2f getTextBounds(String text, int fontSize) {
+		float TEXT_SCALE = (float) fontSize / this.fontSize;
+
+		float width = 0;
+		float height = 0;
+
+		int offsetX = 0;
+		for (int i = 0; i < text.length(); i++) {
+			char c = text.charAt(i);
+
+			FontRenderer.Glyph glyph = this.getGlyph(c);
+			if (glyph == null) continue;
+
+			width += glyph.width * TEXT_SCALE;
+			height = Math.max(height, glyph.height * TEXT_SCALE);
+		}
+
+		return new Vector2f(width, height);
+	}
+
+	public static class Glyph {
+		public Vector2f[] uvCoords;
+		public int x, y, width, height;
+
+		public Glyph(int x, int y, int width, int height) {
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+		}
+
+		public void calculateUVs(int textureWidth, int textureHeight) {
+			float x0 = (float) x / (float) textureWidth;
+			float x1 = (float) (x + width) / (float) textureWidth;
+			float y0 = (float) (y - height) / (float) textureHeight;
+			float y1 = (float) (y) / (float) textureHeight;
+
+			this.uvCoords = new Vector2f[4];
+			this.uvCoords[0] = new Vector2f(x0, y1);
+			this.uvCoords[1] = new Vector2f(x0, y0);
+			this.uvCoords[2] = new Vector2f(x1, y0);
+			this.uvCoords[3] = new Vector2f(x1, y1);
+		}
 	}
 }

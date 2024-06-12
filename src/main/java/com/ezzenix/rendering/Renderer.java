@@ -2,6 +2,7 @@ package com.ezzenix.rendering;
 
 import com.ezzenix.Debug;
 import com.ezzenix.Game;
+import com.ezzenix.engine.gui.Gui;
 import com.ezzenix.engine.physics.Raycast;
 import com.ezzenix.hud.LineRenderer;
 import com.ezzenix.skybox.Skybox;
@@ -20,6 +21,8 @@ public class Renderer {
 		glClearColor(110f / 255f, 177f / 255f, 1.0f, 0.0f);
 
 		skybox = new Skybox();
+
+		Hotbar.initialize();
 	}
 
 	public void render(long window) {
@@ -41,6 +44,7 @@ public class Renderer {
 		worldRenderer.render(window);
 		Debug.render();
 		LineRenderer.renderBatch();
+		Gui.render();
 
 		glfwSwapBuffers(window);
 	}

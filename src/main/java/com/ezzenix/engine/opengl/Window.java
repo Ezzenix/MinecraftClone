@@ -1,6 +1,7 @@
 package com.ezzenix.engine.opengl;
 
 import com.ezzenix.engine.core.ImageParser;
+import com.ezzenix.engine.gui.Gui;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -77,6 +78,8 @@ public class Window {
 			this.width = width;
 			this.height = height;
 			glViewport(0, 0, width, height);
+
+			Gui.rebuildAll();
 		});
 
 		glfwSetWindowIconifyCallback(window, (window, iconified) -> {

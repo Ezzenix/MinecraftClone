@@ -1,6 +1,8 @@
 package com.ezzenix.hud.font;
 
 import com.ezzenix.Game;
+import com.ezzenix.engine.gui.FontRenderer;
+import com.ezzenix.engine.gui.GuiUtil;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector2f;
 import org.lwjgl.system.MemoryStack;
@@ -26,17 +28,6 @@ public class TextComponent {
 		this.setText(text);
 	}
 
-	private Vector2f toNormalizedDeviceCoordinates(Vector2f pixelCoordinates) {
-		int width = Game.getInstance().getWindow().getWidth();
-		int height = Game.getInstance().getWindow().getHeight();
-
-		// Convert pixel coordinates to normalized device coordinates with (0, 0) as top-left corner
-		float normalizedX = (pixelCoordinates.x / width) * 2 - 1;
-		float normalizedY = 1 - (pixelCoordinates.y / height) * 2; // Adjust to ensure correct inversion
-
-		return new Vector2f(normalizedX, normalizedY);
-	}
-
 	public void setText(String text) {
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			if (this.text != null && this.text.equals(text)) return;
@@ -53,14 +44,14 @@ public class TextComponent {
 			for (int i = 0; i < text.length(); i++) {
 				char c = text.charAt(i);
 
-				Glyph glyph = this.fontRenderer.getGlyph(c);
+				FontRenderer.Glyph glyph = this.fontRenderer.getGlyph(c);
 				if (glyph == null) continue;
 
 				Vector2f[] uvCoords = glyph.uvCoords;
-				Vector2f vertTopLeft = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x, this.y));
-				Vector2f vertBottomLeft = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x, this.y + glyph.height));
-				Vector2f vertBottomRight = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x + glyph.width, this.y + glyph.height));
-				Vector2f vertTopRight = toNormalizedDeviceCoordinates(new Vector2f(offsetX + this.x + glyph.width, this.y));
+				Vector2f vertTopLeft = GuiUtil.toNormalizedDeviceCoordinates(offsetX + this.x, this.y);
+				Vector2f vertBottomLeft = GuiUtil.toNormalizedDeviceCoordinates(offsetX + this.x, this.y + glyph.height);
+				Vector2f vertBottomRight = GuiUtil.toNormalizedDeviceCoordinates(offsetX + this.x + glyph.width, this.y + glyph.height);
+				Vector2f vertTopRight = GuiUtil.toNormalizedDeviceCoordinates(offsetX + this.x + glyph.width, this.y);
 
 				addVertex(vertexList, vertTopLeft, uvCoords[1]);
 				addVertex(vertexList, vertBottomLeft, uvCoords[0]);

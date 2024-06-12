@@ -2,15 +2,19 @@ package com.ezzenix;
 
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.Scheduler;
+import com.ezzenix.engine.gui.UDim2;
+import com.ezzenix.engine.gui.components.GuiFrame;
+import com.ezzenix.engine.gui.components.GuiText;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.World;
 import com.ezzenix.hud.LineRenderer;
-import com.ezzenix.hud.font.FontRenderer;
+import com.ezzenix.engine.gui.FontRenderer;
 import com.ezzenix.hud.font.TextComponent;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.awt.*;
@@ -87,7 +91,7 @@ public class Debug {
 		});
 
 
-		textShader = new Shader("text.vert", "text.frag");
+		textShader = new Shader("gui/text.vert", "gui/text.frag");
 		fontRenderer = new FontRenderer(new Font("Arial", Font.PLAIN, 18));
 
 		fpsText = new TextComponent(fontRenderer, "", 6, 0);
