@@ -3,7 +3,7 @@ package com.ezzenix.game.world;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.math.BoundingBox;
-import com.ezzenix.rendering.chunkbuilder.ChunkMesh;
+import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.math.LocalPosition;

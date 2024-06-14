@@ -1,7 +1,7 @@
 package com.ezzenix.engine.physics;
 
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.enums.Face;
+import com.ezzenix.game.enums.Direction;
 import com.ezzenix.game.world.World;
 import com.ezzenix.math.BlockPos;
 import org.joml.Vector3f;
@@ -10,12 +10,12 @@ import org.joml.Vector3i;
 public class Raycast {
 	public BlockPos blockPos;
 	public BlockType blockType;
-	public Face hitFace;
+	public Direction hitDirection;
 
-	private Raycast(BlockPos blockPos, BlockType blockType, Face hitFace) {
+	private Raycast(BlockPos blockPos, BlockType blockType, Direction hitDirection) {
 		this.blockPos = blockPos;
 		this.blockType = blockType;
-		this.hitFace = hitFace;
+		this.hitDirection = hitDirection;
 	}
 
 	private static float intBound(float s, float ds) {
@@ -56,10 +56,10 @@ public class Raycast {
 		while (distance < maxDistance) {
 			BlockPos voxelBlockPos = new BlockPos(currentVoxel.x, currentVoxel.y, currentVoxel.z);
 			BlockType voxelBlockType = world.getBlock(voxelBlockPos);
-			if (voxelBlockType != BlockType.AIR && voxelBlockType != null) {
+			if (voxelBlockType != BlockType.AIR && voxelBlockType != null && !voxelBlockType.isFluid()) {
 				Vector3i normal = currentVoxel.add(previousVoxel.mul(-1)).mul(-1);
-				Face hitFace = Face.getFace(normal);
-				return new Raycast(voxelBlockPos, voxelBlockType, hitFace);
+				Direction hitDirection = Direction.getFace(normal);
+				return new Raycast(voxelBlockPos, voxelBlockType, hitDirection);
 			}
 
 			previousVoxel.x = currentVoxel.x;

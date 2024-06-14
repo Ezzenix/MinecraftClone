@@ -100,6 +100,13 @@ public class BlockType {
 		return this.isSolid;
 	}
 
+	public boolean isWalkthrough() {
+		if (this == BlockType.AIR) return true;
+		if (this.isFluid()) return true;
+		if (this.isFlower) return true;
+		return false;
+	}
+
 	public boolean isTransparent() {
 		return this.transparent;
 	}

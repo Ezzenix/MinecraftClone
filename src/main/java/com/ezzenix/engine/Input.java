@@ -35,24 +35,24 @@ public class Input {
 	public static void initialize(Window w) {
 		window = w;
 
-		glfwSetKeyCallback(Game.getInstance().getWindow().getId(), (window, key, scancode, action, mods) -> {
+		glfwSetKeyCallback(Game.getInstance().getWindow().getHandle(), (window, key, scancode, action, mods) -> {
 			runEvents(key, action);
 		});
-		glfwSetMouseButtonCallback(Game.getInstance().getWindow().getId(), (window, button, action, mods) -> {
+		glfwSetMouseButtonCallback(Game.getInstance().getWindow().getHandle(), (window, button, action, mods) -> {
 			runEvents(button, action);
 		});
 	}
 
 	public static boolean getKey(int key) {
-		return glfwGetKey(window.getId(), key) == GLFW_PRESS;
+		return glfwGetKey(window.getHandle(), key) == GLFW_PRESS;
 	}
 
 	public static boolean getMouseButton1() {
-		return glfwGetMouseButton(window.getId(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+		return glfwGetMouseButton(window.getHandle(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 	}
 
 	public static boolean getMouseButton2() {
-		return glfwGetMouseButton(window.getId(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+		return glfwGetMouseButton(window.getHandle(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 	}
 
 	public static void keyDown(int key, Runnable runnable) {

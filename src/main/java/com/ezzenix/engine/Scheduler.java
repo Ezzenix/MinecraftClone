@@ -1,5 +1,7 @@
 package com.ezzenix.engine;
 
+import org.lwjgl.glfw.GLFW;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -9,14 +11,19 @@ public class Scheduler {
 	private static float deltaTime = (float) 1 / 60;
 	private static long lastUpdate = System.nanoTime();
 
+	private static double lastDrawTime = Double.MIN_VALUE;
+
 	private static final int FPS_BUFFER_SIZE = 60;
 	private static final List<Float> fpsBuffer = new ArrayList<>();
 
+	private static final long START_TIME = System.currentTimeMillis();
+
 	public static void update() {
 		deltaTime = (System.nanoTime() - lastUpdate) / 1_000_000_000f;
+		lastUpdate = System.nanoTime();
+
 		fpsBuffer.add((float) Math.round(1f / deltaTime));
 		if (fpsBuffer.size() > FPS_BUFFER_SIZE) fpsBuffer.remove(0);
-		lastUpdate = System.nanoTime();
 
 		for (SchedulerRunnable schedulerRunnable : runnables) {
 			if (schedulerRunnable.canRun()) {
@@ -25,12 +32,33 @@ public class Scheduler {
 		}
 	}
 
+	public static void limitFps(int fps) {
+		double d = lastDrawTime + 1.0 / (double) fps;
+		double e = GLFW.glfwGetTime();
+		while (e < d) {
+			GLFW.glfwWaitEventsTimeout(d - e);
+			e = GLFW.glfwGetTime();
+		}
+		lastDrawTime = e;
+	}
+
 	public static float getDeltaTime() {
 		return deltaTime;
 	}
 
+	/**
+	 * Returns average frames per second
+	 */
 	public static float getFps() {
 		return (float) fpsBuffer.stream().mapToDouble(Float::doubleValue).average().orElse(0.0);
+	}
+
+	/**
+	 * Returns amount of seconds the game has been running
+	 */
+	public static float getClock() {
+		long t = System.currentTimeMillis() - START_TIME;
+		return t / 1000f;
 	}
 
 	public static SchedulerRunnable bindToUpdate(Runnable runnable) {

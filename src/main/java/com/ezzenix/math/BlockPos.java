@@ -39,6 +39,10 @@ public class BlockPos {
 		return new BlockPos(chunk.getPos().x * Chunk.CHUNK_WIDTH + localPosition.x, localPosition.y, chunk.getPos().z * Chunk.CHUNK_WIDTH + localPosition.z);
 	}
 
+	public int manhattanDistance(BlockPos other) {
+		return (Math.abs(this.x - other.x) + Math.abs(this.y - other.y) + Math.abs(this.z - other.z));
+	}
+
 	public boolean isValid() {
 		return this.y >= 0 && this.y <= Chunk.CHUNK_HEIGHT;
 	}

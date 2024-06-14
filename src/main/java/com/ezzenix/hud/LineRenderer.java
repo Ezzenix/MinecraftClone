@@ -3,10 +3,7 @@ package com.ezzenix.hud;
 import com.ezzenix.Game;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
-import com.ezzenix.game.entities.Player;
-import com.ezzenix.game.world.Chunk;
-import com.ezzenix.math.ChunkPos;
-import com.ezzenix.rendering.Camera;
+import com.ezzenix.client.rendering.Camera;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
@@ -14,7 +11,6 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glVertexAttribPointer;

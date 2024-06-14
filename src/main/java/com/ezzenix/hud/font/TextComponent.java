@@ -1,8 +1,7 @@
 package com.ezzenix.hud.font;
 
-import com.ezzenix.Game;
-import com.ezzenix.engine.gui.FontRenderer;
-import com.ezzenix.engine.gui.GuiUtil;
+import com.ezzenix.client.gui.library.FontRenderer;
+import com.ezzenix.client.gui.library.GuiUtil;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector2f;
 import org.lwjgl.system.MemoryStack;

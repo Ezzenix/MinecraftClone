@@ -1,37 +1,36 @@
 package com.ezzenix.game.entities;
 
 import com.ezzenix.Game;
+import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.core.Util;
-import com.ezzenix.engine.physics.AABB;
 import com.ezzenix.engine.physics.Raycast;
 import com.ezzenix.game.world.World;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
 import org.joml.Math;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Entity {
-	private Vector3f position;
-	private Vector3f velocity;
-	private float yaw;
-	private float pitch;
+	private final Vector3f position;
+	private final Vector3f velocity = new Vector3f();
+	private float yaw = 0f;
+	private float pitch = 0f;
+
 	private World world;
 
-	public float eyeHeight = 1.5f;
+	private float eyeHeight = 1.5f;
+	public float width = 0.6f;
+	public float height = 1.8f;
 
-	public AABB aabb;
 	public BoundingBox boundingBox;
-	public boolean isGrounded;
+	public boolean isGrounded = false;
+	public boolean isInFluid = false;
+
+	public boolean isFlying = false;
+	private boolean isSneaking = false;
 
 	public Entity(World world, Vector3f position) {
-		this.yaw = 0;
-		this.pitch = 0;
 		this.position = position;
-		this.velocity = new Vector3f();
-
-		this.isGrounded = false;
-		this.aabb = new AABB(0.8f, 1.8f);
 
 		this.boundingBox = new BoundingBox();
 		this.updateBoundingBox();
@@ -42,15 +41,16 @@ public class Entity {
 	}
 
 	private void updateBoundingBox() {
-		float WIDTH = 0.8f;
-		float HEIGHT = 1.8f;
-
-		boundingBox.minX = position.x - WIDTH / 2;
+		boundingBox.minX = position.x - width / 2;
 		boundingBox.minY = position.y;
-		boundingBox.minZ = position.z - WIDTH / 2;
-		boundingBox.maxX = position.x + WIDTH / 2;
-		boundingBox.maxY = position.y + HEIGHT;
-		boundingBox.maxZ = position.z + WIDTH / 2;
+		boundingBox.minZ = position.z - width / 2;
+		boundingBox.maxX = position.x + width / 2;
+		boundingBox.maxY = position.y + height;
+		boundingBox.maxZ = position.z + width / 2;
+
+		if (this.isSneaking) {
+			boundingBox.maxY -= 0.2f;
+		}
 	}
 
 	public Vector3f getPosition() {
@@ -69,6 +69,9 @@ public class Entity {
 	public void applyImpulse(float x, float y, float z) {
 		this.getVelocity().add(x, y, z);
 	}
+	public Vector3f getHorizontalVelocity() {
+		return new Vector3f(this.velocity.x, 0, this.velocity.z);
+	}
 
 	public float getYaw() {
 		return this.yaw;
@@ -78,7 +81,7 @@ public class Entity {
 	}
 
 	public void setPosition(Vector3f position) {
-		this.position = position;
+		this.position.set(position);
 		updateBoundingBox();
 	}
 	public void setYaw(float yaw) {
@@ -91,6 +94,21 @@ public class Entity {
 		float max = 90f;
 		this.pitch = Math.max(min, Math.min(max, pitch));
 	}
+
+	public void setSneaking(boolean sneaking) {
+		if (this.isSneaking == sneaking) return;
+		this.isSneaking = sneaking;
+		updateBoundingBox();
+	}
+
+	public float getEyeHeight() {
+		float height = this.eyeHeight;
+		if (isSneaking) {
+			height -= 0.1f;
+		}
+		return height;
+	}
+
 
 	public void addYaw(float offset) {
 		this.setYaw(this.yaw + offset);
@@ -109,6 +127,19 @@ public class Entity {
 
 	public Vector3f getLookVector() {
 		return Util.getLookVector(getYaw(), getPitch());
+	}
+
+	public void jump() {
+		this.applyImpulse(new Vector3f(0, 8f, 0));
+	}
+
+	public void floatUp() {
+		this.applyImpulse(new Vector3f(0, 20 * Scheduler.getDeltaTime(), 0));
+	}
+
+	public void teleport(Vector3f position) {
+		this.setPosition(position);
+		this.getVelocity().set(0);
 	}
 
 	public Raycast raycast() {

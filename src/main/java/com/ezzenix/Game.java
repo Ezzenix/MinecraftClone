@@ -1,17 +1,20 @@
 package com.ezzenix;
 
+import com.ezzenix.client.Client;
+import com.ezzenix.client.Keyboard;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.core.TextureAtlas;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.worldgen.WorldGeneratorQueue;
-import com.ezzenix.rendering.chunkbuilder.ChunkBuilderQueue;
+import com.ezzenix.client.rendering.Hotbar;
+import com.ezzenix.client.rendering.chunkbuilder.ChunkBuilderQueue;
 import com.ezzenix.game.entities.Entity;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.engine.physics.Physics;
 import com.ezzenix.game.world.World;
-import com.ezzenix.rendering.Camera;
-import com.ezzenix.rendering.Renderer;
+import com.ezzenix.client.rendering.Camera;
+import com.ezzenix.client.rendering.Renderer;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -27,7 +30,6 @@ public class Game {
 	private final Renderer renderer;
 	private final Camera camera;
 	private final Player player;
-	private final InputHandler inputHandler;
 	private final World world;
 	private final List<Entity> entities;
 
@@ -40,11 +42,13 @@ public class Game {
 		window = new Window();
 		window.setTitle("Minecraft");
 		window.centerWindow();
-		window.setVSync(true);
+		window.setVSync(false);
 		window.setIcon("src/main/resources/icon.png");
 
 		// Initialize
 		Input.initialize(window);
+
+		Client.initialize();
 
 		// Initialize game
 		this.blockTextures = TextureAtlas.fromDirectory("src/main/resources/textures");
@@ -55,7 +59,6 @@ public class Game {
 		this.camera = new Camera();
 
 		this.renderer = new Renderer();
-		this.inputHandler = new InputHandler();
 
 		Scheduler.setInterval(() -> {
 			Game.getInstance().getWorld().loadNewChunks();
@@ -65,17 +68,21 @@ public class Game {
 		ChunkBuilderQueue.initialize();
 		WorldGeneratorQueue.initialize();
 
+		Hotbar.initialize();
+
 		// Game loop
-		while (!window.shouldWindowClose()) {
+		while (!window.shouldClose()) {
 			Scheduler.update();
-			inputHandler.handleInput(window.getId());
+			player.updateMovement();
 			Physics.step();
 
-			this.getRenderer().render(window.getId());
-
 			glfwPollEvents();
+
+			this.getRenderer().render(window.getHandle());
 			int glError = glGetError();
 			if (glError != GL_NO_ERROR) System.err.println("OpenGL Error: " + glError);
+
+			//Scheduler.limitFps(60); // TODO
 		}
 
 		// Shutdown
@@ -90,9 +97,6 @@ public class Game {
 	}
 	public Renderer getRenderer() {
 		return this.renderer;
-	}
-	public InputHandler getInputHandler() {
-		return this.inputHandler;
 	}
 	public World getWorld() {
 		return this.world;
