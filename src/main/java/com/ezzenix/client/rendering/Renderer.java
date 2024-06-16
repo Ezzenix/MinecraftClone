@@ -2,6 +2,7 @@ package com.ezzenix.client.rendering;
 
 import com.ezzenix.Debug;
 import com.ezzenix.Game;
+import com.ezzenix.client.gui.GuiContext;
 import com.ezzenix.client.gui.library.Gui;
 import com.ezzenix.engine.physics.Raycast;
 import com.ezzenix.hud.LineRenderer;
@@ -42,6 +43,15 @@ public class Renderer {
 		Debug.render();
 		LineRenderer.renderBatch();
 		Gui.render();
+
+
+		//long start = System.currentTimeMillis();
+		for (int i = 0; i < 100; i++) {
+			GuiContext.drawRect(100, 100, 200, 50, 0, 0, 0, 1);
+			GuiContext.drawText("Hello world!", 100, 100, 18, 1, 1, 1);
+		}
+		GuiContext.renderBatch();
+		//System.out.println(System.currentTimeMillis() - start);
 
 		glfwSwapBuffers(window);
 	}

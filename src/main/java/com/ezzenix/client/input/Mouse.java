@@ -1,7 +1,16 @@
-package com.ezzenix.client;
+package com.ezzenix.client.input;
 
 import com.ezzenix.Game;
+import com.ezzenix.client.Client;
+import com.ezzenix.engine.Input;
 import com.ezzenix.engine.opengl.Window;
+import com.ezzenix.engine.physics.Physics;
+import com.ezzenix.engine.physics.Raycast;
+import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.entities.Entity;
+import com.ezzenix.math.BlockPos;
+import com.ezzenix.math.BoundingBox;
+import org.joml.Vector3i;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
@@ -23,6 +32,32 @@ public class Mouse {
 
 		glfwSetCursorPosCallback(window, (windowHandle, xpos, ypos) -> {
 			cursorMoved((int) xpos, (int) ypos);
+		});
+
+		Input.mouseButton2Down(() -> {
+			if (Client.isPaused) return;
+			Raycast result = Game.getInstance().getPlayer().raycast();
+			if (result != null && result.hitDirection != null) {
+				Vector3i faceNormal = result.hitDirection.getNormal();
+				BlockPos blockPos = result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
+				if (blockPos.isValid()) {
+
+					BoundingBox blockBoundingBox = Physics.getBlockBoundingBox(blockPos);
+					for (Entity entity : Game.getInstance().getEntities()) {
+						if (entity.boundingBox.getIntersection(blockBoundingBox).length() > 0) return;
+					}
+
+					Game.getInstance().getWorld().setBlock(blockPos, BlockType.GRASS_BLOCK);
+				}
+			}
+		});
+
+		Input.mouseButton1Down(() -> {
+			if (Client.isPaused) return;
+			Raycast result = Game.getInstance().getPlayer().raycast();
+			if (result != null) {
+				Game.getInstance().getWorld().setBlock(result.blockPos, BlockType.AIR);
+			}
 		});
 	}
 

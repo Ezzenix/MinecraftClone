@@ -3,6 +3,8 @@ package com.ezzenix.client;
 import com.ezzenix.client.gui.Hud;
 import com.ezzenix.client.gui.library.Gui;
 import com.ezzenix.client.gui.library.Screen;
+import com.ezzenix.client.input.Keyboard;
+import com.ezzenix.client.input.Mouse;
 
 public class Client {
 
@@ -12,6 +14,8 @@ public class Client {
 	private static Keyboard keyboard;
 	private static Hud hud;
 
+	public static boolean isPaused;
+
 	public static void initialize() {
 		mouse = new Mouse();
 		keyboard = new Keyboard();
@@ -20,7 +24,7 @@ public class Client {
 
 	public static void setScreen(Screen screen) {
 		if (currentScreen != null) {
-			currentScreen.dispose();
+			currentScreen.remove();
 			Gui.disposeScreenComponents(currentScreen);
 		}
 

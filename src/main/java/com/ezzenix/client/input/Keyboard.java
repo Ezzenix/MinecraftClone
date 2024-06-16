@@ -1,6 +1,7 @@
-package com.ezzenix.client;
+package com.ezzenix.client.input;
 
 import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.PauseScreen;
 import com.ezzenix.client.gui.chat.ChatScreen;
 import com.ezzenix.engine.Input;
@@ -22,31 +23,9 @@ public class Keyboard {
 	long lastSpaceClicked = 0;
 
 	public Keyboard() {
-		Input.mouseButton2Down(() -> {
-			Raycast result = Game.getInstance().getPlayer().raycast();
-			if (result != null && result.hitDirection != null) {
-				Vector3i faceNormal = result.hitDirection.getNormal();
-				BlockPos blockPos = result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
-				if (blockPos.isValid()) {
-
-					BoundingBox blockBoundingBox = Physics.getBlockBoundingBox(blockPos);
-					for (Entity entity : Game.getInstance().getEntities()) {
-						if (entity.boundingBox.getIntersection(blockBoundingBox).length() > 0) return;
-					}
-
-					Game.getInstance().getWorld().setBlock(blockPos, BlockType.GRASS_BLOCK);
-				}
-			}
-		});
-
-		Input.mouseButton1Down(() -> {
-			Raycast result = Game.getInstance().getPlayer().raycast();
-			if (result != null) {
-				Game.getInstance().getWorld().setBlock(result.blockPos, BlockType.AIR);
-			}
-		});
-
 		Input.keyUp(GLFW_KEY_F5, () -> {
+			if (Client.isPaused) return;
+			
 			Camera camera = Game.getInstance().getCamera();
 			camera.thirdPerson = !camera.thirdPerson;
 		});
@@ -73,6 +52,8 @@ public class Keyboard {
 		});
 
 		Input.keyUp(GLFW_KEY_T, () -> {
+			if (Client.isPaused) return;
+
 			Client.setScreen(new ChatScreen());
 		});
 
@@ -81,7 +62,9 @@ public class Keyboard {
 			window.setFullscreen(!window.isFullscreen());
 		});
 
-		Input.keyUp(GLFW_KEY_SPACE, () -> {
+		Input.keyDown(GLFW_KEY_SPACE, () -> {
+			if (Client.isPaused) return;
+
 			long now = System.currentTimeMillis();
 			if (now - lastSpaceClicked < 300) {
 				Game.getInstance().getPlayer().isFlying = !Game.getInstance().getPlayer().isFlying;

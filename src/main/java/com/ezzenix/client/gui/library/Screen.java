@@ -1,7 +1,5 @@
 package com.ezzenix.client.gui.library;
 
-import com.ezzenix.client.Client;
-
 public class Screen {
 	private final String title;
 
@@ -13,7 +11,7 @@ public class Screen {
 
 	}
 
-	public void dispose() {
+	public void remove() {
 
 	}
 }

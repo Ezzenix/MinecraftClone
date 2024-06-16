@@ -10,6 +10,7 @@ import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
+import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,8 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class GuiText extends GuiComponent {
 	private static final int BASE_FONT_SIZE = 18;
-	private static final FontRenderer FONT_RENDERER = new FontRenderer(new Font("Arial", Font.PLAIN, BASE_FONT_SIZE));
+	//public static final FontRenderer FONT_RENDERER = new FontRenderer(new Font("Arial", Font.PLAIN, BASE_FONT_SIZE));
+	public static final FontRenderer FONT_RENDERER = FontRenderer.fromFile(new File("src/main/resources/fonts/minecraft.ttf"), 18);
 	private static Shader TEXT_SHADER = new Shader("gui/text.vert", "gui/text.frag");
 
 	public String text = "Placeholder";

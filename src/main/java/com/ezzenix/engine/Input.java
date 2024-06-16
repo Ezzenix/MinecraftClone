@@ -26,7 +26,7 @@ public class Input {
 
 	private static void runEvents(int input, int action) {
 		for (InputEvent inputEvent : inputEvents) {
-			if (inputEvent.input == input && (inputEvent.action == action || (action == GLFW_REPEAT && inputEvent.action == GLFW_PRESS))) {
+			if (inputEvent.input == input && (inputEvent.action == action || (inputEvent.action == GLFW_REPEAT && action == GLFW_PRESS))) {
 				inputEvent.runnable.run();
 			}
 		}
@@ -57,6 +57,10 @@ public class Input {
 
 	public static void keyDown(int key, Runnable runnable) {
 		inputEvents.add(new InputEvent(key, GLFW_PRESS, runnable));
+	}
+
+	public static void keyDownAndHold(int key, Runnable runnable) {
+		inputEvents.add(new InputEvent(key, GLFW_REPEAT, runnable));
 	}
 
 	public static void keyUp(int key, Runnable runnable) {

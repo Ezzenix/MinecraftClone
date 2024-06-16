@@ -48,6 +48,10 @@ public class Shader {
 		glDeleteShader(fragmentShader);
 	}
 
+	public Shader(String path) {
+		this(path + ".vert", path + ".frag");
+	}
+
 	private String readShader(String shaderPath) {
 		String shaderSource = FileUtil.readResourceSource("shaders/" + shaderPath);
 		if (shaderSource == null)

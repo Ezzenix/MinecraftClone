@@ -1,6 +1,7 @@
 package com.ezzenix.engine.physics;
 
 import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.entities.Entity;
@@ -61,6 +62,8 @@ public class Physics {
 		if (Game.getInstance().getCamera().thirdPerson) {
 			entity.boundingBox.render(new Vector3f(1, 1, 1));
 		}
+
+		Vector3f oldEntityPosition = new Vector3f(entity.getPosition());
 
 		for (Vector3f axisVector : axisVectors) {
 			Vector3f vel = new Vector3f(entity.getVelocity()).mul(deltaTime).mul(axisVector);
@@ -127,11 +130,41 @@ public class Physics {
 			entityPosition.set(newPosition);
 		}
 
+		/*
+		if (entity.isSneaking() && Math.abs(entity.getVelocity().y) < 0.1f) {
+			BlockPos oldBlockPosBelow = BlockPos.from(oldEntityPosition).add(0, -1, 0);
+			BlockPos newBlockPosBelow = BlockPos.from(entityPosition).add(0, -1, 0);
+
+			if (!oldBlockPosBelow.equals(newBlockPosBelow)) {
+
+				BlockType oldBlockType = world.getBlock(oldBlockPosBelow);
+				BlockType newBlockType = world.getBlock(newBlockPosBelow);
+
+				if (oldBlockType != null && newBlockType != null) {
+					if (!oldBlockType.isWalkthrough() && newBlockType.isWalkthrough()) {
+						entityPosition = oldEntityPosition;
+					}
+				}
+			}
+		}
+		*/
+
+		if (entityPosition.y < -50) {
+			entityPosition.y = 100;
+			entity.getVelocity().y = 0;
+		}
+
 		entity.setPosition(entityPosition);
 		entity.isGrounded = isGrounded;
+
+		if (entity.isGrounded && entity.isFlying) {
+			entity.isFlying = false;
+		}
 	}
 
 	public static void step() {
+		if (Client.isPaused) return;
+
 		float deltaTime = Scheduler.getDeltaTime() * gameSpeed;
 
 		for (Entity entity : Game.getInstance().getEntities()) {

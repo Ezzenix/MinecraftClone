@@ -1,6 +1,7 @@
 package com.ezzenix.client.gui;
 
 import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.library.Gui;
 import com.ezzenix.client.gui.library.Screen;
 import com.ezzenix.client.gui.library.UDim2;
@@ -18,6 +19,8 @@ public class PauseScreen extends Screen {
 	}
 
 	public void init() {
+		Client.isPaused = true;
+
 		GuiFrame background = new GuiFrame();
 		background.size = UDim2.fromScale(1, 1);
 		background.color = new Vector3f(0.1f, 0.1f, 0.1f);
@@ -40,5 +43,9 @@ public class PauseScreen extends Screen {
 		button.size = UDim2.fromScale(0.4f, 0.05f);
 		button.sizeConstraint = Gui.SizeConstraint.YY;
 		button.screen = this;
+	}
+
+	public void remove() {
+		Client.isPaused = false;
 	}
 }

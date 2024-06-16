@@ -101,6 +101,10 @@ public class Entity {
 		updateBoundingBox();
 	}
 
+	public boolean isSneaking() {
+		return this.isSneaking;
+	}
+
 	public float getEyeHeight() {
 		float height = this.eyeHeight;
 		if (isSneaking) {
@@ -143,7 +147,7 @@ public class Entity {
 	}
 
 	public Raycast raycast() {
-		float interactionRange = 5;
+		float interactionRange = 6;
 		return Raycast.create(getWorld(), getEyePosition(), getLookVector().mul(interactionRange));
 	}
 }

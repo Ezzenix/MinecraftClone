@@ -29,7 +29,7 @@ public class ChatHud {
 			GuiFrame guiFrame = new GuiFrame();
 			guiFrame.color = new Vector3f(0f, 0f, 0f);
 			guiFrame.transparency = 0.6f;
-			guiFrame.position = new UDim2(0, 8, 0.8f, -(i * 22) + 5);
+			guiFrame.position = new UDim2(0, 8, 0.8f, -(i * 22));
 			guiFrame.anchorPoint = new Vector2f(0, 1);
 			guiFrame.size = new UDim2(0.45f, 0, 0, 22);
 

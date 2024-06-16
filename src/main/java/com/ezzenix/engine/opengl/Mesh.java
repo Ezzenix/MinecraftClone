@@ -37,7 +37,7 @@ public class Mesh {
 
 	public void render() {
 		if (vertexCount == 0) return;
-		glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
+		//glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
 		glBindVertexArray(this.vao);
 		glDrawArrays(primitive, 0, this.vertexCount);
 		glBindVertexArray(0);

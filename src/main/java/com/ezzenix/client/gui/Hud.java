@@ -16,7 +16,6 @@ public class Hud {
 	public Hud() {
 		chatHud.addMessage("Hello world!");
 		chatHud.addMessage("Test message...");
-
 		crosshair = new GuiText();
 		crosshair.position = new UDim2(0.5f, 0, 0.5f, -2);
 		crosshair.anchorPoint = new Vector2f(0.5f, 0.5f);

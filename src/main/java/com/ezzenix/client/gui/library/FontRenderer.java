@@ -15,10 +15,12 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class FontRenderer {
 	private final Font font;
-	private final int fontSize;
+	public final int fontSize;
 	private final Texture texture;
 	private final HashMap<Character, Glyph> characterMap = new HashMap<>();
 	private int width, height, lineHeight;
+
+	public FontMetrics fontMetrics;
 
 	public FontRenderer(Font font) {
 		this.font = font;
@@ -30,9 +32,11 @@ public class FontRenderer {
 		Font customFont = null;
 		try {
 			customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-		} catch (FontFormatException | IOException ignored) {
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
 		}
-		if (customFont == null) return null;
+		if (customFont == null)
+			throw new RuntimeException("Failed to load font " + fontFile.getAbsolutePath());
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		ge.registerFont(customFont);
@@ -48,12 +52,17 @@ public class FontRenderer {
 		return characterMap.get(c);
 	}
 
+	public HashMap<Character, Glyph> getGlyphs() {
+		return characterMap;
+	}
+
 	private Texture createFontTexture() {
 		// Create fake image to get font information
 		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = img.createGraphics();
 		g2d.setFont(font);
 		FontMetrics fontMetrics = g2d.getFontMetrics();
+		this.fontMetrics = fontMetrics;
 
 		int estimatedWidth = (int) Math.sqrt(font.getNumGlyphs()) * font.getSize() + 1;
 		width = 0;
@@ -64,12 +73,18 @@ public class FontRenderer {
 
 		int X_SPACING = 6;
 
-		for (int i = 0; i < font.getNumGlyphs(); i++) {
+		for (int i = 0; i <= 254; i++) {
 			if (font.canDisplay(i)) {
+				int charWidth = fontMetrics.charWidth(i);
+				int charHeight = fontMetrics.getHeight();
+
+				if (charWidth == 0 || charHeight == 0) continue;
+
+
 				// Get the sizes for each codepoint glyph, and update the actual image width and height
-				Glyph glyph = new Glyph(x, y, fontMetrics.charWidth(i), fontMetrics.getHeight());
+				Glyph glyph = new Glyph(x, y, charWidth, charHeight);
 				characterMap.put((char) i, glyph);
-				width = Math.max(x + fontMetrics.charWidth(i) + X_SPACING, width);
+				width = Math.max(x + charWidth + X_SPACING, width);
 
 				x += glyph.width + X_SPACING;
 				if (x > estimatedWidth) {
@@ -88,10 +103,12 @@ public class FontRenderer {
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setFont(font);
 		g2d.setColor(Color.WHITE);
-		for (int i = 0; i < font.getNumGlyphs(); i++) {
+		for (int i = 0; i <= 254; i++) {
 			if (font.canDisplay(i)) {
 				Glyph info = characterMap.get((char) i);
-				info.calculateUVs(width, height);
+				if (info == null) continue;
+
+				info.calculateUVs(width, height, fontMetrics);
 				//info.calculateTextureCoordinates(width, height);
 				g2d.drawString("" + (char) i, info.x, info.y);
 			}
@@ -118,7 +135,6 @@ public class FontRenderer {
 		float width = 0;
 		float height = 0;
 
-		int offsetX = 0;
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
 
@@ -143,11 +159,13 @@ public class FontRenderer {
 			this.height = height;
 		}
 
-		public void calculateUVs(int textureWidth, int textureHeight) {
+		public void calculateUVs(int textureWidth, int textureHeight, FontMetrics fontMetrics) {
+			int offsetY = fontMetrics.getDescent() + fontMetrics.getLeading();
+
 			float x0 = (float) x / (float) textureWidth;
 			float x1 = (float) (x + width) / (float) textureWidth;
-			float y0 = (float) (y - height) / (float) textureHeight;
-			float y1 = (float) (y) / (float) textureHeight;
+			float y0 = (float) (y + offsetY - height) / (float) textureHeight;
+			float y1 = (float) (y + offsetY) / (float) textureHeight;
 
 			this.uvCoords = new Vector2f[4];
 			this.uvCoords[0] = new Vector2f(x0, y1);

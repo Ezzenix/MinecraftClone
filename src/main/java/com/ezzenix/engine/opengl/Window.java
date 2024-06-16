@@ -3,6 +3,7 @@ package com.ezzenix.engine.opengl;
 import com.ezzenix.client.Client;
 import com.ezzenix.engine.Signal;
 import com.ezzenix.engine.core.ImageParser;
+import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -63,7 +64,7 @@ public class Window {
 			Configuration.DEBUG_STACK.set(true);
 		}
 
-		Configuration.STACK_SIZE.set(1024);
+		Configuration.STACK_SIZE.set(1024 * 1024 * 10);
 
 		if (!glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
@@ -86,6 +87,9 @@ public class Window {
 		createCapabilities();
 
 		updateWindow();
+
+		System.out.println("LWJGL " + Version.getVersion());
+		System.out.println("OpenGl " + glGetString(GL_VERSION));
 
 		// Listen for changes
 		glfwSetWindowSizeCallback(this.handle, this::onWindowSizeChanged);

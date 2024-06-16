@@ -1,5 +1,6 @@
 package com.ezzenix.game.entities;
 
+import com.ezzenix.client.Client;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.world.World;
@@ -17,6 +18,8 @@ public class Player extends Entity {
 	}
 
 	public void updateMovement() {
+		if (Client.isPaused) return;
+
 		// get input
 		boolean pressingForward = Input.getKey(GLFW_KEY_W);
 		boolean pressingBack = Input.getKey(GLFW_KEY_S);
