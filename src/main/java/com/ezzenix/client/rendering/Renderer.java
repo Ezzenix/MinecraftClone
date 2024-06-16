@@ -37,7 +37,7 @@ public class Renderer {
 			LineRenderer.highlightVoxel(new Vector3f(result.blockPos.x, result.blockPos.y, result.blockPos.z), new Vector3f(0.2f, 0.2f, 0.2f));
 		}
 
-		skybox.render();
+		//skybox.render();
 
 		worldRenderer.render(window);
 		Debug.render();
@@ -45,13 +45,11 @@ public class Renderer {
 		Gui.render();
 
 
-		//long start = System.currentTimeMillis();
-		for (int i = 0; i < 100; i++) {
-			GuiContext.drawRect(100, 100, 200, 50, 0, 0, 0, 1);
-			GuiContext.drawText("Hello world!", 100, 100, 18, 1, 1, 1);
+		for (int i = 0; i < 1000; i++) {
+			GuiContext.drawRect(100, 100, 200, 50, 1, 1, 1, 1);
+			GuiContext.drawText("Hello world!", 100, 100, 18, 1, 0, 0);
 		}
 		GuiContext.renderBatch();
-		//System.out.println(System.currentTimeMillis() - start);
 
 		glfwSwapBuffers(window);
 	}

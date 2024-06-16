@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.Configuration;
+import org.lwjgl.system.MemoryStack;
 
 import java.util.Objects;
 
@@ -64,8 +65,6 @@ public class Window {
 			Configuration.DEBUG_STACK.set(true);
 		}
 
-		Configuration.STACK_SIZE.set(1024 * 1024 * 10);
-
 		if (!glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
 
@@ -104,10 +103,12 @@ public class Window {
 				glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 				glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, (int[]) null, true);
 				glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
-					System.err.println("\nOpenGL debug message:");
-					System.err.println("\tType: " + type);
-					System.err.println("\tSeverity: " + severity);
-					System.err.println("\tMessage: " + memUTF8(message));
+					if (severity != 33387) {
+						System.err.println("\nOpenGL debug message:");
+						System.err.println("\tType: " + type);
+						System.err.println("\tSeverity: " + severity);
+						System.err.println("\tMessage: " + memUTF8(message));
+					}
 				}, 0);
 				System.out.println("OpenGL debug was set up successfully");
 			} else {

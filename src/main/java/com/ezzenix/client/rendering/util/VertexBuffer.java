@@ -10,7 +10,6 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
@@ -22,10 +21,12 @@ public class VertexBuffer {
 	private int vertexBufferId;
 	//private int indexBufferId;
 	private int vertexArrayId;
-	private int vertexCount;
 
-	private int vertexBuilderCount;
-	private final List<Float> vertexBuilderList;
+	private int uploadedVertexCount;
+
+	private int vertexCount;
+	//private final DynamicByteBuffer byteBuffer;
+	private List<Float> vertexList;
 
 	public enum Usage {
 		STATIC(GL_STATIC_DRAW),
@@ -52,8 +53,9 @@ public class VertexBuffer {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		this.vertexBuilderCount = 0;
-		this.vertexBuilderList = new ArrayList<>();
+		this.vertexCount = 0;
+		//this.byteBuffer = new DynamicByteBuffer(0);
+		this.vertexList = new ArrayList<>();
 	}
 
 	public void bind() {
@@ -70,34 +72,42 @@ public class VertexBuffer {
 	}
 
 	public void draw() {
-		if (this.vertexCount == 0)
+		if (this.uploadedVertexCount == 0)
 			throw new IllegalStateException("Attempt to call .draw() with nothing uploaded");
 
 		shader.bind();
 		this.bind();
-		glDrawArrays(GL_TRIANGLES, 0, this.vertexCount);
+		glDrawArrays(GL_TRIANGLES, 0, this.uploadedVertexCount);
 		this.unbind();
 	}
 
 	public void upload() {
-		if (vertexBuilderCount == 0)
+		if (vertexCount == 0)
 			throw new RuntimeException("Attempt to upload VertexBuffer with 0 vertices");
 
-		this.vertexCount = this.vertexBuilderCount;
-
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(this.vertexBuilderList.size());
-
-		for (Float v : this.vertexBuilderList) {
-			buffer.put(v);
-		}
-		buffer.flip();
+		this.uploadedVertexCount = this.vertexCount;
 
 		this.bind();
-		glBindBuffer(GL_ARRAY_BUFFER, this.vertexBufferId);
-		glBufferData(GL_ARRAY_BUFFER, buffer, this.usage.id);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			FloatBuffer buffer = stack.mallocFloat(this.vertexList.size());
+			for (float v : this.vertexList) {
+				buffer.put(v);
+			}
+			buffer.flip();
+
+			glBindBuffer(GL_ARRAY_BUFFER, this.vertexBufferId);
+			glBufferData(GL_ARRAY_BUFFER, buffer, this.usage.id);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		}
 
 		this.reset();
+	}
+
+	public void reset() {
+		//this.byteBuffer.clear();
+		this.vertexList.clear();
+		this.vertexCount = 0;
 	}
 
 	public void close() {
@@ -116,52 +126,47 @@ public class VertexBuffer {
 	}
 
 	public VertexBuffer vertex(float x, float y, float z) {
-		this.vertexBuilderList.add(x);
-		this.vertexBuilderList.add(y);
-		this.vertexBuilderList.add(z);
+		this.vertexList.add(x);
+		this.vertexList.add(y);
+		this.vertexList.add(z);
 		return this;
 	}
 
 	public VertexBuffer vertex(float x, float y) {
 		Vector2f ndc = GuiUtil.toNormalizedDeviceCoordinates(x, y);
-		this.vertexBuilderList.add(ndc.x);
-		this.vertexBuilderList.add(ndc.y);
+		this.vertexList.add(ndc.x);
+		this.vertexList.add(ndc.y);
 		return this;
 	}
 
 	public VertexBuffer color(float r, float g, float b) {
-		this.vertexBuilderList.add(r);
-		this.vertexBuilderList.add(g);
-		this.vertexBuilderList.add(b);
+		this.vertexList.add(r);
+		this.vertexList.add(g);
+		this.vertexList.add(b);
 		return this;
 	}
 
 	public VertexBuffer color(float r, float g, float b, float a) {
-		this.vertexBuilderList.add(r);
-		this.vertexBuilderList.add(g);
-		this.vertexBuilderList.add(b);
-		this.vertexBuilderList.add(a);
+		this.vertexList.add(r);
+		this.vertexList.add(g);
+		this.vertexList.add(b);
+		this.vertexList.add(a);
 		return this;
 	}
 
 	public VertexBuffer texture(float u, float v) {
-		this.vertexBuilderList.add(u);
-		this.vertexBuilderList.add(v);
+		this.vertexList.add(u);
+		this.vertexList.add(v);
 		return this;
 	}
 
 	public VertexBuffer texture(Vector2f uv) {
-		this.vertexBuilderList.add(uv.x);
-		this.vertexBuilderList.add(uv.y);
+		this.vertexList.add(uv.x);
+		this.vertexList.add(uv.y);
 		return this;
 	}
 
 	public void next() {
-		this.vertexBuilderCount += 1;
-	}
-
-	public void reset() {
-		this.vertexBuilderList.clear();
-		this.vertexBuilderCount = 0;
+		this.vertexCount += 1;
 	}
 }

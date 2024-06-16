@@ -50,13 +50,18 @@ public class GuiContext {
 	public static void drawText(String text, int x, int y, int fontSize, int r, int g, int b) {
 		float TEXT_SCALE = (float) fontSize / FONT_RENDERER.fontSize;
 
-		y -= 5; // TODO: Make this a better way
+		y -= 5; // TODO: Make this a better way, font offset to align top of text
 
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
 
 			FontRenderer.Glyph glyph = FONT_RENDERER.getGlyph(c);
 			if (glyph == null) continue;
+
+			if (c == ' ') {
+				x += (int) (glyph.width * 2 * TEXT_SCALE); // space doesn't have to be actually rendered
+				continue;
+			}
 
 			int width = (int) (glyph.width * TEXT_SCALE);
 			int height = (int) (glyph.height * TEXT_SCALE);

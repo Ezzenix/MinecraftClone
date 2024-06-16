@@ -141,6 +141,11 @@ public class FontRenderer {
 			FontRenderer.Glyph glyph = this.getGlyph(c);
 			if (glyph == null) continue;
 
+			if (c == ' ') {
+				width += (int) (glyph.width * 2 * TEXT_SCALE);
+				continue;
+			}
+
 			width += glyph.width * TEXT_SCALE;
 			height = Math.max(height, glyph.height * TEXT_SCALE);
 		}

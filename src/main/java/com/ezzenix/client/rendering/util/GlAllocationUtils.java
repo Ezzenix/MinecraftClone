@@ -16,7 +16,21 @@ public class GlAllocationUtils {
 	}
 
 	public static ByteBuffer resizeByteBuffer(ByteBuffer source, int size) {
-		long l = ALLOCATOR.realloc(MemoryUtil.memAddress0(source), size);
+		/*
+		int pos = source.position();
+
+		ByteBuffer newBuffer = allocateByteBuffer(size);
+		newBuffer.put(source);
+		newBuffer.position(pos);
+
+		free(source);
+
+		return newBuffer;
+		 */
+
+		long adr = MemoryUtil.memAddress0(source);
+		long l = ALLOCATOR.realloc(adr, size);
+
 		if (l == 0L) {
 			throw new OutOfMemoryError("Failed to resize buffer from " + source.capacity() + " bytes to " + size + " bytes");
 		}

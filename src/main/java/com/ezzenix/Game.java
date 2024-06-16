@@ -1,6 +1,7 @@
 package com.ezzenix;
 
 import com.ezzenix.client.Client;
+import com.ezzenix.client.rendering.util.DynamicByteBuffer;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.core.TextureAtlas;
 import com.ezzenix.engine.opengl.Window;
@@ -15,7 +16,11 @@ import com.ezzenix.game.world.World;
 import com.ezzenix.client.rendering.Camera;
 import com.ezzenix.client.rendering.Renderer;
 import org.joml.Vector3f;
+import org.lwjgl.system.Configuration;
+import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +40,26 @@ public class Game {
 	public final TextureAtlas<String> blockTextures;
 
 	public Game() {
+		Configuration.STACK_SIZE.set(25000);
+
 		INSTANCE = this;
 
+		/*
+		DynamicByteBuffer buffer = new DynamicByteBuffer(0);
+		for (int i = 1; i <= 10; i++) {
+			buffer.putFloat(i);
+		}
+
+		ByteBuffer finalBuffer = buffer.end();
+		while (finalBuffer.hasRemaining()) {
+			System.out.println(finalBuffer.getFloat());
+		}
+
+		System.exit(0);
+		 */
+
 		// Create a window and initialize OpenGL & glfw
-		window = new Window();
+		window = new Window(true);
 		window.setTitle("Minecraft");
 		window.centerWindow();
 		window.setVSync(false);
@@ -78,6 +99,7 @@ public class Game {
 			glfwPollEvents();
 
 			this.getRenderer().render(window.getHandle());
+
 			int glError = glGetError();
 			if (glError != GL_NO_ERROR) System.err.println("OpenGL Error: " + glError);
 
