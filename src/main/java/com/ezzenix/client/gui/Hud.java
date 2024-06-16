@@ -23,5 +23,4 @@ public class Hud {
 		crosshair.size = UDim2.fromOffset(22, 22);
 		crosshair.textAlign = Gui.TextAlign.Center;
 	}
-
 }

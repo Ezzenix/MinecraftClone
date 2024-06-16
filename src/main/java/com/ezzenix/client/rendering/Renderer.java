@@ -44,11 +44,6 @@ public class Renderer {
 		LineRenderer.renderBatch();
 		Gui.render();
 
-
-		for (int i = 0; i < 1000; i++) {
-			GuiContext.drawRect(100, 100, 200, 50, 1, 1, 1, 1);
-			GuiContext.drawText("Hello world!", 100, 100, 18, 1, 0, 0);
-		}
 		GuiContext.renderBatch();
 
 		glfwSwapBuffers(window);

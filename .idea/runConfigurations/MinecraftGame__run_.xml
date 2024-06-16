@@ -13,7 +13,7 @@
           <option value="run" />
         </list>
       </option>
-      <option name="vmOptions" value="-XX:ErrorFile=error.log -XX:HeapDumpPath=heapdump.hprof -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M" />
+      <option name="vmOptions" value="-XX:ErrorFile=error.log -XX:HeapDumpPath=heapdump.hprof -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M -Dorg.lwjgl.util.Debug=true" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>

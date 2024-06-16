@@ -7,19 +7,27 @@ public class DynamicByteBuffer {
 	private int size;
 
 	public DynamicByteBuffer(int initialSize) {
-		if (initialSize <= 0) initialSize = 1;
+		if (initialSize < 32) initialSize = 32;
 		this.buffer = GlAllocationUtils.allocateByteBuffer(initialSize);
 		this.size = 0;
+
+		this.putFloat(10);
 	}
 
 	private void grow() {
 		int currentCapacity = this.buffer.capacity();
 		if (this.size <= currentCapacity) return;
 
-		System.out.println("Resizing buffer from " + currentCapacity + " to " + this.size);
+		int newSize = this.size * 2;
+
+		//System.out.println("Resizing buffer from " + currentCapacity + " to " + newSize);
 		int pos = this.buffer.position();
-		this.buffer = GlAllocationUtils.resizeByteBuffer(this.buffer, this.size);
+		this.buffer = GlAllocationUtils.resizeByteBuffer(this.buffer, newSize);
 		this.buffer.position(pos);
+	}
+
+	public void debugPrint() {
+		System.out.printf("Size: %d Capacity: %d Position: %d%n", size, buffer.capacity(), buffer.position());
 	}
 
 	public void putFloat(float value) {

@@ -9,7 +9,6 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
-import java.awt.*;
 import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -58,18 +57,18 @@ public class GuiText extends GuiComponent {
 		Vector2f size = this.getAbsoluteSize();
 		position = this.computeTopLeftCorner(position, size);
 
-		Vector2f textBounds = FONT_RENDERER.getTextBounds(text, this.fontSize);
+		int textWidth = FONT_RENDERER.getTextWidth(text, this.fontSize);
 		float fontSize = this.fontSize;
 
 		if (textScaled) {
-			fontSize *= (size.y / textBounds.y);
-			textBounds = FONT_RENDERER.getTextBounds(text, (int) fontSize);
+			fontSize *= (size.y / this.fontSize);
+			textWidth = FONT_RENDERER.getTextWidth(text, (int) fontSize);
 		}
 
 		if (textAlign == Gui.TextAlign.Center) {
-			position.add(size.x / 2 - textBounds.x / 2, 0);
+			position.add(size.x / 2 - (float) textWidth / 2, 0);
 		} else if (textAlign == Gui.TextAlign.Right) {
-			position.add(size.x - textBounds.x, 0);
+			position.add(size.x - textWidth, 0);
 		}
 
 		float TEXT_SCALE = fontSize / BASE_FONT_SIZE;

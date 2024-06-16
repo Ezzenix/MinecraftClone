@@ -129,11 +129,10 @@ public class FontRenderer {
 		return texture;
 	}
 
-	public Vector2f getTextBounds(String text, int fontSize) {
+	public int getTextWidth(String text, int fontSize) {
 		float TEXT_SCALE = (float) fontSize / this.fontSize;
 
-		float width = 0;
-		float height = 0;
+		int width = 0;
 
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
@@ -146,11 +145,10 @@ public class FontRenderer {
 				continue;
 			}
 
-			width += glyph.width * TEXT_SCALE;
-			height = Math.max(height, glyph.height * TEXT_SCALE);
+			width += (int) (glyph.width * TEXT_SCALE);
 		}
 
-		return new Vector2f(width, height);
+		return width;
 	}
 
 	public static class Glyph {

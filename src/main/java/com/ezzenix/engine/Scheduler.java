@@ -14,7 +14,12 @@ public class Scheduler {
 	private static double lastDrawTime = Double.MIN_VALUE;
 
 	private static final int FPS_BUFFER_SIZE = 60;
-	private static final List<Float> fpsBuffer = new ArrayList<>();
+	private static final List<Float> fpsBuffer = new ArrayList<>(FPS_BUFFER_SIZE);
+	private static float fpsAverage = 0;
+	private static float fpsMin = 0;
+	private static float fpsMax = 0;
+	private static final float FPS_UPDATE_INTERVAL = 1;
+	private static float lastFpsUpdate = 0;
 
 	private static final long START_TIME = System.currentTimeMillis();
 
@@ -24,6 +29,14 @@ public class Scheduler {
 
 		fpsBuffer.add((float) Math.round(1f / deltaTime));
 		if (fpsBuffer.size() > FPS_BUFFER_SIZE) fpsBuffer.remove(0);
+
+		float now = getClock();
+		if (now - lastFpsUpdate > FPS_UPDATE_INTERVAL) {
+			lastFpsUpdate = now;
+			fpsMax = (float) fpsBuffer.stream().mapToDouble(Float::doubleValue).max().orElse(0.0);
+			fpsMin = (float) fpsBuffer.stream().mapToDouble(Float::doubleValue).min().orElse(0.0);
+			fpsAverage = (float) fpsBuffer.stream().mapToDouble(Float::doubleValue).average().orElse(0.0);
+		}
 
 		for (SchedulerRunnable schedulerRunnable : runnables) {
 			if (schedulerRunnable.canRun()) {
@@ -49,8 +62,14 @@ public class Scheduler {
 	/**
 	 * Returns average frames per second
 	 */
-	public static float getFps() {
-		return (float) fpsBuffer.stream().mapToDouble(Float::doubleValue).average().orElse(0.0);
+	public static float getAverageFps() {
+		return fpsAverage;
+	}
+	public static float getMinFps() {
+		return fpsMin;
+	}
+	public static float getMaxFps() {
+		return fpsMax;
 	}
 
 	/**

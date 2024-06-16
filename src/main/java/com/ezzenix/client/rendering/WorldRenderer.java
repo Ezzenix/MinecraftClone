@@ -23,6 +23,8 @@ public class WorldRenderer {
 
 	private final Vector2f textureAtlasSize;
 
+	public int chunksRenderedCount = 0;
+
 	public WorldRenderer() {
 		blockTexture = new Texture(Game.getInstance().blockTextures.getAtlasImage());
 		textureAtlasSize = new Vector2f(
@@ -51,6 +53,7 @@ public class WorldRenderer {
 		// Get chunks in frustum and sort them by distance to camera
 		List<Chunk> chunks = new ArrayList<>(world.getChunks().values().stream().filter(chunk -> chunk.getBoundingBox().checkFrustum(frustumIntersection)).toList());
 		chunks.sort((a, b) -> Float.compare(cameraChunkPos.distanceTo(b.getPos()), cameraChunkPos.distanceTo(a.getPos())));
+		chunksRenderedCount = chunks.size();
 
 		worldShader.bind();
 		worldShader.setUniform("projectionMatrix", projectionMatrix);

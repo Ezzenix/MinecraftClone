@@ -75,5 +75,7 @@ public class Debug {
 		if (showChunkBorders) {
 			renderChunkBorders();
 		}
+
+		DebugHud.render();
 	}
 }

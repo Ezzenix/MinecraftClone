@@ -1,15 +1,13 @@
 package com.ezzenix.client.gui;
 
 import com.ezzenix.client.gui.library.FontRenderer;
-import com.ezzenix.client.gui.library.GuiUtil;
 import com.ezzenix.client.rendering.util.VertexBuffer;
 import com.ezzenix.client.rendering.util.VertexFormat;
+import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Shader;
 import org.joml.Vector2f;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
@@ -21,16 +19,30 @@ public class GuiContext {
 	private static final VertexBuffer rectangleBuffer = new VertexBuffer(new Shader("gui/frame"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 4), VertexBuffer.Usage.DYNAMIC);
 	private static final VertexBuffer fontBuffer = new VertexBuffer(new Shader("gui/text"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2, GL_FLOAT, 3), VertexBuffer.Usage.DYNAMIC);
 
+	private static boolean shouldRecomputeThisFrame = false;
+	private static long lastGuiRecompute = 0;
+	private static final long GUI_RENDER_INTERVAL = (long) (0.0166 * 2 * 1E9); // 30 FPS
+
+	static {
+		Scheduler.bindToUpdate(() -> {
+			long now = System.nanoTime();
+			shouldRecomputeThisFrame = (now - lastGuiRecompute > GUI_RENDER_INTERVAL);
+			if (shouldRecomputeThisFrame) {
+				lastGuiRecompute = now;
+			}
+		});
+	}
+
 	public static void renderBatch() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		rectangleBuffer.uploadAndDraw();
+		rectangleBuffer.draw(shouldRecomputeThisFrame);
 
 		FONT_RENDERER.getAtlasTexture().bind();
-		fontBuffer.uploadAndDraw();
+		fontBuffer.draw(shouldRecomputeThisFrame);
 
 		glUseProgram(0);
 		glEnable(GL_DEPTH_TEST);
@@ -38,6 +50,8 @@ public class GuiContext {
 	}
 
 	public static void drawRect(int x, int y, int width, int height, int r, int g, int b, int a) {
+		if (!shouldRecomputeThisFrame) return;
+
 		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
 		rectangleBuffer.vertex(x, y + height).color(r, g, b, a).next();
 		rectangleBuffer.vertex(x + width, y + height).color(r, g, b, a).next();
@@ -48,6 +62,8 @@ public class GuiContext {
 	}
 
 	public static void drawText(String text, int x, int y, int fontSize, int r, int g, int b) {
+		if (!shouldRecomputeThisFrame) return;
+
 		float TEXT_SCALE = (float) fontSize / FONT_RENDERER.fontSize;
 
 		y -= 5; // TODO: Make this a better way, font offset to align top of text

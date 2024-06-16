@@ -2,6 +2,7 @@ package com.ezzenix;
 
 import com.ezzenix.client.Client;
 import com.ezzenix.client.rendering.util.DynamicByteBuffer;
+import com.ezzenix.client.rendering.util.GlAllocationUtils;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.core.TextureAtlas;
 import com.ezzenix.engine.opengl.Window;
@@ -46,7 +47,7 @@ public class Game {
 
 		/*
 		DynamicByteBuffer buffer = new DynamicByteBuffer(0);
-		for (int i = 1; i <= 10; i++) {
+		for (int i = 1; i <= 10000; i++) {
 			buffer.putFloat(i);
 		}
 
@@ -54,8 +55,8 @@ public class Game {
 		while (finalBuffer.hasRemaining()) {
 			System.out.println(finalBuffer.getFloat());
 		}
-
 		System.exit(0);
+
 		 */
 
 		// Create a window and initialize OpenGL & glfw

@@ -1,22 +1,34 @@
 package com.ezzenix.client.gui.library;
 
 import com.ezzenix.Game;
+import com.ezzenix.engine.opengl.Window;
 import org.joml.Vector2f;
 
 public class GuiUtil {
-	/**
+	private static int windowWidth;
+	private static int windowHeight;
+
+	static {
+		Window window = Game.getInstance().getWindow();
+		windowWidth = window.getWidth();
+		windowHeight = window.getHeight();
+		window.sizeChanged.connect(() -> {
+			windowWidth = window.getWidth();
+			windowHeight = window.getHeight();
+		});
+	}
+
+	/*
 	 * Converts pixel coordinates to normalized device coordinates where pixel (0, 0) is top-left corner
 	 */
-	public static Vector2f toNormalizedDeviceCoordinates(float x, float y) {
-		int width = Game.getInstance().getWindow().getWidth();
-		int height = Game.getInstance().getWindow().getHeight();
-
-		float normalizedX = (x / width) * 2 - 1;
-		float normalizedY = 1 - (y / height) * 2;
-
-		return new Vector2f(normalizedX, normalizedY);
+	public static float toNormalizedDeviceCoordinateX(float x) {
+		return (x / windowWidth) * 2 - 1;
 	}
-	public static Vector2f toNormalizedDeviceCoordinates(Vector2f pixelCoordinates) {
-		return toNormalizedDeviceCoordinates(pixelCoordinates.x, pixelCoordinates.y);
+
+	public static float toNormalizedDeviceCoordinateY(float y) {
+		return 1 - (y / windowHeight) * 2;
+	}
+	public static Vector2f toNormalizedDeviceCoordinates(float x, float y) {
+		return new Vector2f(toNormalizedDeviceCoordinateX(x), toNormalizedDeviceCoordinateY(y));
 	}
 }

@@ -12,6 +12,8 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.opengl.ARBBufferStorage.GL_MAP_COHERENT_BIT;
+import static org.lwjgl.opengl.ARBBufferStorage.GL_MAP_PERSISTENT_BIT;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -25,8 +27,7 @@ public class VertexBuffer {
 	private int uploadedVertexCount;
 
 	private int vertexCount;
-	//private final DynamicByteBuffer byteBuffer;
-	private List<Float> vertexList;
+	private final DynamicByteBuffer byteBuffer;
 
 	public enum Usage {
 		STATIC(GL_STATIC_DRAW),
@@ -47,15 +48,12 @@ public class VertexBuffer {
 
 		glBindVertexArray(this.vertexArrayId);
 		glBindBuffer(GL_ARRAY_BUFFER, this.vertexBufferId);
-
 		vertexFormat.use();
-
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
 		this.vertexCount = 0;
-		//this.byteBuffer = new DynamicByteBuffer(0);
-		this.vertexList = new ArrayList<>();
+		this.byteBuffer = new DynamicByteBuffer(5012);
 	}
 
 	public void bind() {
@@ -71,9 +69,12 @@ public class VertexBuffer {
 		this.draw();
 	}
 
-	public void draw() {
-		if (this.uploadedVertexCount == 0)
-			throw new IllegalStateException("Attempt to call .draw() with nothing uploaded");
+	public void draw(boolean uploadFirst) {
+		if (uploadFirst) {
+			this.upload();
+		}
+
+		if (this.uploadedVertexCount == 0) return;
 
 		shader.bind();
 		this.bind();
@@ -81,32 +82,32 @@ public class VertexBuffer {
 		this.unbind();
 	}
 
-	public void upload() {
-		if (vertexCount == 0)
-			throw new RuntimeException("Attempt to upload VertexBuffer with 0 vertices");
+	public void draw() {
+		this.draw(false);
+	}
 
-		this.uploadedVertexCount = this.vertexCount;
+	public void upload() {
+		if (vertexCount == 0) {
+			if (this.uploadedVertexCount != 0) {
+				this.reset();
+				this.uploadedVertexCount = 0;
+			}
+			return;
+		}
 
 		this.bind();
 
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer buffer = stack.mallocFloat(this.vertexList.size());
-			for (float v : this.vertexList) {
-				buffer.put(v);
-			}
-			buffer.flip();
+		ByteBuffer buffer = this.byteBuffer.end();
+		glBindBuffer(GL_ARRAY_BUFFER, this.vertexBufferId);
+		glBufferData(GL_ARRAY_BUFFER, buffer, this.usage.id);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			glBindBuffer(GL_ARRAY_BUFFER, this.vertexBufferId);
-			glBufferData(GL_ARRAY_BUFFER, buffer, this.usage.id);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		}
-
+		this.uploadedVertexCount = this.vertexCount;
 		this.reset();
 	}
 
 	public void reset() {
-		//this.byteBuffer.clear();
-		this.vertexList.clear();
+		this.byteBuffer.clear();
 		this.vertexCount = 0;
 	}
 
@@ -126,43 +127,42 @@ public class VertexBuffer {
 	}
 
 	public VertexBuffer vertex(float x, float y, float z) {
-		this.vertexList.add(x);
-		this.vertexList.add(y);
-		this.vertexList.add(z);
+		this.byteBuffer.putFloat(x);
+		this.byteBuffer.putFloat(y);
+		this.byteBuffer.putFloat(z);
 		return this;
 	}
 
 	public VertexBuffer vertex(float x, float y) {
-		Vector2f ndc = GuiUtil.toNormalizedDeviceCoordinates(x, y);
-		this.vertexList.add(ndc.x);
-		this.vertexList.add(ndc.y);
+		this.byteBuffer.putFloat(GuiUtil.toNormalizedDeviceCoordinateX(x));
+		this.byteBuffer.putFloat(GuiUtil.toNormalizedDeviceCoordinateY(y));
 		return this;
 	}
 
 	public VertexBuffer color(float r, float g, float b) {
-		this.vertexList.add(r);
-		this.vertexList.add(g);
-		this.vertexList.add(b);
+		this.byteBuffer.putFloat(r);
+		this.byteBuffer.putFloat(g);
+		this.byteBuffer.putFloat(b);
 		return this;
 	}
 
 	public VertexBuffer color(float r, float g, float b, float a) {
-		this.vertexList.add(r);
-		this.vertexList.add(g);
-		this.vertexList.add(b);
-		this.vertexList.add(a);
+		this.byteBuffer.putFloat(r);
+		this.byteBuffer.putFloat(g);
+		this.byteBuffer.putFloat(b);
+		this.byteBuffer.putFloat(a);
 		return this;
 	}
 
 	public VertexBuffer texture(float u, float v) {
-		this.vertexList.add(u);
-		this.vertexList.add(v);
+		this.byteBuffer.putFloat(u);
+		this.byteBuffer.putFloat(v);
 		return this;
 	}
 
 	public VertexBuffer texture(Vector2f uv) {
-		this.vertexList.add(uv.x);
-		this.vertexList.add(uv.y);
+		this.byteBuffer.putFloat(uv.x);
+		this.byteBuffer.putFloat(uv.y);
 		return this;
 	}
 

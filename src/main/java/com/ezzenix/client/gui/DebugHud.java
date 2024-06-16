@@ -1,15 +1,12 @@
 package com.ezzenix.client.gui;
 
 import com.ezzenix.Game;
-import com.ezzenix.client.gui.library.Gui;
-import com.ezzenix.client.gui.library.UDim2;
 import com.ezzenix.client.gui.library.components.GuiText;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.enums.Direction;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.lang.management.GarbageCollectorMXBean;
@@ -23,14 +20,9 @@ import java.util.concurrent.TimeUnit;
 import static org.lwjgl.opengl.GL11.*;
 
 public class DebugHud {
-	private static final List<GuiText> textComponents = new ArrayList<>();
 	private static boolean isEnabled = false;
 
 	private static final AllocationRateCalculator allocationRateCalculator = new AllocationRateCalculator();
-
-	static {
-		Scheduler.setInterval(DebugHud::update, 100);
-	}
 
 	public static boolean isEnabled() {
 		return isEnabled;
@@ -38,44 +30,32 @@ public class DebugHud {
 
 	public static void setEnabled(boolean enabled) {
 		isEnabled = enabled;
-		if (!enabled) cleanup();
 	}
 
 	private static void renderLines(List<String> lines, boolean rightSide) {
 		int i = 0;
 		for (String line : lines) {
-			GuiText text = new GuiText();
-			text.text = line;
-			text.position = UDim2.fromOffset(6, i * 18);
-
+			int x = 6;
 			if (rightSide) {
-				text.textAlign = Gui.TextAlign.Right;
-				text.anchorPoint = new Vector2f(1, 0);
-				text.position.scaleX = 1;
-				text.position.offsetX = -6;
+				int textWidth = GuiText.FONT_RENDERER.getTextWidth(line, 18);
+				x = Game.getInstance().getWindow().getWidth() - textWidth - 6;
 			}
 
-			textComponents.add(text);
+			GuiContext.drawText(line, x, 6 + i * 18, 18, 1, 1, 1);
+
 			i++;
 		}
 	}
 
-	private static void update() {
+	public static void render() {
 		if (!isEnabled()) return;
 
-		//long startTime = System.currentTimeMillis();
+		//long startTime = System.nanoTime();
 
-		cleanup();
 		renderLines(getLeftText(), false);
 		renderLines(getRightText(), true);
 
-		//System.out.println("Updated DebugHud in " + (System.currentTimeMillis() - startTime) + "ms");
-	}
-
-	private static void cleanup() {
-		for (GuiText component : textComponents) {
-			component.dispose();
-		}
+		//System.out.println("Rendered DebugHud in " + (System.nanoTime() - startTime));
 	}
 
 	private static List<String> getLeftText() {
@@ -87,7 +67,7 @@ public class DebugHud {
 		BlockPos blockPos = BlockPos.from(position);
 		ChunkPos chunkPos = ChunkPos.from(blockPos);
 
-		lines.add("FPS: " + (int) Scheduler.getFps());
+		lines.add(String.format("FPS: %.0f (min: %.0f, max: %.0f)", Scheduler.getAverageFps(), Scheduler.getMinFps(), Scheduler.getMaxFps()));
 
 		lines.add("");
 
@@ -100,6 +80,7 @@ public class DebugHud {
 
 		lines.add(String.format("Grounded: %s", player.isGrounded ? "Yes" : "No"));
 		lines.add(String.format("Velocity: %.3f / %.3f / %.3f", velocity.x, velocity.y, velocity.z));
+		lines.add(String.format("Chunks rendered: %d", Game.getInstance().getRenderer().getWorldRenderer().chunksRenderedCount));
 
 		return lines;
 	}
