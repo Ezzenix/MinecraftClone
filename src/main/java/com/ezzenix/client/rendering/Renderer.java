@@ -42,7 +42,7 @@ public class Renderer {
 		worldRenderer.render(window);
 		Debug.render();
 		LineRenderer.renderBatch();
-		Gui.render();
+		//Gui.render();
 
 		GuiContext.renderBatch();
 

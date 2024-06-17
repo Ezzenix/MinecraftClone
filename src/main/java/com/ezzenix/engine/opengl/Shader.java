@@ -6,9 +6,14 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
@@ -56,7 +61,23 @@ public class Shader {
 		String shaderSource = FileUtil.readResourceSource("shaders/" + shaderPath);
 		if (shaderSource == null)
 			throw new RuntimeException("Could not read shader " + shaderPath);
-		return shaderSource;
+
+		// process includes
+		StringBuilder processedSource = new StringBuilder();
+		try {
+			Pattern pattern = Pattern.compile("#include \"(.*)\"");
+			Matcher matcher = pattern.matcher(shaderSource);
+			while (matcher.find()) {
+				String includeFilePath = "include/" + matcher.group(1);
+				String includeSource = readShader(includeFilePath); // Recursively process includes
+				matcher.appendReplacement(processedSource, includeSource);
+			}
+			matcher.appendTail(processedSource);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return processedSource.toString();
 	}
 
 	private void initializeUniforms(String shaderPath) {
