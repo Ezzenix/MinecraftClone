@@ -1,22 +1,9 @@
 package com.ezzenix.client.gui.library.components;
 
-import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.library.Gui;
-import com.ezzenix.client.gui.library.GuiUtil;
 import com.ezzenix.client.gui.library.UDim2;
-import com.ezzenix.engine.opengl.Mesh;
-import com.ezzenix.engine.opengl.Shader;
-import org.joml.Runtime;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
 
 public class GuiButton extends GuiComponent {
 	public String text;

@@ -10,8 +10,6 @@ public class DynamicByteBuffer {
 		if (initialSize < 32) initialSize = 32;
 		this.buffer = GlAllocationUtils.allocateByteBuffer(initialSize);
 		this.size = 0;
-
-		this.putFloat(10);
 	}
 
 	private void grow() {

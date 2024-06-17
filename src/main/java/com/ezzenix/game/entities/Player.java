@@ -18,7 +18,7 @@ public class Player extends Entity {
 	}
 
 	public void updateMovement() {
-		if (Client.isPaused) return;
+		if (Client.isPaused()) return;
 
 		// get input
 		boolean pressingForward = Input.getKey(GLFW_KEY_W);

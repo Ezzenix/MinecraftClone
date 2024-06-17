@@ -1,11 +1,12 @@
 package com.ezzenix.client.rendering;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.game.entities.Entity;
-import org.joml.*;
 import org.joml.Math;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class Camera {
 	private final Entity entity;
@@ -16,15 +17,15 @@ public class Camera {
 	private float previousVelocityFactor = 0;
 
 	public Camera() {
-		this.entity = Game.getInstance().getPlayer();
+		this.entity = Client.getPlayer();
 
 		// Initialize projection matrix
 		updateProjectionMatrix();
-		Game.getInstance().getWindow().sizeChanged.connect(this::updateProjectionMatrix);
+		Client.getWindow().sizeChanged.connect(this::updateProjectionMatrix);
 	}
 
 	public void updateProjectionMatrix() {
-		Window window = Game.getInstance().getWindow();
+		Window window = Client.getWindow();
 
 		float fov = Math.toRadians(75);
 		float aspectRatio = (float) window.getWidth() / window.getHeight();

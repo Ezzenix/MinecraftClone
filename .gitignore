@@ -6,6 +6,8 @@ build/
 **/*.log
 temp
 
+run/
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml

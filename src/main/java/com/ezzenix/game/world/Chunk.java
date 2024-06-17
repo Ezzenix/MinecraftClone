@@ -1,10 +1,10 @@
 package com.ezzenix.game.world;
 
+import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.game.blocks.BlockRegistry;
 import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.math.BoundingBox;
-import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.math.BlockPos;
+import com.ezzenix.math.BoundingBox;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.math.LocalPosition;
 import org.joml.Vector3f;
@@ -109,6 +109,10 @@ public class Chunk {
 
 	public Vector3f getWorldPos() {
 		return new Vector3f(chunkPos.x * Chunk.CHUNK_WIDTH, 0, chunkPos.z * Chunk.CHUNK_WIDTH);
+	}
+
+	public BlockPos getWorldBlockPos() {
+		return new BlockPos(chunkPos.x * Chunk.CHUNK_WIDTH, 0, chunkPos.z * Chunk.CHUNK_WIDTH);
 	}
 
 	public byte[] getBlockIDs() {

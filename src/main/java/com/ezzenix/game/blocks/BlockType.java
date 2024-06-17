@@ -1,6 +1,6 @@
 package com.ezzenix.game.blocks;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import org.joml.Vector2f;
 
 public class BlockType {
@@ -43,17 +43,17 @@ public class BlockType {
 
 	// Configuration
 	private BlockType setTextureTop(String textureName) {
-		this.textureUVTop = Game.getInstance().blockTextures.getUV(textureName);
+		this.textureUVTop = Client.blockTextures.getUV(textureName);
 		return this;
 	}
 
 	private BlockType setTextureSides(String textureName) {
-		this.textureUVSides = Game.getInstance().blockTextures.getUV(textureName);
+		this.textureUVSides = Client.blockTextures.getUV(textureName);
 		return this;
 	}
 
 	private BlockType setTextureBottom(String textureName) {
-		this.textureUVBottom = Game.getInstance().blockTextures.getUV(textureName);
+		this.textureUVBottom = Client.blockTextures.getUV(textureName);
 		return this;
 	}
 

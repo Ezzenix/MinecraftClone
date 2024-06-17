@@ -1,6 +1,6 @@
 package com.ezzenix.client.gui.library.components;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.game.blocks.BlockType;
 
 public class GuiBlockIcon extends GuiImage {
@@ -9,7 +9,7 @@ public class GuiBlockIcon extends GuiImage {
 	public GuiBlockIcon() {
 		super();
 
-		this.texture = Game.getInstance().getRenderer().getWorldRenderer().blockTexture;
+		this.texture = Renderer.getWorldRenderer().blockTexture;
 	}
 
 	@Override

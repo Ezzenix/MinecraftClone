@@ -1,6 +1,5 @@
 package com.ezzenix.game.entities;
 
-import com.ezzenix.Game;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.core.Util;
 import com.ezzenix.engine.physics.Raycast;
@@ -35,9 +34,8 @@ public class Entity {
 		this.boundingBox = new BoundingBox();
 		this.updateBoundingBox();
 
-		Game.getInstance().getEntities().add(this);
-
 		this.world = world;
+		world.getEntities().add(this);
 	}
 
 	private void updateBoundingBox() {

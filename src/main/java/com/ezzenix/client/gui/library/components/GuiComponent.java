@@ -1,9 +1,9 @@
 package com.ezzenix.client.gui.library.components;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.library.Gui;
+import com.ezzenix.client.gui.screen.Screen;
 import com.ezzenix.client.gui.library.UDim2;
-import com.ezzenix.client.gui.library.Screen;
 import com.ezzenix.engine.opengl.Mesh;
 import org.joml.Vector2f;
 
@@ -46,7 +46,7 @@ public class GuiComponent {
 
 	public Vector2f getAdorneeSize() {
 		if (this.adornee == null) {
-			return new Vector2f(Game.getInstance().getWindow().getWidth(), Game.getInstance().getWindow().getHeight());
+			return new Vector2f(Client.getWindow().getWidth(), Client.getWindow().getHeight());
 		} else {
 			return this.adornee.getAbsoluteSize();
 		}

@@ -1,9 +1,9 @@
 package com.ezzenix.hud;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
+import com.ezzenix.client.rendering.Camera;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
-import com.ezzenix.client.rendering.Camera;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
@@ -24,7 +24,7 @@ public class LineRenderer {
 		try (
 			MemoryStack stack = MemoryStack.stackPush()
 		) {
-			Camera camera = Game.getInstance().getCamera();
+			Camera camera = Client.getCamera();
 
 			debugShader.bind();
 			debugShader.setUniform("projectionMatrix", camera.getProjectionMatrix());

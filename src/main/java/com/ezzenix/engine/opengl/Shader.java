@@ -6,18 +6,12 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 
 public class Shader {
 	private final int programId;
@@ -28,6 +22,9 @@ public class Shader {
 		programId = glCreateProgram();
 		if (programId == 0)
 			throw new RuntimeException("Could not create shader");
+
+		vertexShaderPath = "core/" + vertexShaderPath;
+		fragmentShaderPath = "core/" + fragmentShaderPath;
 
 		// create shaders
 		int vertexShader = loadShader(vertexShaderPath, GL_VERTEX_SHADER);

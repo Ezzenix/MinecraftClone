@@ -1,6 +1,6 @@
-package com.ezzenix.game.worldgen;
+package com.ezzenix.game.world.gen;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.math.ChunkPos;
@@ -24,10 +24,10 @@ public class WorldGeneratorQueue {
 	}
 
 	private static Chunk getNextChunk() {
-		ConcurrentHashMap<ChunkPos, Chunk> chunks = Game.getInstance().getWorld().getChunks();
+		ConcurrentHashMap<ChunkPos, Chunk> chunks = Client.getWorld().getChunks();
 		if (chunks.isEmpty()) return null;
 
-		ChunkPos cameraChunkPos = ChunkPos.from(Game.getInstance().getCamera().getPosition());
+		ChunkPos cameraChunkPos = ChunkPos.from(Client.getCamera().getPosition());
 
 		Chunk closestChunk = null;
 		float closestDistance = Float.MAX_VALUE;
@@ -52,13 +52,11 @@ public class WorldGeneratorQueue {
 		chunk.isGenerating = true;
 
 		executorService.submit(() -> {
-			WorldGeneratorRequest request = new WorldGeneratorRequest(chunk);
-			WorldGenerator.process(request);
+			chunk.getWorld().getGenerator().generate(chunk);
 
 			mainThreadTasks.add(() -> {
 				if (chunk.isDisposed) return;
 
-				request.apply();
 				chunk.hasGenerated = true;
 				chunk.isGenerating = false;
 				chunk.flagMeshForUpdate();

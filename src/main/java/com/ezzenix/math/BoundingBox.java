@@ -1,8 +1,10 @@
 package com.ezzenix.math;
 
 import com.ezzenix.hud.LineRenderer;
-import org.joml.*;
+import org.joml.FrustumIntersection;
 import org.joml.Math;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class BoundingBox {
 	public float minX;

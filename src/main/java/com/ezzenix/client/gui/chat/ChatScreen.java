@@ -1,6 +1,6 @@
 package com.ezzenix.client.gui.chat;
 
-import com.ezzenix.client.gui.library.Screen;
+import com.ezzenix.client.gui.screen.Screen;
 import com.ezzenix.client.gui.library.UDim2;
 import com.ezzenix.client.gui.library.components.GuiFrame;
 import org.joml.Vector2f;
@@ -12,7 +12,7 @@ public class ChatScreen extends Screen {
 		super("Chat");
 	}
 
-	public void init() {
+	public void init(int width, int height) {
 
 		GuiFrame fieldBackground = new GuiFrame();
 		fieldBackground.color = new Vector3f(0f, 0f, 0f);
@@ -21,12 +21,9 @@ public class ChatScreen extends Screen {
 		fieldBackground.anchorPoint = new Vector2f(0, 1);
 		fieldBackground.screen = this;
 		fieldBackground.size = new UDim2(0.45f, 0, 0, 22);
-
-
 	}
 
-	public void dispose() {
-
+	@Override
+	public void renderBackground() {
 	}
-
 }

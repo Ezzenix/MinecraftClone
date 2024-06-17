@@ -21,7 +21,7 @@ public class GuiContext {
 
 	private static boolean shouldRecomputeThisFrame = false;
 	private static long lastGuiRecompute = 0;
-	private static final long GUI_RENDER_INTERVAL = (long) (0.0166 * 2 * 1E9); // 30 FPS
+	private static final long GUI_RENDER_INTERVAL = (long) (0.0166 * 1E9); // 60 FPS
 
 	static {
 		Scheduler.bindToUpdate(() -> {
@@ -49,7 +49,7 @@ public class GuiContext {
 		glEnable(GL_CULL_FACE);
 	}
 
-	public static void drawRect(int x, int y, int width, int height, int r, int g, int b, int a) {
+	public static void drawRect(int x, int y, int width, int height, float r, float g, float b, float a) {
 		if (!shouldRecomputeThisFrame) return;
 
 		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
@@ -61,7 +61,24 @@ public class GuiContext {
 		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
 	}
 
-	public static void drawText(String text, int x, int y, int fontSize, int r, int g, int b) {
+	public static void drawRectGradient(int x, int y, int width, int height, float r, float g, float b, float a, float r2, float g2, float b2, float a2) {
+		if (!shouldRecomputeThisFrame) return;
+
+		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
+		rectangleBuffer.vertex(x, y + height).color(r2, g2, b2, a2).next();
+		rectangleBuffer.vertex(x + width, y + height).color(r2, g2, b2, a2).next();
+
+		rectangleBuffer.vertex(x + width, y + height).color(r2, g2, b2, a2).next();
+		rectangleBuffer.vertex(x + width, y).color(r, g, b, a).next();
+		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
+	}
+
+	public static void drawCenteredText(String text, int centerX, int centerY, int fontSize, float r, float g, float b) {
+		int textWidth = FONT_RENDERER.getTextWidth(text, fontSize);
+		drawText(text, centerX - textWidth / 2, centerY - fontSize / 2, fontSize, r, g, b);
+	}
+
+	public static void drawText(String text, int x, int y, int fontSize, float r, float g, float b) {
 		if (!shouldRecomputeThisFrame) return;
 
 		float TEXT_SCALE = (float) fontSize / FONT_RENDERER.fontSize;

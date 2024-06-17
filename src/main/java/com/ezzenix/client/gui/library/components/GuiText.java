@@ -1,8 +1,8 @@
 package com.ezzenix.client.gui.library.components;
 
+import com.ezzenix.client.gui.library.FontRenderer;
 import com.ezzenix.client.gui.library.Gui;
 import com.ezzenix.client.gui.library.GuiUtil;
-import com.ezzenix.client.gui.library.FontRenderer;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
 import org.joml.Vector2f;

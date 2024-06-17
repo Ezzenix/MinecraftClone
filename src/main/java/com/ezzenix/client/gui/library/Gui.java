@@ -1,8 +1,8 @@
 package com.ezzenix.client.gui.library;
 
-import com.ezzenix.Game;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.library.components.GuiComponent;
+import com.ezzenix.client.gui.screen.Screen;
 import com.ezzenix.engine.Input;
 
 import java.util.ArrayList;
@@ -13,11 +13,11 @@ public class Gui {
 
 	static {
 		// Rebuild all components when window size changes
-		Game.getInstance().getWindow().sizeChanged.connect(() -> {
-			for (GuiComponent component : components) {
-				component.rebuild();
-			}
-		});
+		//Client.getWindow().sizeChanged.connect(() -> {
+		//	for (GuiComponent component : components) {
+		//		component.rebuild();
+		//	}
+		//});
 
 		Input.mouseButton1Up(() -> {
 			int x = Client.getMouse().getX();

@@ -1,7 +1,8 @@
 package com.ezzenix.client.gui;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.library.components.GuiText;
+import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.enums.Direction;
@@ -38,7 +39,7 @@ public class DebugHud {
 			int x = 6;
 			if (rightSide) {
 				int textWidth = GuiText.FONT_RENDERER.getTextWidth(line, 18);
-				x = Game.getInstance().getWindow().getWidth() - textWidth - 6;
+				x = Client.getWindow().getWidth() - textWidth - 6;
 			}
 
 			GuiContext.drawText(line, x, 6 + i * 18, 18, 1, 1, 1);
@@ -61,7 +62,7 @@ public class DebugHud {
 	private static List<String> getLeftText() {
 		List<String> lines = new ArrayList<>();
 
-		Player player = Game.getInstance().getPlayer();
+		Player player = Client.getPlayer();
 		Vector3f position = player.getPosition();
 		Vector3f velocity = player.getVelocity();
 		BlockPos blockPos = BlockPos.from(position);
@@ -80,7 +81,7 @@ public class DebugHud {
 
 		lines.add(String.format("Grounded: %s", player.isGrounded ? "Yes" : "No"));
 		lines.add(String.format("Velocity: %.3f / %.3f / %.3f", velocity.x, velocity.y, velocity.z));
-		lines.add(String.format("Chunks rendered: %d", Game.getInstance().getRenderer().getWorldRenderer().chunksRenderedCount));
+		lines.add(String.format("Chunks rendered: %d", Renderer.getWorldRenderer().chunksRenderedCount));
 
 		return lines;
 	}
@@ -103,7 +104,7 @@ public class DebugHud {
 
 		lines.add("");
 
-		lines.add(String.format("Display: %dx%d (%s)", Game.getInstance().getWindow().getWidth(), Game.getInstance().getWindow().getHeight(), glGetString(GL_VENDOR)));
+		lines.add(String.format("Display: %dx%d (%s)", Client.getWindow().getWidth(), Client.getWindow().getHeight(), glGetString(GL_VENDOR)));
 		lines.add(String.format(Objects.requireNonNullElse(glGetString(GL_RENDERER), "")));
 		lines.add(String.format(Objects.requireNonNullElse(glGetString(GL_VERSION), "")));
 

@@ -1,9 +1,5 @@
 package com.ezzenix.client.rendering.util;
 
-import javax.lang.model.util.Elements;
-
-import java.util.Arrays;
-
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;

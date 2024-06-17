@@ -1,10 +1,9 @@
 package com.ezzenix.client.rendering;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
-import com.ezzenix.client.rendering.Camera;
 import org.joml.Matrix4f;
 
 import javax.imageio.ImageIO;
@@ -27,7 +26,7 @@ public class Skybox {
 			System.err.println("Failed to load skybox: " + e);
 		}
 
-		shader = new Shader("skybox.vert", "skybox.frag");
+		shader = new Shader("skybox");
 
 		mesh = createMesh();
 	}
@@ -95,7 +94,7 @@ public class Skybox {
 		texture.bind();
 		shader.bind();
 
-		Camera camera = Game.getInstance().getCamera();
+		Camera camera = Client.getCamera();
 		shader.setUniform("projectionMatrix", camera.getProjectionMatrix());
 		shader.setUniform("viewMatrix", new Matrix4f(camera.getViewMatrix()).m30(0).m31(0).m32(0));
 

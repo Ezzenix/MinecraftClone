@@ -1,10 +1,10 @@
 package com.ezzenix.engine;
 
-import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public class Scheduler {
 	private static final ConcurrentLinkedQueue<SchedulerRunnable> runnables = new ConcurrentLinkedQueue<>();
@@ -44,13 +44,10 @@ public class Scheduler {
 	}
 
 	public static void limitFps(int fps) {
-		double d = lastDrawTime + 1.0 / (double) fps;
-		double e = GLFW.glfwGetTime();
-		while (e < d) {
-			GLFW.glfwWaitEventsTimeout(d - e);
-			e = GLFW.glfwGetTime();
+		while (glfwGetTime() < lastDrawTime + 1.0 / fps) {
+			// TODO: Put the thread to sleep, yield, or simply do nothing
 		}
-		lastDrawTime = e;
+		lastDrawTime = glfwGetTime();
 	}
 
 	public static float getDeltaTime() {

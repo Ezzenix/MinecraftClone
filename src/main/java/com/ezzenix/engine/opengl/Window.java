@@ -8,7 +8,6 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.Configuration;
-import org.lwjgl.system.MemoryStack;
 
 import java.util.Objects;
 
@@ -130,6 +129,11 @@ public class Window {
 		}
 
 		Client.getMouse().resetDelta();
+
+		if (Client.getScreen() != null) {
+			Client.getScreen().dispose();
+			Client.getScreen().init(width, height);
+		}
 
 		sizeChanged.fire();
 		updateWindow();

@@ -1,7 +1,9 @@
 package com.ezzenix.game.world;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.game.blocks.BlockType;
+import com.ezzenix.game.entities.Entity;
+import com.ezzenix.game.world.gen.ChunkGenerator;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 
@@ -11,9 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class World {
 	private final ConcurrentHashMap<ChunkPos, Chunk> chunks = new ConcurrentHashMap<>();
+	private final ChunkGenerator generator;
+	private final List<Entity> entities;
 
-	public World() {
-		//loadInitialChunks();
+	public World(ChunkGenerator generator) {
+		this.generator = generator;
+		this.entities = new ArrayList<>();
 	}
 
 	private void loadInitialChunks() {
@@ -75,8 +80,12 @@ public class World {
 		return this.chunks;
 	}
 
+	public ChunkGenerator getGenerator() {
+		return this.generator;
+	}
+
 	public void loadNewChunks() {
-		ChunkPos chunkPos = ChunkPos.from(Game.getInstance().getPlayer().getBlockPos());
+		ChunkPos chunkPos = ChunkPos.from(Client.getPlayer().getBlockPos());
 
 		int renderDistance = 16;
 
@@ -104,5 +113,9 @@ public class World {
 				chunk.dispose();
 			}
 		}
+	}
+
+	public List<Entity> getEntities() {
+		return this.entities;
 	}
 }

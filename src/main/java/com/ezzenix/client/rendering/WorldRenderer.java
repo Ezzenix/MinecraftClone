@@ -1,9 +1,9 @@
 package com.ezzenix.client.rendering;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
+import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
-import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.World;
 import com.ezzenix.math.ChunkPos;
@@ -26,10 +26,10 @@ public class WorldRenderer {
 	public int chunksRenderedCount = 0;
 
 	public WorldRenderer() {
-		blockTexture = new Texture(Game.getInstance().blockTextures.getAtlasImage());
+		blockTexture = new Texture(Client.blockTextures.getAtlasImage());
 		textureAtlasSize = new Vector2f(
-			Game.getInstance().blockTextures.getAtlasImage().getWidth(),
-			Game.getInstance().blockTextures.getAtlasImage().getHeight()
+			Client.blockTextures.getAtlasImage().getWidth(),
+			Client.blockTextures.getAtlasImage().getHeight()
 		);
 		//blockTexture.generateMipmap();
 		//blockTexture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -37,12 +37,12 @@ public class WorldRenderer {
 	}
 
 	public void render(long window) {
-		World world = Game.getInstance().getWorld();
+		World world = Client.getWorld();
 		if (world == null) return;
 
 		blockTexture.bind();
 
-		Camera camera = Game.getInstance().getCamera();
+		Camera camera = Client.getCamera();
 		ChunkPos cameraChunkPos = ChunkPos.from(camera.getPosition());
 
 		Matrix4f projectionMatrix = camera.getProjectionMatrix();
@@ -86,7 +86,7 @@ public class WorldRenderer {
 
 	public void reloadAllChunks() {
 		System.out.println("Reloading all chunks!");
-		World world = Game.getInstance().getWorld();
+		World world = Client.getWorld();
 		for (Chunk chunk : world.getChunks().values()) {
 			chunk.getChunkMesh().dispose();
 			chunk.flagMeshForUpdate();

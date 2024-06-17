@@ -3,17 +3,9 @@ package com.ezzenix.client.rendering.util;
 import com.ezzenix.client.gui.library.GuiUtil;
 import com.ezzenix.engine.opengl.Shader;
 import org.joml.Vector2f;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.lwjgl.opengl.ARBBufferStorage.GL_MAP_COHERENT_BIT;
-import static org.lwjgl.opengl.ARBBufferStorage.GL_MAP_PERSISTENT_BIT;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
 

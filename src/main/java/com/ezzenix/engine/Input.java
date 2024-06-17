@@ -1,6 +1,6 @@
 package com.ezzenix.engine;
 
-import com.ezzenix.Game;
+import com.ezzenix.client.Client;
 import com.ezzenix.engine.opengl.Window;
 
 import java.util.ArrayList;
@@ -35,10 +35,10 @@ public class Input {
 	public static void initialize(Window w) {
 		window = w;
 
-		glfwSetKeyCallback(Game.getInstance().getWindow().getHandle(), (window, key, scancode, action, mods) -> {
+		glfwSetKeyCallback(Client.getWindow().getHandle(), (window, key, scancode, action, mods) -> {
 			runEvents(key, action);
 		});
-		glfwSetMouseButtonCallback(Game.getInstance().getWindow().getHandle(), (window, button, action, mods) -> {
+		glfwSetMouseButtonCallback(Client.getWindow().getHandle(), (window, button, action, mods) -> {
 			runEvents(button, action);
 		});
 	}

@@ -1,6 +1,5 @@
 package com.ezzenix.math;
 
-import com.ezzenix.game.world.Chunk;
 import org.joml.Vector3f;
 
 import java.util.Objects;

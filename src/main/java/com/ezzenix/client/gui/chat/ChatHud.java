@@ -1,6 +1,5 @@
 package com.ezzenix.client.gui.chat;
 
-import com.ezzenix.client.gui.library.Gui;
 import com.ezzenix.client.gui.library.UDim2;
 import com.ezzenix.client.gui.library.components.GuiFrame;
 import com.ezzenix.client.gui.library.components.GuiText;

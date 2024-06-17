@@ -1,8 +1,8 @@
 package com.ezzenix.client.rendering.chunkbuilder;
 
-import com.ezzenix.Game;
-import com.ezzenix.engine.Scheduler;
+import com.ezzenix.client.Client;
 import com.ezzenix.client.rendering.chunkbuilder.builder.ChunkBuilder;
+import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.world.Chunk;
 import com.ezzenix.math.ChunkPos;
 
@@ -25,10 +25,10 @@ public class ChunkBuilderQueue {
 	}
 
 	private static Chunk getNextChunk() {
-		ConcurrentHashMap<ChunkPos, Chunk> chunks = Game.getInstance().getWorld().getChunks();
+		ConcurrentHashMap<ChunkPos, Chunk> chunks = Client.getWorld().getChunks();
 		if (chunks.isEmpty()) return null;
 
-		ChunkPos cameraChunkPos = ChunkPos.from(Game.getInstance().getCamera().getPosition());
+		ChunkPos cameraChunkPos = ChunkPos.from(Client.getCamera().getPosition());
 
 		Chunk closestChunk = null;
 		float closestDistance = Float.MAX_VALUE;

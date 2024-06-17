@@ -1,6 +1,5 @@
 package com.ezzenix.engine.physics;
 
-import com.ezzenix.Game;
 import com.ezzenix.client.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.blocks.BlockType;
@@ -59,7 +58,7 @@ public class Physics {
 		Vector3f entityPosition = new Vector3f(entity.getPosition());
 		boolean isGrounded = false;
 
-		if (Game.getInstance().getCamera().thirdPerson) {
+		if (Client.getCamera().thirdPerson) {
 			entity.boundingBox.render(new Vector3f(1, 1, 1));
 		}
 
@@ -163,11 +162,11 @@ public class Physics {
 	}
 
 	public static void step() {
-		if (Client.isPaused) return;
+		if (Client.isPaused()) return;
 
 		float deltaTime = Scheduler.getDeltaTime() * gameSpeed;
 
-		for (Entity entity : Game.getInstance().getEntities()) {
+		for (Entity entity : Client.getWorld().getEntities()) {
 			stepEntity(entity, deltaTime);
 		}
 	}

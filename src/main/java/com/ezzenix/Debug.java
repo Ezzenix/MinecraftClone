@@ -1,6 +1,8 @@
 package com.ezzenix;
 
+import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.DebugHud;
+import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.engine.Input;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.Chunk;
@@ -32,7 +34,7 @@ public class Debug {
 			if (!Input.getKey(TOGGLE_KEY)) return;
 
 			usedActionWhileHoldingToggleKey = true;
-			Game.getInstance().getRenderer().getWorldRenderer().reloadAllChunks();
+			Renderer.getWorldRenderer().reloadAllChunks();
 		});
 		Input.keyDown(GLFW_KEY_G, () -> {
 			if (!Input.getKey(TOGGLE_KEY)) return;
@@ -58,7 +60,7 @@ public class Debug {
 	}
 
 	public static void renderChunkBorders() {
-		Player player = Game.getInstance().getPlayer();
+		Player player = Client.getPlayer();
 		ChunkPos chunkPos = ChunkPos.from(player.getBlockPos());
 
 		int viewDistance = 1;
