@@ -110,8 +110,10 @@ public class Shader {
 		glShaderSource(shaderId, shaderSource);
 		glCompileShader(shaderId);
 
-		if (glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL_FALSE)
-			throw new RuntimeException("Could not compile shader: " + glGetShaderInfoLog(shaderId, 1024));
+		if (glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL_FALSE) {
+			System.out.println(shaderSource);
+			throw new RuntimeException("Could not compile shader " + path + ": " + glGetShaderInfoLog(shaderId, 1024));
+		}
 
 		glAttachShader(this.programId, shaderId);
 

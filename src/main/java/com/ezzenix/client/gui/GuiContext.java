@@ -19,7 +19,7 @@ public class GuiContext {
 	public static final FontRenderer FONT_RENDERER = FontRenderer.fromFile(new File("src/main/resources/fonts/minecraft.ttf"), 18);
 
 
-	private static final VertexBuffer rectangleBuffer = new VertexBuffer(new Shader("gui/frame"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 4), VertexBuffer.Usage.DYNAMIC);
+	private static final VertexBuffer rectangleBuffer = new VertexBuffer(new Shader("gui/frame"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 1), VertexBuffer.Usage.DYNAMIC);
 	private static final VertexBuffer fontBuffer = new VertexBuffer(new Shader("gui/text"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2, GL_FLOAT, 3), VertexBuffer.Usage.DYNAMIC);
 	private static final VertexBuffer textureBuffer = new VertexBuffer(new Shader("gui/image"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2), VertexBuffer.Usage.DYNAMIC);
 
@@ -60,28 +60,34 @@ public class GuiContext {
 		glEnable(GL_CULL_FACE);
 	}
 
+	private static int packColor(int r, int g, int b, int a) {
+		return (r << 24) | (g << 16) | (b << 8) | a;
+	}
+
 	public static void drawRect(int x, int y, int width, int height, float r, float g, float b, float a) {
 		if (!shouldRecomputeThisFrame) return;
 
-		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
-		rectangleBuffer.vertex(x, y + height).color(r, g, b, a).next();
-		rectangleBuffer.vertex(x + width, y + height).color(r, g, b, a).next();
+		int color = packColor((int) r * 255, (int) g * 255, (int) b * 255, (int) a * 155);
 
-		rectangleBuffer.vertex(x + width, y + height).color(r, g, b, a).next();
-		rectangleBuffer.vertex(x + width, y).color(r, g, b, a).next();
-		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
+		rectangleBuffer.vertex(x, y).color(color).next();
+		rectangleBuffer.vertex(x, y + height).color(color).next();
+		rectangleBuffer.vertex(x + width, y + height).color(color).next();
+
+		rectangleBuffer.vertex(x + width, y + height).color(color).next();
+		rectangleBuffer.vertex(x + width, y).color(color).next();
+		rectangleBuffer.vertex(x, y).color(color).next();
 	}
 
 	public static void drawRectGradient(int x, int y, int width, int height, float r, float g, float b, float a, float r2, float g2, float b2, float a2) {
 		if (!shouldRecomputeThisFrame) return;
 
-		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
-		rectangleBuffer.vertex(x, y + height).color(r2, g2, b2, a2).next();
-		rectangleBuffer.vertex(x + width, y + height).color(r2, g2, b2, a2).next();
+		//rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
+		//rectangleBuffer.vertex(x, y + height).color(r2, g2, b2, a2).next();
+		//rectangleBuffer.vertex(x + width, y + height).color(r2, g2, b2, a2).next();
 
-		rectangleBuffer.vertex(x + width, y + height).color(r2, g2, b2, a2).next();
-		rectangleBuffer.vertex(x + width, y).color(r, g, b, a).next();
-		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
+		//rectangleBuffer.vertex(x + width, y + height).color(r2, g2, b2, a2).next();
+		//rectangleBuffer.vertex(x + width, y).color(r, g, b, a).next();
+		//rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
 	}
 
 	private static void drawBatchedTexture(Texture texture) {

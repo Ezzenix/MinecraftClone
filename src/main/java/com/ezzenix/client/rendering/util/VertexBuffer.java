@@ -139,6 +139,11 @@ public class VertexBuffer {
 		return this;
 	}
 
+	public VertexBuffer color(int packedColor) {
+		this.byteBuffer.putFloat(packedColor);
+		return this;
+	}
+
 	public VertexBuffer color(float r, float g, float b, float a) {
 		this.byteBuffer.putFloat(r);
 		this.byteBuffer.putFloat(g);

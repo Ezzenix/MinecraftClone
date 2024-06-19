@@ -1,4 +1,4 @@
-vec4 unpackColor(int packedColor) { // maybe doesn't work
+vec4 unpackColor(int packedColor) {
     float r = float((packedColor >> 24) & 0xFF) / 255.0;
     float g = float((packedColor >> 16) & 0xFF) / 255.0;
     float b = float((packedColor >> 8) & 0xFF) / 255.0;

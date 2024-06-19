@@ -52,9 +52,11 @@ public class Hud {
 	}
 
 	public void render() {
-		renderCrosshair();
-		renderHotbar();
-		this.chatHud.render();
+		//renderCrosshair();
+		//renderHotbar();
+		//this.chatHud.render();
+
+		GuiContext.drawRect(100, 100, 200, 50, 1, 1, 1, 1);
 
 		//GuiContext.drawTexture(Renderer.getWorldRenderer().blockTexture, 0, 0, Client.getWindow().getWidth(), Client.getWindow().getHeight());
 		//GuiContext.drawBlockIcon(BlockType.GRASS_BLOCK, 0, 0, Math.max(Client.getWindow().getWidth(), Client.getWindow().getHeight()));
