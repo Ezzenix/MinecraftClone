@@ -1,8 +1,8 @@
 package com.ezzenix.client.input;
 
 import com.ezzenix.client.Client;
-import com.ezzenix.client.gui.screen.PauseScreen;
 import com.ezzenix.client.gui.chat.ChatScreen;
+import com.ezzenix.client.gui.screen.PauseScreen;
 import com.ezzenix.client.rendering.Camera;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.core.Profiler;
@@ -35,6 +35,10 @@ public class Keyboard {
 
 		Input.keyUp(GLFW_KEY_KP_2, () -> {
 			Client.getPlayer().teleport(new Vector3f(0, 100, 0));
+		});
+
+		Input.keyUp(GLFW_KEY_F6, () -> {
+			Client.getPlayer().noclip = !Client.getPlayer().noclip;
 		});
 
 		Input.keyDown(GLFW_KEY_ESCAPE, () -> {

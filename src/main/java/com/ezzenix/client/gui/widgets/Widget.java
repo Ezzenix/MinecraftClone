@@ -2,8 +2,6 @@ package com.ezzenix.client.gui.widgets;
 
 import com.ezzenix.client.Client;
 
-import javax.swing.event.CaretListener;
-
 public class Widget {
 	public int x;
 	public int y;

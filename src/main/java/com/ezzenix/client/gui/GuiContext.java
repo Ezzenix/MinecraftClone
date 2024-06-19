@@ -1,10 +1,12 @@
 package com.ezzenix.client.gui;
 
-import com.ezzenix.client.gui.library.FontRenderer;
+import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.client.rendering.util.VertexBuffer;
 import com.ezzenix.client.rendering.util.VertexFormat;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.engine.opengl.Texture;
+import com.ezzenix.game.blocks.BlockType;
 import org.joml.Vector2f;
 
 import java.io.File;
@@ -16,8 +18,10 @@ public class GuiContext {
 
 	public static final FontRenderer FONT_RENDERER = FontRenderer.fromFile(new File("src/main/resources/fonts/minecraft.ttf"), 18);
 
+
 	private static final VertexBuffer rectangleBuffer = new VertexBuffer(new Shader("gui/frame"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 4), VertexBuffer.Usage.DYNAMIC);
 	private static final VertexBuffer fontBuffer = new VertexBuffer(new Shader("gui/text"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2, GL_FLOAT, 3), VertexBuffer.Usage.DYNAMIC);
+	private static final VertexBuffer textureBuffer = new VertexBuffer(new Shader("gui/image"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2), VertexBuffer.Usage.DYNAMIC);
 
 	private static boolean shouldRecomputeThisFrame = false;
 	private static long lastGuiRecompute = 0;
@@ -33,16 +37,23 @@ public class GuiContext {
 		});
 	}
 
+	private static void uploadAndDraw(VertexBuffer buffer) {
+		if (shouldRecomputeThisFrame) {
+			buffer.upload();
+		}
+		buffer.draw();
+	}
+
 	public static void renderBatch() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		rectangleBuffer.draw(shouldRecomputeThisFrame);
+		uploadAndDraw(rectangleBuffer);
 
 		FONT_RENDERER.getAtlasTexture().bind();
-		fontBuffer.draw(shouldRecomputeThisFrame);
+		uploadAndDraw(fontBuffer);
 
 		glUseProgram(0);
 		glEnable(GL_DEPTH_TEST);
@@ -71,6 +82,48 @@ public class GuiContext {
 		rectangleBuffer.vertex(x + width, y + height).color(r2, g2, b2, a2).next();
 		rectangleBuffer.vertex(x + width, y).color(r, g, b, a).next();
 		rectangleBuffer.vertex(x, y).color(r, g, b, a).next();
+	}
+
+	private static void drawBatchedTexture(Texture texture) {
+		textureBuffer.upload();
+
+		textureBuffer.shader.setTexture(0, texture);
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		textureBuffer.draw();
+		glUseProgram(0);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+	}
+
+	public static void drawTexture(Texture texture, int x, int y, int width, int height) {
+		textureBuffer.vertex(x, y).texture(0, 0).next();
+		textureBuffer.vertex(x, y + height).texture(0, 1).next();
+		textureBuffer.vertex(x + width, y + height).texture(1, 1).next();
+
+		textureBuffer.vertex(x + width, y + height).texture(1, 1).next();
+		textureBuffer.vertex(x + width, y).texture(1, 0).next();
+		textureBuffer.vertex(x, y).texture(0, 0).next();
+
+		drawBatchedTexture(texture);
+	}
+
+	public static void drawBlockIcon(BlockType blockType, int x, int y, int size) {
+		Texture texture = Renderer.getWorldRenderer().blockTexture;
+		Vector2f[] uv = blockType.textureUVSides;
+
+		textureBuffer.vertex(x, y).texture(uv[0]).next();
+		textureBuffer.vertex(x, y + size).texture(uv[1]).next();
+		textureBuffer.vertex(x + size, y + size).texture(uv[2]).next();
+
+		textureBuffer.vertex(x + size, y + size).texture(uv[2]).next();
+		textureBuffer.vertex(x + size, y).texture(uv[3]).next();
+		textureBuffer.vertex(x, y).texture(uv[0]).next();
+
+		drawBatchedTexture(texture);
 	}
 
 	public static void drawCenteredText(String text, int centerX, int centerY, int fontSize, float r, float g, float b) {

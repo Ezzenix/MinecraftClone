@@ -1,4 +1,4 @@
-package com.ezzenix.engine.physics;
+package com.ezzenix.physics;
 
 import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.game.enums.Direction;

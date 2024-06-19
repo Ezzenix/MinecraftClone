@@ -1,7 +1,8 @@
 package com.ezzenix.client.rendering.util;
 
-import com.ezzenix.client.gui.library.GuiUtil;
+import com.ezzenix.client.gui.GuiUtil;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.engine.opengl.Texture;
 import org.joml.Vector2f;
 
 import java.nio.ByteBuffer;
@@ -11,7 +12,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class VertexBuffer {
 	private final Usage usage;
-	private final Shader shader;
+	public final Shader shader;
 	private int vertexBufferId;
 	//private int indexBufferId;
 	private int vertexArrayId;
@@ -20,6 +21,8 @@ public class VertexBuffer {
 
 	private int vertexCount;
 	private final DynamicByteBuffer byteBuffer;
+
+	private boolean isMakingVertex = false;
 
 	public enum Usage {
 		STATIC(GL_STATIC_DRAW),
@@ -56,26 +59,14 @@ public class VertexBuffer {
 		glBindVertexArray(0);
 	}
 
-	public void uploadAndDraw() {
-		this.upload();
-		this.draw();
-	}
-
-	public void draw(boolean uploadFirst) {
-		if (uploadFirst) {
-			this.upload();
-		}
-
+	public void draw() {
 		if (this.uploadedVertexCount == 0) return;
 
 		shader.bind();
+
 		this.bind();
 		glDrawArrays(GL_TRIANGLES, 0, this.uploadedVertexCount);
 		this.unbind();
-	}
-
-	public void draw() {
-		this.draw(false);
 	}
 
 	public void upload() {
@@ -118,7 +109,16 @@ public class VertexBuffer {
 		}
 	}
 
+	private void checkMakingVertex() {
+		if (isMakingVertex) {
+			System.err.println("Already making vertex, did you forget to call .next()?");
+		} else {
+			isMakingVertex = true;
+		}
+	}
+
 	public VertexBuffer vertex(float x, float y, float z) {
+		checkMakingVertex();
 		this.byteBuffer.putFloat(x);
 		this.byteBuffer.putFloat(y);
 		this.byteBuffer.putFloat(z);
@@ -126,6 +126,7 @@ public class VertexBuffer {
 	}
 
 	public VertexBuffer vertex(float x, float y) {
+		checkMakingVertex();
 		this.byteBuffer.putFloat(GuiUtil.toNormalizedDeviceCoordinateX(x));
 		this.byteBuffer.putFloat(GuiUtil.toNormalizedDeviceCoordinateY(y));
 		return this;
@@ -160,5 +161,6 @@ public class VertexBuffer {
 
 	public void next() {
 		this.vertexCount += 1;
+		this.isMakingVertex = false;
 	}
 }

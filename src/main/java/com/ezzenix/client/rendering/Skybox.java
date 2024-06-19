@@ -1,6 +1,9 @@
 package com.ezzenix.client.rendering;
 
 import com.ezzenix.client.Client;
+import com.ezzenix.client.rendering.util.VertexBuffer;
+import com.ezzenix.client.rendering.util.VertexFormat;
+import com.ezzenix.client.resource.ResourceManager;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
@@ -10,98 +13,91 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
 
 public class Skybox {
 	Texture texture;
 	Shader shader;
 	Mesh mesh;
 
+	VertexBuffer vertexBuffer;
+
 	public Skybox() {
-		try {
-			texture = new Texture(ImageIO.read(new File("src/main/resources/skybox.png")));
-		} catch (IOException e) {
-			System.err.println("Failed to load skybox: " + e);
-		}
+		this.shader = new Shader("skybox");
 
-		shader = new Shader("skybox");
+		initVertexBuffer();
 
-		mesh = createMesh();
+		texture = new Texture(ResourceManager.loadImage("skybox.png"));
 	}
 
-	private Mesh createMesh() {
+	private void initVertexBuffer() {
+		VertexBuffer buffer = this.vertexBuffer = new VertexBuffer(this.shader, new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.STATIC);
+
 		float[] vertices = new float[]{
-			-1.0f, 1.0f, -1.0f,// 0.0f, 0.0f,
-			-1.0f, -1.0f, -1.0f,// 0.0f, 1.0f,
-			1.0f, -1.0f, -1.0f,// 1.0f, 1.0f,
-			1.0f, -1.0f, -1.0f,// 1.0f, 1.0f,
-			1.0f, 1.0f, -1.0f,// 1.0f, 0.0f,
-			-1.0f, 1.0f, -1.0f,// 0.0f, 0.0f,
+			// Bottom face
+			-1.0f, -1.0f, -1.0f, 0 / 3f, 0 / 2f,
+			-1.0f, -1.0f, 1.0f, 0 / 3f, 1 / 2f,
+			1.0f, -1.0f, 1.0f, 1 / 3f, 1 / 2f,
+			1.0f, -1.0f, 1.0f, 1 / 3f, 1 / 2f,
+			1.0f, -1.0f, -1.0f, 1 / 3f, 0 / 2f,
+			-1.0f, -1.0f, -1.0f, 0 / 3f, 0 / 2f,
 
-			-1.0f, -1.0f, 1.0f,// 0.0f, 1.0f,
-			-1.0f, -1.0f, -1.0f,// 0.0f, 0.0f,
-			-1.0f, 1.0f, -1.0f,// 1.0f, 0.0f,
-			-1.0f, 1.0f, -1.0f,// 1.0f, 0.0f,
-			-1.0f, 1.0f, 1.0f,// 1.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,// 0.0f, 1.0f,
+			// Top face
+			-1.0f, 1.0f, -1.0f, 2 / 3f, 0 / 2f,
+			1.0f, 1.0f, -1.0f, 1 / 3f, 0 / 2f,
+			1.0f, 1.0f, 1.0f, 1 / 3f, 1 / 2f,
+			1.0f, 1.0f, 1.0f, 1 / 3f, 1 / 2f,
+			-1.0f, 1.0f, 1.0f, 2 / 3f, 1 / 2f,
+			-1.0f, 1.0f, -1.0f, 2 / 3f, 0 / 2f,
 
-			1.0f, -1.0f, -1.0f,// 0.0f, 0.0f,
-			1.0f, -1.0f, 1.0f,// 0.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,// 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,// 1.0f, 1.0f,
-			1.0f, 1.0f, -1.0f,// 1.0f, 0.0f,
-			1.0f, -1.0f, -1.0f,// 0.0f, 0.0f,
+			// Front face
+			-1.0f, -1.0f, -1.0f, 2 / 3f, 1 / 2f,
+			1.0f, -1.0f, -1.0f, 3 / 3f, 1 / 2f,
+			1.0f, 1.0f, -1.0f, 3 / 3f, 0 / 2f,
+			1.0f, 1.0f, -1.0f, 3 / 3f, 0 / 2f,
+			-1.0f, 1.0f, -1.0f, 2 / 3f, 0 / 2f,
+			-1.0f, -1.0f, -1.0f, 2 / 3f, 1 / 2f,
 
-			-1.0f, -1.0f, 1.0f,// 1.0f, 1.0f,
-			-1.0f, 1.0f, 1.0f,// 1.0f, 0.0f,
-			1.0f, 1.0f, 1.0f,// 0.0f, 0.0f,
-			1.0f, 1.0f, 1.0f,// 0.0f, 0.0f,
-			1.0f, -1.0f, 1.0f,// 0.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,// 1.0f, 1.0f,
+			// Right face
+			1.0f, -1.0f, -1.0f, 0 / 3f, 2 / 2f,
+			1.0f, -1.0f, 1.0f, 1 / 3f, 2 / 2f,
+			1.0f, 1.0f, 1.0f, 1 / 3f, 1 / 2f,
+			1.0f, 1.0f, 1.0f, 1 / 3f, 1 / 2f,
+			1.0f, 1.0f, -1.0f, 0 / 3f, 1 / 2f,
+			1.0f, -1.0f, -1.0f, 0 / 3f, 2 / 2f,
 
-			-1.0f, 1.0f, -1.0f,// 0.0f, 0.0f,
-			1.0f, 1.0f, -1.0f,// 1.0f, 0.0f,
-			1.0f, 1.0f, 1.0f,// 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,// 1.0f, 1.0f,
-			-1.0f, 1.0f, 1.0f,// 0.0f, 1.0f,
-			-1.0f, 1.0f, -1.0f,// 0.0f, 0.0f,
+			// Back face
+			1.0f, -1.0f, 1.0f, 1 / 3f, 2 / 2f,
+			-1.0f, -1.0f, 1.0f, 2 / 3f, 2 / 2f,
+			-1.0f, 1.0f, 1.0f, 2 / 3f, 1 / 2f,
+			-1.0f, 1.0f, 1.0f, 2 / 3f, 1 / 2f,
+			1.0f, 1.0f, 1.0f, 1 / 3f, 1 / 2f,
+			1.0f, -1.0f, 1.0f, 1 / 3f, 2 / 2f,
 
-			-1.0f, -1.0f, -1.0f,// 0.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,// 0.0f, 0.0f,
-			1.0f, -1.0f, -1.0f,// 1.0f, 1.0f,
-			1.0f, -1.0f, -1.0f,// 1.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,// 0.0f, 0.0f,
-			1.0f, -1.0f, 1.0f,// 1.0f, 0.0f
+			// Left face
+			-1.0f, -1.0f, 1.0f, 2 / 3f, 2 / 2f,
+			-1.0f, -1.0f, -1.0f, 3 / 3f, 2 / 2f,
+			-1.0f, 1.0f, -1.0f, 3 / 3f, 1 / 2f,
+			-1.0f, 1.0f, -1.0f, 3 / 3f, 1 / 2f,
+			-1.0f, 1.0f, 1.0f, 2 / 3f, 1 / 2f,
+			-1.0f, -1.0f, 1.0f, 2 / 3f, 2 / 2f,
 		};
+		float SIZE = 1000;
+		for (int i = 0; i < vertices.length; i += 5) {
+			buffer.vertex(vertices[i] * SIZE, vertices[i + 1] * SIZE, vertices[i + 2] * SIZE).texture(vertices[i + 3], vertices[i + 4]).next();
+		}
 
-		Mesh mesh = new Mesh(Mesh.convertToBuffer(vertices), 36, GL_TRIANGLES);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 3, 0);
-		glEnableVertexAttribArray(0);
-
-		mesh.unbind();
-
-		return mesh;
+		this.vertexBuffer.upload();
 	}
 
 	public void render() {
-		glDisable(GL_CULL_FACE);
+		this.vertexBuffer.shader.bind();
+		this.vertexBuffer.shader.setUniform("projectionMatrix", Client.getCamera().getProjectionMatrix());
+		this.vertexBuffer.shader.setUniform("viewMatrix", Client.getCamera().getViewMatrix());
+		this.vertexBuffer.shader.setUniform("modelMatrix", new Matrix4f().translate(Client.getCamera().getPosition()));
 
-		glDepthFunc(GL_ALWAYS);
+		this.texture.bind();
 
-		texture.bind();
-		shader.bind();
-
-		Camera camera = Client.getCamera();
-		shader.setUniform("projectionMatrix", camera.getProjectionMatrix());
-		shader.setUniform("viewMatrix", new Matrix4f(camera.getViewMatrix()).m30(0).m31(0).m32(0));
-
-		mesh.render();
-
-		glDepthFunc(GL_LESS); // Restore default depth function
-
-		glEnable(GL_CULL_FACE);
+		this.vertexBuffer.draw();
 	}
 }

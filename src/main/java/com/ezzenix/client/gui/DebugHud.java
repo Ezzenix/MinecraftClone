@@ -1,7 +1,6 @@
 package com.ezzenix.client.gui;
 
 import com.ezzenix.client.Client;
-import com.ezzenix.client.gui.library.components.GuiText;
 import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.game.entities.Player;
@@ -38,7 +37,7 @@ public class DebugHud {
 		for (String line : lines) {
 			int x = 6;
 			if (rightSide) {
-				int textWidth = GuiText.FONT_RENDERER.getTextWidth(line, 18);
+				int textWidth = GuiContext.FONT_RENDERER.getTextWidth(line, 18);
 				x = Client.getWindow().getWidth() - textWidth - 6;
 			}
 

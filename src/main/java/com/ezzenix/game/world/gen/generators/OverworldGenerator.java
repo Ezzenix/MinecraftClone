@@ -6,6 +6,9 @@ import com.ezzenix.game.world.Chunk;
 import com.ezzenix.game.world.gen.ChunkGenerator;
 import com.ezzenix.math.BlockPos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OverworldGenerator extends ChunkGenerator {
 	private final FastNoiseLite noise;
 
@@ -64,19 +67,27 @@ public class OverworldGenerator extends ChunkGenerator {
 	}
 
 	public void placeTree(Chunk chunk, BlockPos blockPos) {
+		List<BlockPos> leavesPositions = new ArrayList<>();
 		for (int x = -2; x <= 2; x++) {
 			for (int z = -2; z <= 2; z++) {
 				if ((x == -2 && z == -2) || (x == 2 && z == 2) || (x == -2 && z == 2) || (x == 2 && z == -2)) continue;
-				chunk.setBlock(blockPos.add(new BlockPos(x, 3, z)), BlockType.OAK_LEAVES);
-				chunk.setBlock(blockPos.add(new BlockPos(x, 4, z)), BlockType.OAK_LEAVES);
+				leavesPositions.add(blockPos.add(x, 3, z));
+				leavesPositions.add(blockPos.add(x, 4, z));
 			}
 		}
 		for (int x = -1; x <= 1; x++) {
 			for (int z = -1; z <= 1; z++) {
-				chunk.setBlock(blockPos.add(new BlockPos(x, 5, z)), BlockType.OAK_LEAVES);
+				leavesPositions.add(blockPos.add(x, 5, z));
 				if ((x != -1 || z != -1) && (x != 1 || z != 1) && (x != -1 || z != 1) && (x != 1 || z != -1)) {
-					chunk.setBlock(blockPos.add(new BlockPos(x, 6, z)), BlockType.OAK_LEAVES);
+					leavesPositions.add(blockPos.add(x, 6, z));
 				}
+			}
+		}
+
+		for (BlockPos pos : leavesPositions) {
+			BlockType block = chunk.getBlock(pos);
+			if (block == null || block == BlockType.AIR) {
+				chunk.setBlock(pos, BlockType.OAK_LEAVES);
 			}
 		}
 

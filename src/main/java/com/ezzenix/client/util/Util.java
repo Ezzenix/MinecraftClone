@@ -1,4 +1,4 @@
-package com.ezzenix.engine.core;
+package com.ezzenix.client.util;
 
 import org.joml.Math;
 import org.joml.Quaternionf;

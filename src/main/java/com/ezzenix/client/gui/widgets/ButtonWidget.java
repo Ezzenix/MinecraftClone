@@ -1,6 +1,5 @@
 package com.ezzenix.client.gui.widgets;
 
-import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.GuiContext;
 
 public class ButtonWidget extends Widget {

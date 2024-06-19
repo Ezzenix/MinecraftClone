@@ -1,8 +1,8 @@
 package com.ezzenix.game.entities;
 
 import com.ezzenix.engine.Scheduler;
-import com.ezzenix.engine.core.Util;
-import com.ezzenix.engine.physics.Raycast;
+import com.ezzenix.client.util.Util;
+import com.ezzenix.physics.Raycast;
 import com.ezzenix.game.world.World;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
@@ -20,6 +20,8 @@ public class Entity {
 	private float eyeHeight = 1.5f;
 	public float width = 0.6f;
 	public float height = 1.8f;
+
+	public boolean noclip = false;
 
 	public BoundingBox boundingBox;
 	public boolean isGrounded = false;

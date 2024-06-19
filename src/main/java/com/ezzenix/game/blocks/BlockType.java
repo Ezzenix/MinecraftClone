@@ -43,17 +43,17 @@ public class BlockType {
 
 	// Configuration
 	private BlockType setTextureTop(String textureName) {
-		this.textureUVTop = Client.blockTextures.getUV(textureName);
+		this.textureUVTop = Client.getTextureManager().blockAtlas.getUV(textureName);
 		return this;
 	}
 
 	private BlockType setTextureSides(String textureName) {
-		this.textureUVSides = Client.blockTextures.getUV(textureName);
+		this.textureUVSides = Client.getTextureManager().blockAtlas.getUV(textureName);
 		return this;
 	}
 
 	private BlockType setTextureBottom(String textureName) {
-		this.textureUVBottom = Client.blockTextures.getUV(textureName);
+		this.textureUVBottom = Client.getTextureManager().blockAtlas.getUV(textureName);
 		return this;
 	}
 

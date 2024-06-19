@@ -4,8 +4,7 @@ import com.ezzenix.Debug;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.GuiContext;
 import com.ezzenix.engine.opengl.Window;
-import com.ezzenix.engine.physics.Raycast;
-import com.ezzenix.hud.LineRenderer;
+import com.ezzenix.physics.Raycast;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -38,7 +37,7 @@ public class Renderer {
 			LineRenderer.highlightVoxel(new Vector3f(result.blockPos.x, result.blockPos.y, result.blockPos.z), new Vector3f(0.2f, 0.2f, 0.2f));
 		}
 
-		//skybox.render();
+		skybox.render();
 
 		worldRenderer.render(window.getHandle());
 		Debug.render();

@@ -1,4 +1,4 @@
-package com.ezzenix.engine.core;
+package com.ezzenix.client.resource;
 
 import org.joml.Vector2f;
 
@@ -74,7 +74,6 @@ public class TextureAtlas<KeyType> {
 			System.err.println("TextureAtlas failed to read directory " + directoryPath);
 			return null;
 		}
-		;
 
 		for (File imageFile : imageFiles) {
 			try {

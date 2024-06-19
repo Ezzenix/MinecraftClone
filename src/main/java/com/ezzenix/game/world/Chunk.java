@@ -24,6 +24,7 @@ public class Chunk {
 
 	public boolean isDisposed = false;
 
+	public boolean doNotGenerate = false;
 	public boolean hasGenerated = false;
 	public boolean isGenerating = false;
 	public boolean shouldMeshRebuild = false;

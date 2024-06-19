@@ -1,20 +1,18 @@
 package com.ezzenix.client;
 
 import com.ezzenix.client.gui.Hud;
-import com.ezzenix.client.gui.library.Gui;
 import com.ezzenix.client.gui.screen.Screen;
 import com.ezzenix.client.input.Keyboard;
 import com.ezzenix.client.input.Mouse;
 import com.ezzenix.client.options.GameOptions;
 import com.ezzenix.client.rendering.Camera;
-import com.ezzenix.client.rendering.Hotbar;
 import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.client.rendering.chunkbuilder.ChunkBuilderQueue;
+import com.ezzenix.client.resource.TextureManager;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.Scheduler;
-import com.ezzenix.engine.core.TextureAtlas;
 import com.ezzenix.engine.opengl.Window;
-import com.ezzenix.engine.physics.Physics;
+import com.ezzenix.physics.Physics;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.World;
 import com.ezzenix.game.world.gen.WorldGeneratorQueue;
@@ -36,13 +34,13 @@ public class Client {
 	private static Keyboard keyboard;
 	private static Hud hud;
 
+	private static TextureManager textureManager;
+
 	private static GameOptions options;
 
 	private static Camera camera;
 	private static Player player;
 	private static World world;
-
-	public static TextureAtlas<String> blockTextures;
 
 	public static void init() {
 		gameDirectory = new File("run");
@@ -54,9 +52,9 @@ public class Client {
 		window.setTitle("Minecraft");
 		window.centerWindow();
 		window.setVSync(false);
-		window.setIcon("src/main/resources/icon.png");
+		window.setIcon("icon.png");
 
-		blockTextures = TextureAtlas.fromDirectory("src/main/resources/textures");
+		textureManager = new TextureManager();
 
 		mouse = new Mouse();
 		keyboard = new Keyboard();
@@ -74,7 +72,6 @@ public class Client {
 		Input.initialize(window);
 		ChunkBuilderQueue.initialize();
 		WorldGeneratorQueue.initialize();
-		Hotbar.initialize();
 
 		Scheduler.setInterval(() -> {
 			Client.getWorld().loadNewChunks();
@@ -109,7 +106,6 @@ public class Client {
 		if (currentScreen != null) {
 			currentScreen.dispose();
 			currentScreen.onRemoved();
-			Gui.disposeScreenComponents(currentScreen);
 
 			if (screen == null && currentScreen.parent != null) { // if closing current and current has a parent, then open the parent
 				screen = currentScreen.parent;
@@ -156,6 +152,9 @@ public class Client {
 	}
 	public static File getDirectory() {
 		return gameDirectory;
+	}
+	public static TextureManager getTextureManager() {
+		return textureManager;
 	}
 
 	public static boolean isPaused() {

@@ -1,4 +1,4 @@
-package com.ezzenix.engine.physics;
+package com.ezzenix.physics;
 
 import com.ezzenix.client.Client;
 import com.ezzenix.engine.Scheduler;
@@ -49,7 +49,6 @@ public class Physics {
 		if (velocity.length() < 2) frictionCoefficient *= 0.02f;
 		velocity.x *= (float) Math.pow(frictionCoefficient, deltaTime);
 		velocity.z *= (float) Math.pow(frictionCoefficient, deltaTime);
-
 		if (entity.isFlying) {
 			velocity.y *= (float) Math.pow(0.03, deltaTime);
 		}
@@ -74,24 +73,26 @@ public class Physics {
 			Vector3f intersection = new Vector3f();
 			float highestLength = 0;
 
-			for (int x = newBlockPos.x - 1; x <= newBlockPos.x + 1; x++) {
-				for (int y = newBlockPos.y - 1; y <= newBlockPos.y + 2; y++) {
-					for (int z = newBlockPos.z - 1; z <= newBlockPos.z + 1; z++) {
-						BlockPos blockPos = new BlockPos(x, y, z);
-						BlockType blockType = world.getBlock(blockPos);
-						if (blockType == null || blockType == BlockType.AIR) continue;
+			if (!entity.noclip) {
+				for (int x = newBlockPos.x - 1; x <= newBlockPos.x + 1; x++) {
+					for (int y = newBlockPos.y - 1; y <= newBlockPos.y + 2; y++) {
+						for (int z = newBlockPos.z - 1; z <= newBlockPos.z + 1; z++) {
+							BlockPos blockPos = new BlockPos(x, y, z);
+							BlockType blockType = world.getBlock(blockPos);
+							if (blockType == null || blockType == BlockType.AIR) continue;
 
-						if (blockPos.equals(newBlockPos) && axisVector.y != 1) continue;
-						if (blockPos.equals(newBlockPos.add(0, 1, 0)) && axisVector.y != 1) continue;
+							if (blockPos.equals(newBlockPos) && axisVector.y != 1) continue;
+							if (blockPos.equals(newBlockPos.add(0, 1, 0)) && axisVector.y != 1) continue;
 
-						if (!blockType.isWalkthrough()) {
-							Vector3f intersec = entity.boundingBox.getIntersection(getBlockBoundingBox(blockPos)).mul(axisVector);
+							if (!blockType.isWalkthrough()) {
+								Vector3f intersec = entity.boundingBox.getIntersection(getBlockBoundingBox(blockPos)).mul(axisVector);
 
-							//getBlockBoundingBox(blockPos).render(intersec.length() > 0 ? new Vector3f(1, 0, 0) : new Vector3f(0, 1, 0));
+								//getBlockBoundingBox(blockPos).render(intersec.length() > 0 ? new Vector3f(1, 0, 0) : new Vector3f(0, 1, 0));
 
-							if (intersec.length() > highestLength) {
-								highestLength = intersec.length();
-								intersection = intersec;
+								if (intersec.length() > highestLength) {
+									highestLength = intersec.length();
+									intersection = intersec;
+								}
 							}
 						}
 					}

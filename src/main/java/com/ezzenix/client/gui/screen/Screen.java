@@ -2,7 +2,6 @@ package com.ezzenix.client.gui.screen;
 
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.GuiContext;
-import com.ezzenix.client.gui.library.components.GuiComponent;
 import com.ezzenix.client.gui.widgets.Widget;
 
 import java.util.ArrayList;

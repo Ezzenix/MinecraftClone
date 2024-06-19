@@ -1,7 +1,13 @@
 #version 330 core
 
+#include "color.glsl"
+
+in vec2 uv;
+
 out vec4 fragColor;
 
+uniform sampler2D textureSampler;
+
 void main() {
-    fragColor = vec4(1.0, 0.0, 0.0, 1.0);// Red color for testing
+    fragColor = texture(textureSampler, uv);
 }

@@ -1,10 +1,9 @@
 package com.ezzenix.client.gui.chat;
 
-import com.ezzenix.client.gui.library.UDim2;
-import com.ezzenix.client.gui.library.components.GuiFrame;
-import com.ezzenix.client.gui.library.components.GuiText;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
+import com.ezzenix.client.Client;
+import com.ezzenix.client.gui.GuiContext;
+import com.ezzenix.engine.Scheduler;
+import org.joml.Math;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,48 +16,59 @@ public class ChatHud {
 
 	}
 
-	public void update() {
-		int i = 0;
-		for (ChatMessage message : messages) {
-			if (message.guiText != null) message.guiText.dispose();
-			if (message.guiFrame != null) message.guiFrame.dispose();
-
-			if (i > 5) continue;
-
-			GuiFrame guiFrame = new GuiFrame();
-			guiFrame.color = new Vector3f(0f, 0f, 0f);
-			guiFrame.transparency = 0.6f;
-			guiFrame.position = new UDim2(0, 8, 0.8f, -(i * 22));
-			guiFrame.anchorPoint = new Vector2f(0, 1);
-			guiFrame.size = new UDim2(0.45f, 0, 0, 22);
-
-			GuiText guiText = new GuiText();
-			guiText.text = message.text;
-			guiText.position = new UDim2(0, 12, 0.8f, -(i * 22));
-			guiText.anchorPoint = new Vector2f(0, 1);
-			guiText.size = new UDim2(0.45f, 0, 0, 22);
-
-			message.guiText = guiText;
-			message.guiFrame = guiFrame;
-			i++;
-		}
-	}
-
 	public void addMessage(String text) {
 		ChatMessage message = new ChatMessage(text);
 
 		messages.add(0, message);
-		update();
+	}
+
+
+	public void render() {
+		int CHAT_WIDTH = (int) (Client.getWindow().getWidth() * 0.4);
+
+		int width = Client.getWindow().getWidth();
+		int height = Client.getWindow().getHeight();
+
+		int lineHeight = 26;
+		int pad = (lineHeight - 16) / 2;
+
+		int i = 0;
+		for (ChatMessage message : this.messages) {
+			int x = 6;
+			int y = height - 150 - i * lineHeight;
+
+			float transparency = 0.5f * message.getFadeAlpha();
+			if (transparency == 0) break;
+
+			int textWidth = GuiContext.FONT_RENDERER.getTextWidth(message.text, 18);
+
+			GuiContext.drawRect(x, y, CHAT_WIDTH + pad * 2, lineHeight, 0, 0, 0, transparency);
+			GuiContext.drawText(message.text, x + pad, y + pad, 18, 1, 1, 1);
+
+			i++;
+		}
 	}
 
 
 	private static class ChatMessage {
 		String text;
-		GuiText guiText;
-		GuiFrame guiFrame;
+		float timestamp;
 
 		public ChatMessage(String text) {
 			this.text = text;
+			this.timestamp = Scheduler.getClock();
+		}
+
+		public float getFadeAlpha() {
+			float VISIBLE_TIME = 3f;
+			float FADE_TIME = 0.4f;
+
+			float time = Scheduler.getClock() - this.timestamp;
+
+			if (time < VISIBLE_TIME) return 1;
+			if (time > VISIBLE_TIME + FADE_TIME) return 0;
+
+			return 1 - (time - VISIBLE_TIME) / FADE_TIME;
 		}
 	}
 }

@@ -1,7 +1,6 @@
-package com.ezzenix.client.gui.library;
+package com.ezzenix.client.gui;
 
 import com.ezzenix.client.Client;
-import com.ezzenix.engine.opengl.Window;
 import org.joml.Vector2f;
 
 public class GuiUtil {

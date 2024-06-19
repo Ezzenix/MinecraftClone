@@ -33,10 +33,12 @@ public class World {
 	private Chunk createChunk(ChunkPos chunkPos, boolean doNotGenerate) {
 		Chunk chunk = chunks.get(chunkPos);
 		if (chunk != null) { // already exists
+			chunk.doNotGenerate = doNotGenerate;
 			return null;
 		}
 		chunk = new Chunk(chunkPos, this);
 		chunks.put(chunkPos, chunk);
+		chunk.doNotGenerate = doNotGenerate;
 		return chunk;
 	}
 	private Chunk createChunk(ChunkPos chunkPos) {
@@ -87,7 +89,7 @@ public class World {
 	public void loadNewChunks() {
 		ChunkPos chunkPos = ChunkPos.from(Client.getPlayer().getBlockPos());
 
-		int renderDistance = 16;
+		int renderDistance = 14;
 
 		// get chunk positions in a spiral
 		List<ChunkPos> chunkPositions = new ArrayList<>();

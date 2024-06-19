@@ -1,4 +1,4 @@
-package com.ezzenix.client.gui.library;
+package com.ezzenix.client.gui;
 
 import com.ezzenix.engine.opengl.Texture;
 import org.joml.Math;

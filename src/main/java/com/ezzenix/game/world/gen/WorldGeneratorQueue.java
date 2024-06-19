@@ -33,7 +33,7 @@ public class WorldGeneratorQueue {
 		float closestDistance = Float.MAX_VALUE;
 
 		for (Chunk chunk : chunks.values()) {
-			if (chunk.hasGenerated || chunk.isGenerating) continue;
+			if (chunk.hasGenerated || chunk.isGenerating || chunk.doNotGenerate) continue;
 
 			float distance = cameraChunkPos.distanceTo(chunk.getPos());
 			if (distance < closestDistance) {

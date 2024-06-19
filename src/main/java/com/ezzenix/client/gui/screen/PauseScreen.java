@@ -1,17 +1,8 @@
 package com.ezzenix.client.gui.screen;
 
 import com.ezzenix.client.Client;
-import com.ezzenix.client.gui.GuiContext;
-import com.ezzenix.client.gui.library.Gui;
-import com.ezzenix.client.gui.library.UDim2;
-import com.ezzenix.client.gui.library.components.GuiButton;
-import com.ezzenix.client.gui.library.components.GuiFrame;
-import com.ezzenix.client.gui.library.components.GuiText;
 import com.ezzenix.client.gui.widgets.ButtonWidget;
 import com.ezzenix.client.gui.widgets.SliderWidget;
-import com.ezzenix.engine.opengl.Window;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 

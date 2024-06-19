@@ -1,6 +1,6 @@
 package com.ezzenix.engine.opengl;
 
-import com.ezzenix.engine.core.ImageUtil;
+import com.ezzenix.client.resource.ResourceManager;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
@@ -27,7 +27,7 @@ public class Texture {
 	}
 
 	public Texture(BufferedImage image) {
-		this(ImageUtil.parseBufferedImage(image), image.getWidth(), image.getHeight());
+		this(ResourceManager.parseBufferedImage(image), image.getWidth(), image.getHeight());
 	}
 
 	public void bind() {

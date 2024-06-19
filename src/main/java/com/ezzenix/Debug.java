@@ -6,7 +6,7 @@ import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.engine.Input;
 import com.ezzenix.game.entities.Player;
 import com.ezzenix.game.world.Chunk;
-import com.ezzenix.hud.LineRenderer;
+import com.ezzenix.client.rendering.LineRenderer;
 import com.ezzenix.math.ChunkPos;
 import org.joml.Vector3f;
 

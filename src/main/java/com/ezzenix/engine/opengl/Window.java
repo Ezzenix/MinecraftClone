@@ -1,14 +1,17 @@
 package com.ezzenix.engine.opengl;
 
 import com.ezzenix.client.Client;
+import com.ezzenix.client.resource.ResourceManager;
 import com.ezzenix.engine.Signal;
-import com.ezzenix.engine.core.ImageParser;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.Configuration;
+import org.lwjgl.system.MemoryStack;
 
+import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -194,15 +197,16 @@ public class Window {
 	}
 
 	public void setIcon(String path) {
-		GLFWImage image = GLFWImage.malloc();
-		GLFWImage.Buffer imageBuffer = GLFWImage.malloc(1);
-		ImageParser resource = ImageParser.loadImage(path);
-		if (resource != null) {
-			image.set(resource.getWidth(), resource.getHeight(), resource.getImage());
-			imageBuffer.put(0, image);
-			glfwSetWindowIcon(handle, imageBuffer);
-		} else {
-			System.out.println("Icon failed to load.");
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			GLFWImage image = GLFWImage.malloc(stack);
+			GLFWImage.Buffer buffer = GLFWImage.malloc(1);
+
+			BufferedImage loadedImage = ResourceManager.loadImage(path);
+			ByteBuffer imageBuffer = ResourceManager.parseBufferedImage(loadedImage);
+
+			image.set(loadedImage.getWidth(), loadedImage.getHeight(), imageBuffer);
+			buffer.put(0, image);
+			glfwSetWindowIcon(handle, buffer);
 		}
 	}
 

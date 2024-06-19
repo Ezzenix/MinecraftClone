@@ -2,6 +2,7 @@ package com.ezzenix.client.rendering;
 
 import com.ezzenix.client.Client;
 import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
+import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.game.world.Chunk;
@@ -11,6 +12,7 @@ import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +28,9 @@ public class WorldRenderer {
 	public int chunksRenderedCount = 0;
 
 	public WorldRenderer() {
-		blockTexture = new Texture(Client.blockTextures.getAtlasImage());
-		textureAtlasSize = new Vector2f(
-			Client.blockTextures.getAtlasImage().getWidth(),
-			Client.blockTextures.getAtlasImage().getHeight()
-		);
+		BufferedImage blockAtlasImage = Client.getTextureManager().blockAtlas.getAtlasImage();
+		blockTexture = new Texture(blockAtlasImage);
+		textureAtlasSize = new Vector2f(blockAtlasImage.getWidth(), blockAtlasImage.getHeight());
 		//blockTexture.generateMipmap();
 		//blockTexture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		blockTexture.setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -69,6 +69,7 @@ public class WorldRenderer {
 		waterShader.setUniform("projectionMatrix", projectionMatrix);
 		waterShader.setUniform("viewMatrix", viewMatrix);
 		waterShader.setUniform("textureAtlasSize", textureAtlasSize);
+		waterShader.setUniform("time", Scheduler.getClock());
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_DEPTH_TEST);
