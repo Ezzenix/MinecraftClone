@@ -1,8 +1,8 @@
-package com.ezzenix.game.world;
+package com.ezzenix.world;
 
+import com.ezzenix.blocks.BlockRegistry;
+import com.ezzenix.blocks.BlockType;
 import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
-import com.ezzenix.game.blocks.BlockRegistry;
-import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
 import com.ezzenix.math.ChunkPos;

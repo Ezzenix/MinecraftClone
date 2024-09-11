@@ -1,11 +1,11 @@
-package com.ezzenix.game.world;
+package com.ezzenix.world;
 
+import com.ezzenix.blocks.BlockType;
 import com.ezzenix.client.Client;
-import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.entities.Entity;
-import com.ezzenix.game.world.gen.ChunkGenerator;
+import com.ezzenix.entities.Entity;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
+import com.ezzenix.world.gen.ChunkGenerator;
 
 import java.util.ArrayList;
 import java.util.List;

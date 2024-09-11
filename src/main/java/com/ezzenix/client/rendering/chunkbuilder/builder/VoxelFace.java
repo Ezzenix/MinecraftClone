@@ -1,11 +1,11 @@
 package com.ezzenix.client.rendering.chunkbuilder.builder;
 
-import com.ezzenix.game.blocks.BlockRegistry;
-import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.enums.Direction;
-import com.ezzenix.game.world.Chunk;
+import com.ezzenix.blocks.BlockRegistry;
+import com.ezzenix.blocks.BlockType;
+import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.LocalPosition;
+import com.ezzenix.world.Chunk;
 import org.joml.Vector3i;
 
 public class VoxelFace {

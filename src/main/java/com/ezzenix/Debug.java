@@ -2,12 +2,12 @@ package com.ezzenix;
 
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.DebugHud;
+import com.ezzenix.client.rendering.LineRenderer;
 import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.engine.Input;
-import com.ezzenix.game.entities.Player;
-import com.ezzenix.game.world.Chunk;
-import com.ezzenix.client.rendering.LineRenderer;
+import com.ezzenix.entities.player.Player;
 import com.ezzenix.math.ChunkPos;
+import com.ezzenix.world.Chunk;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;

@@ -1,7 +1,7 @@
 package com.ezzenix.client.gui.screen;
 
 import com.ezzenix.client.Client;
-import com.ezzenix.client.gui.GuiContext;
+import com.ezzenix.client.gui.Gui;
 import com.ezzenix.client.gui.widgets.Widget;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class Screen {
 	public void renderBackground() {
 		float alpha1 = 0.4f;
 		float alpha2 = 0.6f;
-		GuiContext.drawRectGradient(0, 0, Client.getWindow().getWidth(), Client.getWindow().getHeight(), 0, 0, 0, alpha1, 0, 0, 0, alpha2);
+		Gui.drawRectGradient(0, 0, Client.getWindow().getWidth(), Client.getWindow().getHeight(), 0, 0, 0, alpha1, 0, 0, 0, alpha2);
 	}
 
 	public boolean shouldPauseGame() {
@@ -53,7 +53,7 @@ public class Screen {
 
 
 	public void mouseClicked(int x, int y) {
-		for (Widget widget : this.widgets) {
+		for (Widget widget : this.widgets.stream().toList()) {
 			if (widget.isWithin(x, y)) {
 				widget.mouseClicked(x, y);
 			}
@@ -70,9 +70,7 @@ public class Screen {
 
 	public void mouseMoved(int x, int y) {
 		for (Widget widget : this.widgets) {
-			if (widget.isWithin(x, y)) {
-				widget.mouseMoved(x, y);
-			}
+			widget.mouseMoved(x, y);
 		}
 	}
 
@@ -82,10 +80,29 @@ public class Screen {
 		}
 	}
 
+	public void keyPressed(int key, int action) {
+		for (Widget widget : this.widgets) {
+			widget.keyPressed(key, action);
+		}
+	}
+
+	public void charTyped(int codePoint) {
+		for (Widget widget : this.widgets) {
+			widget.charTyped(codePoint);
+		}
+	}
+
+	public void scrolled(double x, double y) {
+
+	}
+
 	public void onRemoved() {
 	}
 
 	public void dispose() {
+		for (Widget widget : this.widgets) {
+			widget.dispose();
+		}
 		this.widgets.clear();
 	}
 }

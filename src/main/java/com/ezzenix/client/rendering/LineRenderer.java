@@ -1,7 +1,6 @@
 package com.ezzenix.client.rendering;
 
 import com.ezzenix.client.Client;
-import com.ezzenix.client.rendering.Camera;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
 import org.joml.Vector3f;

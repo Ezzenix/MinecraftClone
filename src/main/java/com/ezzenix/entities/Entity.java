@@ -1,11 +1,11 @@
-package com.ezzenix.game.entities;
+package com.ezzenix.entities;
 
-import com.ezzenix.engine.Scheduler;
 import com.ezzenix.client.util.Util;
-import com.ezzenix.physics.Raycast;
-import com.ezzenix.game.world.World;
+import com.ezzenix.engine.Scheduler;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
+import com.ezzenix.physics.Raycast;
+import com.ezzenix.world.World;
 import org.joml.Math;
 import org.joml.Vector3f;
 

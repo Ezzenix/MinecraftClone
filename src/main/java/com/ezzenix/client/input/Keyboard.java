@@ -1,15 +1,17 @@
 package com.ezzenix.client.input;
 
+import com.ezzenix.blocks.BlockType;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.chat.ChatScreen;
 import com.ezzenix.client.gui.screen.PauseScreen;
-import com.ezzenix.client.rendering.Camera;
+import com.ezzenix.client.util.Screenshot;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.core.Profiler;
 import com.ezzenix.engine.opengl.Window;
-import com.ezzenix.game.blocks.BlockType;
 import com.ezzenix.math.BlockPos;
 import org.joml.Vector3f;
+
+import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -17,27 +19,32 @@ public class Keyboard {
 	long lastSpaceClicked = 0;
 
 	public Keyboard() {
-		Input.keyUp(GLFW_KEY_F5, () -> {
+		Input.keyDown(GLFW_KEY_F5, () -> {
 			if (Client.isPaused()) return;
 
-			Camera camera = Client.getCamera();
-			camera.thirdPerson = !camera.thirdPerson;
+			Client.getOptions().thirdPerson = !Client.getOptions().thirdPerson;
 		});
 
-		Input.keyUp(GLFW_KEY_F4, Profiler::dump);
+		Input.keyDown(GLFW_KEY_F1, () -> {
+			if (Client.isPaused()) return;
 
-		Input.keyUp(GLFW_KEY_KP_1, () -> {
+			Client.getOptions().hudHidden = !Client.getOptions().hudHidden;
+		});
+
+		Input.keyDown(GLFW_KEY_F4, Profiler::dump);
+
+		Input.keyDown(GLFW_KEY_KP_1, () -> {
 			BlockPos blockPos = Client.getPlayer().getBlockPos();
 			if (blockPos.isValid()) {
 				Client.getWorld().setBlock(blockPos, BlockType.STONE);
 			}
 		});
 
-		Input.keyUp(GLFW_KEY_KP_2, () -> {
+		Input.keyDown(GLFW_KEY_KP_2, () -> {
 			Client.getPlayer().teleport(new Vector3f(0, 100, 0));
 		});
 
-		Input.keyUp(GLFW_KEY_F6, () -> {
+		Input.keyDown(GLFW_KEY_F6, () -> {
 			Client.getPlayer().noclip = !Client.getPlayer().noclip;
 		});
 
@@ -49,15 +56,26 @@ public class Keyboard {
 			}
 		});
 
-		Input.keyUp(GLFW_KEY_T, () -> {
-			if (Client.isPaused()) return;
-
+		Input.keyDown(GLFW_KEY_T, () -> {
+			if (Client.getScreen() != null) return;
 			Client.setScreen(new ChatScreen());
 		});
 
-		Input.keyUp(GLFW_KEY_F11, () -> {
+		Input.keyDown(GLFW_KEY_F11, () -> {
 			Window window = Client.getWindow();
 			window.setFullscreen(!window.isFullscreen());
+		});
+
+		Input.keyDown(GLFW_KEY_F2, () -> {
+			File screenshotDirectory = new File(Client.getDirectory(), "screenshots");
+			screenshotDirectory.mkdir();
+			Screenshot.takeScreenshot(screenshotDirectory, null);
+		});
+
+		glfwSetCharCallback(Client.getWindow().getHandle(), (long window, int codePoint) -> {
+			if (Client.getScreen() != null) {
+				Client.getScreen().charTyped(codePoint);
+			}
 		});
 
 		Input.keyDown(GLFW_KEY_SPACE, () -> {

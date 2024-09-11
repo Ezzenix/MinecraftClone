@@ -38,8 +38,7 @@ public class FontRenderer {
 		if (customFont == null)
 			throw new RuntimeException("Failed to load font " + fontFile.getAbsolutePath());
 
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		ge.registerFont(customFont);
+		GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
 		Font font = new Font(customFont.getFontName(), Font.PLAIN, fontSize);
 		return new FontRenderer(font);
 	}
@@ -62,6 +61,7 @@ public class FontRenderer {
 		Graphics2D g2d = img.createGraphics();
 		g2d.setFont(font);
 		FontMetrics fontMetrics = g2d.getFontMetrics();
+		g2d.dispose();
 		this.fontMetrics = fontMetrics;
 
 		int estimatedWidth = (int) Math.sqrt(font.getNumGlyphs()) * font.getSize() + 1;
@@ -95,7 +95,6 @@ public class FontRenderer {
 			}
 		}
 		height += (int) (fontMetrics.getHeight() * 1.4f);
-		g2d.dispose();
 
 		// Create the real texture
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

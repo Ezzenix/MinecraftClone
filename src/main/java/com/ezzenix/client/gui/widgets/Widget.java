@@ -31,6 +31,14 @@ public class Widget {
 
 	}
 
+	public void keyPressed(int key, int action) {
+
+	}
+
+	public void charTyped(int codePoint) {
+
+	}
+
 	public boolean isWithin(int x, int y) {
 		return x >= this.x && x <= this.x + this.width
 			&& y >= this.y && y <= this.y + this.height;
@@ -42,5 +50,8 @@ public class Widget {
 
 	public void render() {
 
+	}
+
+	public void dispose() {
 	}
 }

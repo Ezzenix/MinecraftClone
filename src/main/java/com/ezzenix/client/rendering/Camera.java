@@ -3,14 +3,13 @@ package com.ezzenix.client.rendering;
 import com.ezzenix.client.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Window;
-import com.ezzenix.game.entities.Entity;
+import com.ezzenix.entities.Entity;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Camera {
 	private final Entity entity;
-	public boolean thirdPerson = false;
 
 	private Matrix4f projectionMatrix;
 
@@ -22,12 +21,16 @@ public class Camera {
 		// Initialize projection matrix
 		updateProjectionMatrix();
 		Client.getWindow().sizeChanged.connect(this::updateProjectionMatrix);
+
+		Client.getOptions().FOV.onChange((value) -> {
+			this.updateProjectionMatrix();
+		});
 	}
 
 	public void updateProjectionMatrix() {
 		Window window = Client.getWindow();
 
-		float fov = Math.toRadians(75);
+		float fov = Math.toRadians(Client.getOptions().FOV.getValue());
 		float aspectRatio = (float) window.getWidth() / window.getHeight();
 		float near = 0.1f;
 		float far = 2000.0f;
@@ -66,7 +69,7 @@ public class Camera {
 		float pitch = Math.clamp(-89f, 89f, entity.getPitch());
 		Vector3f position = getPosition();
 
-		if (thirdPerson) {
+		if (Client.getOptions().thirdPerson) {
 			Vector3f lookVector = getLookVector();
 			position.add(lookVector.mul(-8));
 		}

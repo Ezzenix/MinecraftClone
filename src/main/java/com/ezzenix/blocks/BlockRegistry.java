@@ -1,4 +1,4 @@
-package com.ezzenix.game.blocks;
+package com.ezzenix.blocks;
 
 import java.util.HashMap;
 

@@ -28,6 +28,8 @@ tasks.withType<Jar> {
 dependencies {
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
+    implementation("it.unimi.dsi", "fastutil", "8.2.1")
+
     implementation("org.joml", "joml", jomlVersion)
     implementation("org.lwjgl", "lwjgl")
     implementation("org.lwjgl", "lwjgl-assimp")
@@ -75,6 +77,7 @@ dependencies {
     implementation("org.lwjgl", "lwjgl-xxhash")
     implementation("org.lwjgl", "lwjgl-yoga")
     implementation("org.lwjgl", "lwjgl-zstd")
+    implementation("org.jetbrains:annotations:24.0.0")
     runtimeOnly("org.lwjgl", "lwjgl", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-assimp", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-bgfx", classifier = lwjglNatives)

@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -1,8 +1,8 @@
 package com.ezzenix.client.rendering.chunkbuilder.builder;
 
-import com.ezzenix.game.enums.Direction;
-import com.ezzenix.game.world.Chunk;
+import com.ezzenix.enums.Direction;
 import com.ezzenix.math.LocalPosition;
+import com.ezzenix.world.Chunk;
 import org.joml.Vector3i;
 
 import java.util.ArrayList;

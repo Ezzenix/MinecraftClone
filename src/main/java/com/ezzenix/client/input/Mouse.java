@@ -1,16 +1,15 @@
 package com.ezzenix.client.input;
 
+import com.ezzenix.blocks.BlockType;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.screen.Screen;
+import com.ezzenix.client.rendering.particle.BlockBreakParticle;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.opengl.Window;
-import com.ezzenix.physics.Physics;
-import com.ezzenix.physics.Raycast;
-import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.entities.Entity;
+import com.ezzenix.item.Item;
 import com.ezzenix.math.BlockPos;
-import com.ezzenix.math.BoundingBox;
-import org.joml.Vector3i;
+import com.ezzenix.physics.Raycast;
+import org.joml.Math;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -33,6 +32,10 @@ public class Mouse {
 			cursorMoved((int) xpos, (int) ypos);
 		});
 
+		glfwSetScrollCallback(window, (long w, double x, double y) -> {
+			this.scrolled(x, y);
+		});
+
 		Input.mouseButton1Up(() -> {
 			if (Client.getScreen() == null) return;
 			Client.getScreen().mouseUp();
@@ -47,19 +50,10 @@ public class Mouse {
 
 		Input.mouseButton2Down(() -> {
 			if (Client.isPaused()) return;
-			Raycast result = Client.getPlayer().raycast();
-			if (result != null && result.hitDirection != null) {
-				Vector3i faceNormal = result.hitDirection.getNormal();
-				BlockPos blockPos = result.blockPos.add(faceNormal.x, faceNormal.y, faceNormal.z);
-				if (blockPos.isValid()) {
 
-					BoundingBox blockBoundingBox = Physics.getBlockBoundingBox(blockPos);
-					for (Entity entity : Client.getWorld().getEntities()) {
-						if (entity.boundingBox.getIntersection(blockBoundingBox).length() > 0) return;
-					}
-
-					Client.getWorld().setBlock(blockPos, BlockType.GRASS_BLOCK);
-				}
+			Item item = Client.getPlayer().getHeldItem();
+			if (item != null) {
+				item.use();
 			}
 		});
 
@@ -67,9 +61,45 @@ public class Mouse {
 			if (Client.isPaused()) return;
 			Raycast result = Client.getPlayer().raycast();
 			if (result != null) {
-				Client.getWorld().setBlock(result.blockPos, BlockType.AIR);
+				BlockPos blockPos = result.blockPos;
+				Client.getWorld().setBlock(blockPos, BlockType.AIR);
+
+				float minX = blockPos.x;
+				float maxX = blockPos.x + 1;
+				float minY = blockPos.y;
+				float maxY = blockPos.y + 1;
+				float minZ = blockPos.z;
+				float maxZ = blockPos.z + 1;
+
+				float step = 1f / 4f;
+
+				float centerX = minX + 0.5f;
+				float centerZ = minZ + 0.5f;
+
+				for (float x = minX + step; x < maxX; x += step) {
+					for (float y = minY + step; y < maxY; y += step) {
+						for (float z = minZ + step; z < maxZ; z += step) {
+							float vx = x - centerX;
+							float vy = 2f;
+							float vz = z - centerZ;
+
+							float spread = 0.25f;
+							float px = (x + ((float) Math.random() * 2 - 1) * spread);
+							float py = (y + ((float) Math.random() * 2 - 1) * spread);
+							float pz = (z + ((float) Math.random() * 2 - 1) * spread);
+
+							new BlockBreakParticle(px, py, pz, vx, vy, vz);
+						}
+					}
+				}
 			}
 		});
+	}
+
+	private void scrolled(double x, double y) {
+		if (Client.getScreen() != null) {
+			Client.getScreen().scrolled(x, y);
+		}
 	}
 
 	private void cursorMoved(int x, int y) {

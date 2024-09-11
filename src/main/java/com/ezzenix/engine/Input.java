@@ -25,11 +25,17 @@ public class Input {
 	}
 
 	private static void runEvents(int input, int action) {
-		List<InputEvent> events = inputEvents.stream().filter(
-			(inputEvent -> (inputEvent.input == input && (inputEvent.action == action || (inputEvent.action == GLFW_REPEAT && action == GLFW_PRESS))))
-		).toList();
-		for (InputEvent inputEvent : events) {
-			inputEvent.runnable.run();
+		if (Client.focusedTextField == null || input == GLFW_KEY_ESCAPE) {
+			List<InputEvent> events = inputEvents.stream().filter(
+				(inputEvent -> (inputEvent.input == input && (inputEvent.action == action || (inputEvent.action == GLFW_REPEAT && action == GLFW_PRESS))))
+			).toList();
+			for (InputEvent inputEvent : events) {
+				inputEvent.runnable.run();
+			}
+		}
+
+		if (Client.getScreen() != null) {
+			Client.getScreen().keyPressed(input, action);
 		}
 	}
 

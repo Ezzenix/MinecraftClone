@@ -1,19 +1,45 @@
 package com.ezzenix.client.gui.widgets;
 
-import com.ezzenix.client.gui.GuiContext;
+import com.ezzenix.client.gui.Color;
+import com.ezzenix.client.gui.Gui;
 import org.joml.Math;
 
-public class SliderWidget extends Widget {
-	private static int BAR_WIDTH = 10;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-	private float minValue = 2f;
-	private float maxValue = 10f;
-	private float value = 5f;
+public class SliderWidget extends Widget {
+	private static final int BAR_WIDTH = 5;
+
+	private int value;
+	private int minValue;
+	private int maxValue;
+	private int increment;
 
 	private boolean isDragging = false;
+	private int dragStartValue;
 
-	public SliderWidget(int x, int y, int width, int height) {
+	private String text;
+
+	private Consumer<Integer> onChange;
+	private Function<Integer, String> stringFormatter;
+
+	public SliderWidget(String text, int x, int y, int width, int height, int value, int minValue, int maxValue, int increment) {
 		super(x, y, width, height);
+
+		this.text = text;
+
+		this.value = value;
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		this.increment = increment;
+	}
+
+	public void setCallback(Consumer<Integer> consumer) {
+		this.onChange = consumer;
+	}
+
+	public void setStringFormatter(Function<Integer, String> formatter) {
+		this.stringFormatter = formatter;
 	}
 
 	public int getLeftX() {
@@ -21,6 +47,13 @@ public class SliderWidget extends Widget {
 	}
 	public int getRightX() {
 		return this.x + this.width - BAR_WIDTH / 2;
+	}
+
+	private void setValue(int value) {
+		this.value = Math.round((float) value / (float) this.increment) * this.increment;
+		if (this.onChange != null) {
+			this.onChange.accept(this.value);
+		}
 	}
 
 	@Override
@@ -31,7 +64,7 @@ public class SliderWidget extends Widget {
 			int leftX = this.getLeftX();
 			int rightX = this.getRightX();
 			float alpha = Math.clamp(0, 1, (float) (x - leftX) / (float) (rightX - leftX));
-			this.value = Math.lerp(this.minValue, this.maxValue, alpha);
+			setValue((int) Math.lerp(this.minValue, this.maxValue, alpha));
 		}
 	}
 
@@ -39,26 +72,30 @@ public class SliderWidget extends Widget {
 	public void mouseDown(int x, int y) {
 		super.mouseDown(x, y);
 		isDragging = true;
+		dragStartValue = this.value;
 	}
 
 	@Override
 	public void mouseUp() {
 		super.mouseUp();
 		isDragging = false;
+		//if (dragStartValue != this.value && this.onChange != null) {
+		//	this.onChange.accept(this.value);
+		//}
 	}
 
 	private float getAlpha() {
-		return (this.value - this.minValue) / (this.maxValue - this.minValue);
+		return ((float) (this.value - this.minValue)) / ((float) (this.maxValue - this.minValue));
 	}
 
 	@Override
 	public void render() {
-		GuiContext.drawRect(this.x, this.y, this.width, this.height, 0, 0, 0, 0.7f);
+		Gui.drawButtonRect(this.x, this.y, this.width, this.height, false);
 
-		String text = String.format("%.1f", this.value);
-		GuiContext.drawCenteredText(text, this.x + this.width / 2, this.y + this.height / 2, 18, 1, 1, 1);
+		String text = this.text + ": " + this.stringFormatter.apply(this.value);
+		Gui.drawCenteredText(text, this.x + this.width / 2, this.y + this.height / 2, Color.WHITE);
 
 		int x = (int) (Math.lerp(this.getLeftX(), this.getRightX(), this.getAlpha()));
-		GuiContext.drawRect(x - BAR_WIDTH / 2, this.y, BAR_WIDTH, this.height, 1, 0, 0, 1f);
+		Gui.drawRect(x - BAR_WIDTH / 2, this.y, BAR_WIDTH, this.height, 1, 1, 1, 1f);
 	}
 }

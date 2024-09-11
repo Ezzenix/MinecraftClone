@@ -6,16 +6,18 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GameOptions {
 	private final List<Option<?>> options = new ArrayList<>();
 	private final File optionsFile;
 
+	public boolean hudHidden = false;
+	public boolean thirdPerson = false;
 
-	public BoolOption IS_COOL = new BoolOption("is_cool", true);
 	public BoolOption SMOOTH_LIGHTING = new BoolOption("smooth_lighting", true);
-	public BoolOption IS_NOOB = new BoolOption("is_noob", false);
-	public BoolOption IS_PRO = new BoolOption("is_pro", true);
+	public IntOption MAX_FRAME_RATE = new IntOption("max_frame_rate", 144, 5, 260, 5);
+	public IntOption FOV = new IntOption("fov", 75, 30, 120, 1);
 
 
 	public GameOptions() {
@@ -61,8 +63,6 @@ public class GameOptions {
 					continue;
 				}
 				option.read(stringifiedValue);
-
-				System.out.println("Loaded option " + name + " with value " + option.value);
 			}
 
 			reader.close();
@@ -73,9 +73,10 @@ public class GameOptions {
 
 
 	public abstract class Option<T> {
-		String name;
-		T defaultValue;
-		T value;
+		public final String name;
+		public final T defaultValue;
+		private T value;
+		public Consumer<T> changeListener;
 
 		public Option(String name, T defaultValue) {
 			this.name = name;
@@ -83,6 +84,21 @@ public class GameOptions {
 			this.value = defaultValue;
 
 			options.add(this);
+		}
+
+		public void setValue(T value) {
+			this.value = value;
+			if (this.changeListener != null) {
+				this.changeListener.accept(value);
+			}
+		}
+
+		public T getValue() {
+			return this.value;
+		}
+
+		public void onChange(Consumer<T> callback) {
+			this.changeListener = callback;
 		}
 
 		public abstract void read(String string);
@@ -96,11 +112,32 @@ public class GameOptions {
 		}
 
 		public void read(String string) {
-			this.value = Boolean.parseBoolean(string);
+			this.setValue(Boolean.parseBoolean(string));
 		}
 
 		public String stringify() {
-			return Boolean.toString(this.value);
+			return Boolean.toString(this.getValue());
+		}
+	}
+
+	public class IntOption extends Option<Integer> {
+		public int minValue;
+		public int maxValue;
+		public int increment;
+
+		public IntOption(String name, int defaultValue, int minValue, int maxValue, int increment) {
+			super(name, defaultValue);
+			this.minValue = minValue;
+			this.maxValue = maxValue;
+			this.increment = increment;
+		}
+
+		public void read(String string) {
+			this.setValue(Integer.parseInt(string));
+		}
+
+		public String stringify() {
+			return Integer.toString(this.getValue());
 		}
 	}
 }

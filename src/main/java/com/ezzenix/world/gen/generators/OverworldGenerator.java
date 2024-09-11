@@ -1,10 +1,10 @@
-package com.ezzenix.game.world.gen.generators;
+package com.ezzenix.world.gen.generators;
 
+import com.ezzenix.blocks.BlockType;
 import com.ezzenix.engine.core.FastNoiseLite;
-import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.world.Chunk;
-import com.ezzenix.game.world.gen.ChunkGenerator;
 import com.ezzenix.math.BlockPos;
+import com.ezzenix.world.Chunk;
+import com.ezzenix.world.gen.ChunkGenerator;
 
 import java.util.ArrayList;
 import java.util.List;

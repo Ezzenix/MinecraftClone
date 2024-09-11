@@ -3,8 +3,8 @@ package com.ezzenix.client.rendering.chunkbuilder;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.rendering.chunkbuilder.builder.ChunkBuilder;
 import com.ezzenix.engine.Scheduler;
-import com.ezzenix.game.world.Chunk;
 import com.ezzenix.math.ChunkPos;
+import com.ezzenix.world.Chunk;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;

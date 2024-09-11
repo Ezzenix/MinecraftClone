@@ -1,12 +1,12 @@
 package com.ezzenix.physics;
 
+import com.ezzenix.blocks.BlockType;
 import com.ezzenix.client.Client;
 import com.ezzenix.engine.Scheduler;
-import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.entities.Entity;
-import com.ezzenix.game.world.World;
+import com.ezzenix.entities.Entity;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
+import com.ezzenix.world.World;
 import org.joml.Vector3f;
 
 public class Physics {
@@ -57,11 +57,9 @@ public class Physics {
 		Vector3f entityPosition = new Vector3f(entity.getPosition());
 		boolean isGrounded = false;
 
-		if (Client.getCamera().thirdPerson) {
+		if (Client.getOptions().thirdPerson) {
 			entity.boundingBox.render(new Vector3f(1, 1, 1));
 		}
-
-		Vector3f oldEntityPosition = new Vector3f(entity.getPosition());
 
 		for (Vector3f axisVector : axisVectors) {
 			Vector3f vel = new Vector3f(entity.getVelocity()).mul(deltaTime).mul(axisVector);
@@ -130,25 +128,6 @@ public class Physics {
 			entityPosition.set(newPosition);
 		}
 
-		/*
-		if (entity.isSneaking() && Math.abs(entity.getVelocity().y) < 0.1f) {
-			BlockPos oldBlockPosBelow = BlockPos.from(oldEntityPosition).add(0, -1, 0);
-			BlockPos newBlockPosBelow = BlockPos.from(entityPosition).add(0, -1, 0);
-
-			if (!oldBlockPosBelow.equals(newBlockPosBelow)) {
-
-				BlockType oldBlockType = world.getBlock(oldBlockPosBelow);
-				BlockType newBlockType = world.getBlock(newBlockPosBelow);
-
-				if (oldBlockType != null && newBlockType != null) {
-					if (!oldBlockType.isWalkthrough() && newBlockType.isWalkthrough()) {
-						entityPosition = oldEntityPosition;
-					}
-				}
-			}
-		}
-		*/
-
 		if (entityPosition.y < -50) {
 			entityPosition.y = 100;
 			entity.getVelocity().y = 0;
@@ -168,6 +147,12 @@ public class Physics {
 		float deltaTime = Scheduler.getDeltaTime() * gameSpeed;
 
 		for (Entity entity : Client.getWorld().getEntities()) {
+			//Vector3f position = entity.getPosition();
+			//Vector3f targetPosition = new Vector3f(position).add(new Vector3f(entity.getVelocity()).mul(deltaTime));
+			//float distance = position.distance(targetPosition);
+
+			//int checks = (int)distance*5;
+
 			stepEntity(entity, deltaTime);
 		}
 	}

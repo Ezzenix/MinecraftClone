@@ -3,8 +3,8 @@ package com.ezzenix.client.gui;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.engine.Scheduler;
-import com.ezzenix.game.entities.Player;
-import com.ezzenix.game.enums.Direction;
+import com.ezzenix.entities.player.Player;
+import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import org.joml.Vector3f;
@@ -37,11 +37,11 @@ public class DebugHud {
 		for (String line : lines) {
 			int x = 6;
 			if (rightSide) {
-				int textWidth = GuiContext.FONT_RENDERER.getTextWidth(line, 18);
+				int textWidth = Gui.FONT_RENDERER.getWidth(line);
 				x = Client.getWindow().getWidth() - textWidth - 6;
 			}
 
-			GuiContext.drawText(line, x, 6 + i * 18, 18, 1, 1, 1);
+			Gui.drawText(line, x, 6 + i * 18, Color.WHITE);
 
 			i++;
 		}

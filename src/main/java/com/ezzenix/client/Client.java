@@ -2,6 +2,7 @@ package com.ezzenix.client;
 
 import com.ezzenix.client.gui.Hud;
 import com.ezzenix.client.gui.screen.Screen;
+import com.ezzenix.client.gui.widgets.TextFieldWidget;
 import com.ezzenix.client.input.Keyboard;
 import com.ezzenix.client.input.Mouse;
 import com.ezzenix.client.options.GameOptions;
@@ -12,11 +13,11 @@ import com.ezzenix.client.resource.TextureManager;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Window;
+import com.ezzenix.entities.player.Player;
 import com.ezzenix.physics.Physics;
-import com.ezzenix.game.entities.Player;
-import com.ezzenix.game.world.World;
-import com.ezzenix.game.world.gen.WorldGeneratorQueue;
-import com.ezzenix.game.world.gen.generators.OverworldGenerator;
+import com.ezzenix.world.World;
+import com.ezzenix.world.gen.WorldGeneratorQueue;
+import com.ezzenix.world.gen.generators.OverworldGenerator;
 import org.joml.Vector3f;
 
 import java.io.File;
@@ -42,6 +43,8 @@ public class Client {
 	private static Player player;
 	private static World world;
 
+	public static TextFieldWidget focusedTextField;
+
 	public static void init() {
 		gameDirectory = new File("run");
 		if (!gameDirectory.exists()) {
@@ -49,7 +52,7 @@ public class Client {
 		}
 
 		window = new Window(true);
-		window.setTitle("Minecraft");
+		window.setTitle("Minecraft 1.22");
 		window.centerWindow();
 		window.setVSync(false);
 		window.setIcon("icon.png");
@@ -99,7 +102,10 @@ public class Client {
 		//int glError = glGetError();
 		//if (glError != GL_NO_ERROR) System.err.println("OpenGL Error: " + glError);
 
-		Scheduler.limitFps(240);
+		int maxFps = Client.getOptions().MAX_FRAME_RATE.getValue();
+		if (maxFps != 260) {
+			Scheduler.limitFps(maxFps);
+		}
 	}
 
 	public static void setScreen(Screen screen) {
@@ -115,8 +121,8 @@ public class Client {
 		currentScreen = screen;
 
 		if (screen != null) {
-			screen.init(getWindow().getWidth(), getWindow().getHeight());
 			screen.onDisplayed();
+			screen.init(getWindow().getWidth(), getWindow().getHeight());
 			getMouse().unlockCursor();
 		} else {
 			getMouse().lockCursor();

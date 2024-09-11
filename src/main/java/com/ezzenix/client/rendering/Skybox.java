@@ -7,13 +7,10 @@ import com.ezzenix.client.resource.ResourceManager;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
+import org.joml.Math;
 import org.joml.Matrix4f;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
-
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.*;
 
 public class Skybox {
 	Texture texture;
@@ -22,12 +19,25 @@ public class Skybox {
 
 	VertexBuffer vertexBuffer;
 
+	VertexBuffer sunVertexBuffer;
+
+	private final Texture skyboxTexture = new Texture(ResourceManager.loadImage("skybox.png"));
+	private final Texture sunTexture = new Texture(ResourceManager.loadImage("sun.png"));
+
 	public Skybox() {
 		this.shader = new Shader("skybox");
 
-		initVertexBuffer();
+		this.sunVertexBuffer = new VertexBuffer(this.shader, new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.STATIC);
+		int SUN_SIZE = 8;
+		this.sunVertexBuffer.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0).next();
+		this.sunVertexBuffer.vertex(-SUN_SIZE, -100, SUN_SIZE).texture(0, 1).next();
+		this.sunVertexBuffer.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1).next();
+		this.sunVertexBuffer.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1).next();
+		this.sunVertexBuffer.vertex(SUN_SIZE, -100, -SUN_SIZE).texture(1, 0).next();
+		this.sunVertexBuffer.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0).next();
+		this.sunVertexBuffer.upload();
 
-		texture = new Texture(ResourceManager.loadImage("skybox.png"));
+		initVertexBuffer();
 	}
 
 	private void initVertexBuffer() {
@@ -91,13 +101,28 @@ public class Skybox {
 	}
 
 	public void render() {
-		this.vertexBuffer.shader.bind();
-		this.vertexBuffer.shader.setUniform("projectionMatrix", Client.getCamera().getProjectionMatrix());
-		this.vertexBuffer.shader.setUniform("viewMatrix", Client.getCamera().getViewMatrix());
-		this.vertexBuffer.shader.setUniform("modelMatrix", new Matrix4f().translate(Client.getCamera().getPosition()));
+		Matrix4f modelMatrix = new Matrix4f().translate(Client.getCamera().getPosition());
 
-		this.texture.bind();
+		shader.bind();
+		shader.setUniform("projectionMatrix", Client.getCamera().getProjectionMatrix());
+		shader.setUniform("viewMatrix", Client.getCamera().getViewMatrix());
 
-		this.vertexBuffer.draw();
+		shader.setTexture(0, skyboxTexture);
+		shader.setUniform("modelMatrix", modelMatrix);
+		vertexBuffer.draw();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glDepthMask(false);
+
+		modelMatrix.rotate(Math.toRadians(180 + 60), 1, 0, 0);
+
+		shader.setTexture(0, sunTexture);
+		shader.setUniform("modelMatrix", modelMatrix);
+		sunVertexBuffer.draw();
+
+		glDepthMask(true);
 	}
 }

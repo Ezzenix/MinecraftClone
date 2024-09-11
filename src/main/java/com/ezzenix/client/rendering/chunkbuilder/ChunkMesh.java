@@ -1,7 +1,7 @@
 package com.ezzenix.client.rendering.chunkbuilder;
 
 import com.ezzenix.engine.opengl.Mesh;
-import com.ezzenix.game.world.Chunk;
+import com.ezzenix.world.Chunk;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

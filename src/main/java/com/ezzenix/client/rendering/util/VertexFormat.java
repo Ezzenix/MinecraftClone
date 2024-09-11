@@ -3,6 +3,7 @@ package com.ezzenix.client.rendering.util;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glVertexAttribIPointer;
 
 public class VertexFormat {
 	public static VertexFormat POSITION_COLOR = new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 4);
@@ -41,7 +42,11 @@ public class VertexFormat {
 
 		int pointer = 0;
 		for (int i = 0; i < this.types.length; i++) {
-			glVertexAttribPointer(i, sizes[i], types[i], false, stride, pointer);
+			if (this.types[i] == GL_INT) {
+				glVertexAttribIPointer(i, sizes[i], types[i], stride, pointer);
+			} else {
+				glVertexAttribPointer(i, sizes[i], types[i], false, stride, pointer);
+			}
 			glEnableVertexAttribArray(i);
 			pointer += getBytes(types[i], sizes[i]);
 		}

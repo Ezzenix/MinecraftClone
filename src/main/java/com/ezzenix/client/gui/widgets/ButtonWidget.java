@@ -1,10 +1,11 @@
 package com.ezzenix.client.gui.widgets;
 
-import com.ezzenix.client.gui.GuiContext;
+import com.ezzenix.client.gui.Color;
+import com.ezzenix.client.gui.Gui;
 
 public class ButtonWidget extends Widget {
 	public String text;
-	private Runnable onClick;
+	private final Runnable onClick;
 
 	public ButtonWidget(String text, int x, int y, int width, int height, Runnable onClick) {
 		super(x, y, width, height);
@@ -20,9 +21,7 @@ public class ButtonWidget extends Widget {
 
 	@Override
 	public void render() {
-		float color = this.isHovered() ? 0.25f : 0f;
-
-		GuiContext.drawRect(this.x, this.y, this.width, this.height, color, color, color, 0.7f);
-		GuiContext.drawCenteredText(this.text, this.x + this.width / 2, this.y + this.height / 2, 18, 1, 1, 1);
+		Gui.drawButtonRect(x, y, width, height, this.isHovered());
+		Gui.drawCenteredTextWithShadow(this.text, this.x + this.width / 2, this.y + this.height / 2, Color.WHITE);
 	}
 }

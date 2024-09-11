@@ -1,6 +1,6 @@
-package com.ezzenix.game.world.gen;
+package com.ezzenix.world.gen;
 
-import com.ezzenix.game.world.Chunk;
+import com.ezzenix.world.Chunk;
 
 public class ChunkGenerator {
 	private int seed;

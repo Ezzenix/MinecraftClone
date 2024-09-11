@@ -1,9 +1,9 @@
 package com.ezzenix.physics;
 
-import com.ezzenix.game.blocks.BlockType;
-import com.ezzenix.game.enums.Direction;
-import com.ezzenix.game.world.World;
+import com.ezzenix.blocks.BlockType;
+import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
+import com.ezzenix.world.World;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 

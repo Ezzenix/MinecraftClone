@@ -1,4 +1,4 @@
-package com.ezzenix.game.enums;
+package com.ezzenix.enums;
 
 import org.joml.Vector3f;
 import org.joml.Vector3i;

@@ -1,8 +1,8 @@
 package com.ezzenix.client.rendering.util;
 
+import com.ezzenix.client.gui.Color;
 import com.ezzenix.client.gui.GuiUtil;
 import com.ezzenix.engine.opengl.Shader;
-import com.ezzenix.engine.opengl.Texture;
 import org.joml.Vector2f;
 
 import java.nio.ByteBuffer;
@@ -132,24 +132,17 @@ public class VertexBuffer {
 		return this;
 	}
 
-	public VertexBuffer color(float r, float g, float b) {
-		this.byteBuffer.putFloat(r);
-		this.byteBuffer.putFloat(g);
-		this.byteBuffer.putFloat(b);
+	public VertexBuffer color(int packedColor) {
+		this.byteBuffer.putInt(packedColor);
 		return this;
 	}
 
-	public VertexBuffer color(int packedColor) {
-		this.byteBuffer.putFloat(packedColor);
-		return this;
+	public VertexBuffer color(float r, float g, float b) {
+		return this.color(Color.pack(r, g, b, 1));
 	}
 
 	public VertexBuffer color(float r, float g, float b, float a) {
-		this.byteBuffer.putFloat(r);
-		this.byteBuffer.putFloat(g);
-		this.byteBuffer.putFloat(b);
-		this.byteBuffer.putFloat(a);
-		return this;
+		return this.color(Color.pack(r, g, b, a));
 	}
 
 	public VertexBuffer texture(float u, float v) {

@@ -3,11 +3,11 @@
 #include "color.glsl"
 
 layout(location = 0) in vec2 position;
-layout(location = 1) in float color;
+layout(location = 1) in int color;
 
 out vec4 outColor;
 
 void main() {
     gl_Position = vec4(position, 1.0, 1.0);
-    outColor = unpackColor(int(color));
+    outColor = unpackColor(color);
 }

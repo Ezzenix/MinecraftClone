@@ -1,6 +1,6 @@
 package com.ezzenix.client.rendering.chunkbuilder;
 
-import com.ezzenix.game.world.Chunk;
+import com.ezzenix.world.Chunk;
 
 import java.nio.FloatBuffer;
 

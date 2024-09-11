@@ -2,7 +2,8 @@ package com.ezzenix.client.rendering;
 
 import com.ezzenix.Debug;
 import com.ezzenix.client.Client;
-import com.ezzenix.client.gui.GuiContext;
+import com.ezzenix.client.gui.Gui;
+import com.ezzenix.client.rendering.particle.ParticleSystem;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.physics.Raycast;
 import org.joml.Vector3f;
@@ -19,6 +20,8 @@ public class Renderer {
 
 		worldRenderer = new WorldRenderer();
 		skybox = new Skybox();
+
+		//new Particle(new Vector3f(0, 50, 0)).setColor(Color.packColor(255, 0, 0, 255)).setSize(0.1f).setVelocity(new Vector3f(0, 1, 0));
 	}
 
 	public static void render() {
@@ -42,7 +45,8 @@ public class Renderer {
 		worldRenderer.render(window.getHandle());
 		Debug.render();
 		LineRenderer.renderBatch();
-		//Gui.render();
+
+		ParticleSystem.render();
 
 		Client.getHud().render();
 
@@ -50,7 +54,7 @@ public class Renderer {
 			Client.getScreen().render();
 		}
 
-		GuiContext.renderBatch();
+		Gui.renderBatch();
 
 		glfwSwapBuffers(window.getHandle());
 	}
