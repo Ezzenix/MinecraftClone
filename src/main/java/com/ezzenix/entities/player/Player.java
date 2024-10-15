@@ -1,12 +1,15 @@
 package com.ezzenix.entities.player;
 
 import com.ezzenix.client.Client;
+import com.ezzenix.client.gui.Gui;
+import com.ezzenix.client.gui.Hud;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.Entity;
 import com.ezzenix.inventory.Inventory;
 import com.ezzenix.inventory.ItemStack;
 import com.ezzenix.item.Item;
+import com.ezzenix.item.Items;
 import com.ezzenix.world.World;
 import org.joml.Math;
 import org.joml.Quaternionf;
@@ -25,6 +28,14 @@ public class Player extends Entity {
 
 		this.handSlot = 0;
 		this.inventory = new Inventory(9 * 4);
+		this.inventory.setSlot(0, new ItemStack(Items.GRASS_BLOCK, 64));
+		this.inventory.setSlot(1, new ItemStack(Items.STONE, 32));
+		this.inventory.setSlot(2, new ItemStack(Items.DIRT, 16));
+		this.inventory.setSlot(3, new ItemStack(Items.SAND, 4));
+		this.inventory.setSlot(4, new ItemStack(Items.GLASS, 2));
+		this.inventory.setSlot(5, new ItemStack(Items.OAK_PLANKS, 16));
+		this.inventory.setSlot(6, new ItemStack(Items.OAK_LEAVES, 16));
+		this.inventory.setSlot(7, new ItemStack(Items.POPPY, 16));
 
 		for (int i = 0; i < 9; i++) {
 			int slot = i;
@@ -36,6 +47,11 @@ public class Player extends Entity {
 
 	public void setHandSlot(int slot) {
 		this.handSlot = slot;
+
+		ItemStack stack = this.inventory.getSlot(slot);
+		if (stack != null) {
+			Client.getHud().sendActionbar(stack.item.name);
+		}
 	}
 
 	public int getHandSlot() {

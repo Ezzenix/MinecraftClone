@@ -47,15 +47,6 @@ public class Debug {
 
 			usedActionWhileHoldingToggleKey = true;
 			wireframeMode = !wireframeMode;
-			if (wireframeMode) {
-				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				glDisable(GL_DEPTH_TEST);
-				glDisable(GL_CULL_FACE);
-			} else {
-				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-				glEnable(GL_DEPTH_TEST);
-				glEnable(GL_CULL_FACE);
-			}
 		});
 	}
 

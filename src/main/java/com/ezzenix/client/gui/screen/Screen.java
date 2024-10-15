@@ -99,6 +99,13 @@ public class Screen {
 	public void onRemoved() {
 	}
 
+	public void mouse2Down(int x, int y) {
+
+	}
+	public void mouse2Up(int x, int y) {
+
+	}
+
 	public void dispose() {
 		for (Widget widget : this.widgets) {
 			widget.dispose();

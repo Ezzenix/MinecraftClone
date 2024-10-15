@@ -7,6 +7,8 @@ import com.ezzenix.client.rendering.util.VertexFormat;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
+import com.ezzenix.inventory.ItemStack;
+import com.ezzenix.item.BlockItem;
 import org.joml.Vector2f;
 
 import java.io.File;
@@ -19,7 +21,7 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 public class Gui {
 
 	//public static final FontRenderer FONT_RENDERER = FontRenderer.fromFile(new File("src/main/resources/fonts/minecraft.ttf"), 18);
-	public static final FontRenderer2 FONT_RENDERER = new FontRenderer2(new File("src/main/resources/fonts/minecraft.ttf"), 18);
+	public static final FontRenderer FONT_RENDERER = new FontRenderer(new File("src/main/resources/fonts/minecraft.ttf"), 18);
 
 
 	private static final VertexBuffer rectangleBuffer = new VertexBuffer(new Shader("gui/frame"), new VertexFormat(GL_FLOAT, 2, GL_INT, 1), VertexBuffer.Usage.DYNAMIC);
@@ -138,6 +140,14 @@ public class Gui {
 			textureBuffer.upload();
 			textureBuffer.draw();
 		});
+	}
+
+	public static void drawStack(ItemStack stack, int x, int y, int size) {
+		if (stack.item instanceof BlockItem) {
+			BlockType blockType = ((BlockItem) stack.item).getBlockType();
+			Gui.drawBlockIcon(blockType, x, y, size);
+			Gui.drawCenteredTextWithShadow(Integer.toString(stack.amount), (int) (x + size * 0.9f), (int) (y + size * 0.9f), Color.WHITE);
+		}
 	}
 
 	public static void drawButtonRect(int x, int y, int width, int height, boolean hovered) {

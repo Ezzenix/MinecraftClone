@@ -2,6 +2,8 @@ package com.ezzenix.client.gui;
 
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.chat.ChatHud;
+import com.ezzenix.engine.Scheduler;
+import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.entities.player.Player;
 import com.ezzenix.inventory.ItemStack;
 import com.ezzenix.item.BlockItem;
@@ -9,6 +11,9 @@ import com.ezzenix.item.BlockItem;
 public class Hud {
 
 	public ChatHud chatHud = new ChatHud();
+
+	private String actionbarText = "";
+	private float actionbarTime = 0;
 
 	//private int i = 0;
 	public Hud() {
@@ -51,15 +56,28 @@ public class Hud {
 
 			if (itemStack == null) continue;
 
-			if (isHandSlot) {
-				Gui.drawCenteredText(itemStack.item.name, width / 2, y - 22, Color.WHITE);
-			}
+			//if (isHandSlot) {
+			//	Gui.drawCenteredText(itemStack.item.name, width / 2, y - 22, Color.WHITE);
+			//}
 
-			if (itemStack.item instanceof BlockItem) {
-				Gui.drawBlockIcon(((BlockItem) itemStack.item).getBlockType(), x + 12, y + 12, size - 24);
-				Gui.drawCenteredText(Integer.toString(itemStack.amount), (int) (x + size * 0.7f), y + 38, Color.WHITE);
-			}
+			Gui.drawStack(itemStack, x + 10, y + 10, size - 20);
 		}
+	}
+
+	private float getAlpha(float a, float b, float n) {
+		return Math.clamp(((n - a) / (b - a)), 0f, 1f);
+	}
+
+	private void renderActionbar() {
+		float alpha = getAlpha(1.2f, 1.8f, Scheduler.getClock() - this.actionbarTime);
+		if (alpha == 1) return;
+		int color = Color.pack(1f, 1f, 1f, 1f - alpha);
+		Gui.drawCenteredTextWithShadow(this.actionbarText, Client.getWindow().getWidth() / 2, Client.getWindow().getHeight() - 100, color);
+	}
+
+	public void sendActionbar(String text) {
+		this.actionbarText = text;
+		this.actionbarTime = Scheduler.getClock();
 	}
 
 	public void render() {
@@ -67,6 +85,7 @@ public class Hud {
 
 		this.renderCrosshair();
 		this.renderHotbar();
+		this.renderActionbar();
 		this.chatHud.render();
 
 		//GuiContext.drawTexture(Renderer.getWorldRenderer().blockTexture, 0, 0, Client.getWindow().getWidth(), Client.getWindow().getHeight());

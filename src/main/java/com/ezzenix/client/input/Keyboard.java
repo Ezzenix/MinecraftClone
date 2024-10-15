@@ -3,6 +3,7 @@ package com.ezzenix.client.input;
 import com.ezzenix.blocks.BlockType;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.chat.ChatScreen;
+import com.ezzenix.client.gui.screen.InventoryScreen;
 import com.ezzenix.client.gui.screen.PauseScreen;
 import com.ezzenix.client.util.Screenshot;
 import com.ezzenix.engine.Input;
@@ -70,6 +71,14 @@ public class Keyboard {
 			File screenshotDirectory = new File(Client.getDirectory(), "screenshots");
 			screenshotDirectory.mkdir();
 			Screenshot.takeScreenshot(screenshotDirectory, null);
+		});
+
+		Input.keyDown(GLFW_KEY_E, () -> {
+			if (Client.getScreen() instanceof InventoryScreen) {
+				Client.setScreen(null);
+			} else {
+				Client.setScreen(new InventoryScreen());
+			}
 		});
 
 		glfwSetCharCallback(Client.getWindow().getHandle(), (long window, int codePoint) -> {

@@ -2,7 +2,7 @@ package com.ezzenix.client.gui.widgets;
 
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.Color;
-import com.ezzenix.client.gui.FontRenderer2;
+import com.ezzenix.client.gui.FontRenderer;
 import com.ezzenix.client.gui.Gui;
 import com.ezzenix.engine.Scheduler;
 
@@ -14,7 +14,7 @@ public class TextFieldWidget extends Widget {
 	private int cursor = 0;
 	private int selectionStart;
 	private int selectionEnd;
-	private FontRenderer2 fontRenderer = Gui.FONT_RENDERER;
+	private FontRenderer fontRenderer = Gui.FONT_RENDERER;
 	private float focusedAt;
 
 	public TextFieldWidget(String text, int x, int y) {

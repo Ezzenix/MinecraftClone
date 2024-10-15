@@ -1,5 +1,6 @@
 package com.ezzenix.client.rendering;
 
+import com.ezzenix.Debug;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.engine.Scheduler;
@@ -39,6 +40,9 @@ public class WorldRenderer {
 	public void render(long window) {
 		World world = Client.getWorld();
 		if (world == null) return;
+
+		boolean renderWireframe = Debug.wireframeMode;
+		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		blockTexture.bind();
 
@@ -83,6 +87,8 @@ public class WorldRenderer {
 		//glDisable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(true);
+
+		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	public void reloadAllChunks() {

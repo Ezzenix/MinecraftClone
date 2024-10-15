@@ -47,9 +47,20 @@ public class Mouse {
 			Client.getScreen().mouseDown(this.x, this.y);
 		});
 
+		Input.mouseButton2Up(() -> {
+			if (Client.getScreen() == null) return;
+			Client.getScreen().mouse2Up(this.x, this.y);
+		});
+
+		Input.mouseButton2Down(() -> {
+			if (Client.getScreen() == null) return;
+			Client.getScreen().mouse2Down(this.x, this.y);
+		});
+
 
 		Input.mouseButton2Down(() -> {
 			if (Client.isPaused()) return;
+			if (Client.getScreen() != null) return;
 
 			Item item = Client.getPlayer().getHeldItem();
 			if (item != null) {
@@ -59,6 +70,7 @@ public class Mouse {
 
 		Input.mouseButton1Down(() -> {
 			if (Client.isPaused()) return;
+			if (Client.getScreen() != null) return;
 			Raycast result = Client.getPlayer().raycast();
 			if (result != null) {
 				BlockPos blockPos = result.blockPos;

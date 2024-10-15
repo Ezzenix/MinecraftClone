@@ -65,6 +65,7 @@ public class GreedyShape {
 	}
 
 	private boolean canMergeWith(VoxelFace voxelFace) {
+		if (voxelFace.blockId == 6) return false; // TODO: Temporary check for water
 		if (voxelFace.blockId != this.initialVoxelFace.blockId) return false;
 		if (this.initialVoxelFace.ao1 != voxelFace.ao1) return false;
 		if (this.initialVoxelFace.ao2 != voxelFace.ao2) return false;
