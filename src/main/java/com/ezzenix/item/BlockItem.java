@@ -1,6 +1,6 @@
 package com.ezzenix.item;
 
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Block;
 import com.ezzenix.client.Client;
 import com.ezzenix.entities.Entity;
 import com.ezzenix.math.BlockPos;
@@ -10,9 +10,9 @@ import com.ezzenix.physics.Raycast;
 import org.joml.Vector3i;
 
 public class BlockItem extends Item {
-	private final BlockType blockType;
+	private final Block blockType;
 
-	public BlockItem(BlockType blockType) {
+	public BlockItem(Block blockType) {
 		super(blockType.getName());
 		this.blockType = blockType;
 	}
@@ -37,7 +37,7 @@ public class BlockItem extends Item {
 	public void attack() {
 	}
 
-	public BlockType getBlockType() {
+	public Block getBlock() {
 		return this.blockType;
 	}
 }

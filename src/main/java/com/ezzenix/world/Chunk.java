@@ -1,7 +1,7 @@
 package com.ezzenix.world;
 
-import com.ezzenix.blocks.BlockRegistry;
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Block;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.client.rendering.chunkbuilder.ChunkMesh;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
@@ -44,7 +44,7 @@ public class Chunk {
 		this.boundingBox = new BoundingBox(getWorldPos(), getWorldPos().add(CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_WIDTH));
 	}
 
-	public void setBlock(BlockPos blockPos, BlockType blockType) {
+	public void setBlock(BlockPos blockPos, Block blockType) {
 		LocalPosition localPosition = LocalPosition.from(this, blockPos);
 		int index = localPosition.toIndex();
 		if (index == -1) {
@@ -57,15 +57,15 @@ public class Chunk {
 
 		// if block above is flower then break it
 		BlockPos blockAbovePos = blockPos.add(0, 1, 0);
-		BlockType blockAbove = getBlock(blockAbovePos);
+		Block blockAbove = getBlock(blockAbovePos);
 		if (blockAbove != null && blockAbove.isFlower()) {
-			setBlock(blockAbovePos, BlockType.AIR);
+			setBlock(blockAbovePos, Blocks.AIR);
 		}
 
 		byte id = blockIDs[index];
 		if (id != blockType.getId()) {
 			blockIDs[index] = blockType.getId();
-			this.blockCount += (blockType != BlockType.AIR ? 1 : -1);
+			this.blockCount += (blockType != Blocks.AIR ? 1 : -1);
 		}
 		this.flagMeshForUpdate();
 
@@ -88,20 +88,20 @@ public class Chunk {
 
 	}
 
-	public BlockType getBlock(BlockPos blockPos) {
+	public Block getBlock(BlockPos blockPos) {
 		int index = LocalPosition.from(this, blockPos).toIndex();
 		if (index == -1) {
 			return world.getBlock(blockPos); // not in this chunk, redirect to world
 		}
 		return getBlock(index);
 	}
-	public BlockType getBlock(LocalPosition localPosition) {
+	public Block getBlock(LocalPosition localPosition) {
 		return getBlock(BlockPos.from(this, localPosition));
 	}
-	public BlockType getBlock(int index) {
+	public Block getBlock(int index) {
 		if (index == -1 || index >= blockIDs.length) return null;
-		BlockType type = BlockRegistry.getBlockFromId(blockIDs[index]);
-		return type != null ? type : BlockType.AIR;
+		Block type = Blocks.getBlockFromId(blockIDs[index]);
+		return type != null ? type : Blocks.AIR;
 	}
 
 	public ChunkPos getPos() {

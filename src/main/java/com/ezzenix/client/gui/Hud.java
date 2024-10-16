@@ -3,10 +3,8 @@ package com.ezzenix.client.gui;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.chat.ChatHud;
 import com.ezzenix.engine.Scheduler;
-import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.entities.player.Player;
 import com.ezzenix.inventory.ItemStack;
-import com.ezzenix.item.BlockItem;
 
 public class Hud {
 
@@ -89,6 +87,6 @@ public class Hud {
 		this.chatHud.render();
 
 		//GuiContext.drawTexture(Renderer.getWorldRenderer().blockTexture, 0, 0, Client.getWindow().getWidth(), Client.getWindow().getHeight());
-		//GuiContext.drawBlockIcon(BlockType.GRASS_BLOCK, 0, 0, Math.max(Client.getWindow().getWidth(), Client.getWindow().getHeight()));
+		//GuiContext.drawBlockIcon(Blocks.GRASS_BLOCK, 0, 0, Math.max(Client.getWindow().getWidth(), Client.getWindow().getHeight()));
 	}
 }

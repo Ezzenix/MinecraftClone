@@ -1,15 +1,11 @@
 package com.ezzenix.client.gui.screen.handledscreen;
 
-
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.Color;
 import com.ezzenix.client.gui.Gui;
-import com.ezzenix.client.gui.screen.InventoryScreen;
 import com.ezzenix.client.gui.screen.Screen;
-import com.ezzenix.client.input.Mouse;
 import com.ezzenix.inventory.Inventory;
 import com.ezzenix.inventory.ItemStack;
-import com.ezzenix.item.BlockItem;
 
 import java.util.ArrayList;
 import java.util.List;

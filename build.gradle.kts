@@ -29,6 +29,7 @@ dependencies {
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
     implementation("it.unimi.dsi", "fastutil", "8.2.1")
+    implementation("com.google.guava:guava:33.3.1-jre")
 
     implementation("org.joml", "joml", jomlVersion)
     implementation("org.lwjgl", "lwjgl")

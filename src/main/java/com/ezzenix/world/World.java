@@ -1,6 +1,6 @@
 package com.ezzenix.world;
 
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Block;
 import com.ezzenix.client.Client;
 import com.ezzenix.entities.Entity;
 import com.ezzenix.math.BlockPos;
@@ -48,7 +48,7 @@ public class World {
 		return createChunk(new ChunkPos(x, z));
 	}
 
-	public void setBlock(BlockPos blockPos, BlockType blockType) {
+	public void setBlock(BlockPos blockPos, Block blockType) {
 		if (!blockPos.isValid())
 			throw new RuntimeException("Attempt to place block outside of world");
 
@@ -61,7 +61,7 @@ public class World {
 		chunk.setBlock(blockPos, blockType);
 	}
 
-	public BlockType getBlock(BlockPos blockPos) {
+	public Block getBlock(BlockPos blockPos) {
 		Chunk chunk = getChunk(blockPos);
 		if (chunk == null || !chunk.hasGenerated) return null;
 		return chunk.getBlock(blockPos);

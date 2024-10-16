@@ -8,6 +8,6 @@ public class TextureManager {
 	}
 
 	public void getTexture(String path) {
-		
+
 	}
 }

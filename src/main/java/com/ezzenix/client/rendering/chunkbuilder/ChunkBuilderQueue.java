@@ -1,7 +1,6 @@
 package com.ezzenix.client.rendering.chunkbuilder;
 
 import com.ezzenix.client.Client;
-import com.ezzenix.client.gui.Hud;
 import com.ezzenix.client.rendering.chunkbuilder.builder.ChunkBuilder;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.math.ChunkPos;

@@ -1,7 +1,7 @@
 package com.ezzenix.client.rendering.chunkbuilder.builder;
 
-import com.ezzenix.blocks.BlockRegistry;
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Block;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.client.rendering.chunkbuilder.ChunkBuildRequest;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.enums.Direction;
@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ChunkBuilder {
-	public static Vector2f[] getBlockTextureUV(BlockType blockType, Direction direction) {
-		if (direction == Direction.UP) return blockType.textureUVTop;
-		if (direction == Direction.DOWN) return blockType.textureUVBottom;
-		return blockType.textureUVSides;
+	public static Vector2f[] getBlockTextureUV(Block blockType, Direction direction) {
+		if (direction == Direction.UP) return blockType.getTexture().getTopUV();
+		if (direction == Direction.DOWN) return blockType.getTexture().getBottomUV();
+		return blockType.getTexture().getSideUV();
 	}
 
 	private static List<Float> create(ChunkBuildRequest request, boolean transparentBlocksOnly) {
@@ -32,7 +32,7 @@ public class ChunkBuilder {
 		if (transparentBlocksOnly) {
 			for (int i = 0; i < chunk.getBlockIDs().length; i++) {
 				LocalPosition localPosition = LocalPosition.fromIndex(i);
-				BlockType blockType = chunk.getBlock(localPosition);
+				Block blockType = chunk.getBlock(localPosition);
 				if (blockType == null || !blockType.isFlower()) continue;
 				Vector3f midPos = new Vector3f(localPosition.x + 0.5f, localPosition.y, localPosition.z + 0.5f);
 
@@ -58,7 +58,7 @@ public class ChunkBuilder {
 
 		// Blocks
 		for (GreedyShape shape : generateShapes(chunk, transparentBlocksOnly)) {
-			BlockType blockType = BlockRegistry.getBlockFromId(shape.initialVoxelFace.blockId);
+			Block blockType = Blocks.getBlockFromId(shape.initialVoxelFace.blockId);
 
 			Vector2f[] textureUV = getBlockTextureUV(blockType, shape.initialVoxelFace.direction);
 
@@ -179,13 +179,13 @@ public class ChunkBuilder {
 		vertexList.add(aoFactor);
 	}
 
-	private static boolean shouldRenderFace(Chunk chunk, BlockType blockType, BlockPos blockPos, Direction direction) {
-		if (blockType == BlockType.AIR) return false;
+	private static boolean shouldRenderFace(Chunk chunk, Block blockType, BlockPos blockPos, Direction direction) {
+		if (blockType == Blocks.AIR) return false;
 
-		BlockType neighborType = chunk.getBlock(blockPos.add(direction.getNormal().x, direction.getNormal().y, direction.getNormal().z));
+		Block neighborType = chunk.getBlock(blockPos.add(direction.getNormal().x, direction.getNormal().y, direction.getNormal().z));
 
 		if (neighborType == null) return (direction == Direction.UP || direction == Direction.DOWN);
-		if (neighborType == BlockType.AIR) return true;
+		if (neighborType == Blocks.AIR) return true;
 
 		if (neighborType == blockType && blockType.isFluid()) return false;
 
@@ -204,7 +204,7 @@ public class ChunkBuilder {
 		for (int i = 0; i < chunk.getBlockIDs().length; i++) {
 			byte blockId = blockArray[i];
 			if (blockId == 1) continue; // air
-			BlockType type = BlockRegistry.getBlockFromId(blockId);
+			Block type = Blocks.getBlockFromId(blockId);
 			if (type.isFlower()) continue;
 
 			LocalPosition localPosition = LocalPosition.fromIndex(i);

@@ -1,6 +1,6 @@
 package com.ezzenix.client.input;
 
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.screen.Screen;
 import com.ezzenix.client.rendering.particle.BlockBreakParticle;
@@ -74,7 +74,7 @@ public class Mouse {
 			Raycast result = Client.getPlayer().raycast();
 			if (result != null) {
 				BlockPos blockPos = result.blockPos;
-				Client.getWorld().setBlock(blockPos, BlockType.AIR);
+				Client.getWorld().setBlock(blockPos, Blocks.AIR);
 
 				float minX = blockPos.x;
 				float maxX = blockPos.x + 1;

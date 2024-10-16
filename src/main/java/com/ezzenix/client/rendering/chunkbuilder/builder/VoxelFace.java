@@ -1,7 +1,7 @@
 package com.ezzenix.client.rendering.chunkbuilder.builder;
 
-import com.ezzenix.blocks.BlockRegistry;
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Block;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.LocalPosition;
@@ -29,10 +29,10 @@ public class VoxelFace {
 		applyOffsetRotation(direction, offset);
 
 		BlockPos worldPos = BlockPos.from(chunk, localPosition.add(offset.x, offset.y, offset.z));
-		BlockType blockType = chunk.getBlock(worldPos);
+		Block blockType = chunk.getBlock(worldPos);
 
 		if (blockType == null) return 0;
-		return blockType == BlockType.AIR || !blockType.isSolid() ? 0 : 1;
+		return blockType == Blocks.AIR || !blockType.isSolid() ? 0 : 1;
 	}
 
 	private void applyOffsetRotation(Direction direction, Vector3i offset) {
@@ -54,7 +54,7 @@ public class VoxelFace {
 	}
 
 	public void calculateAO(Chunk chunk) {
-		BlockType type = BlockRegistry.getBlockFromId(blockId);
+		Block type = Blocks.getBlockFromId(blockId);
 		if (type.isTransparent()) return;
 
 		int W = isBlockAt(chunk, this.direction, new Vector3i(-1, 1, 0));

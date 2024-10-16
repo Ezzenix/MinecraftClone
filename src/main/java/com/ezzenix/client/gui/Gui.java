@@ -1,6 +1,6 @@
 package com.ezzenix.client.gui;
 
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Block;
 import com.ezzenix.client.rendering.Renderer;
 import com.ezzenix.client.rendering.util.VertexBuffer;
 import com.ezzenix.client.rendering.util.VertexFormat;
@@ -122,9 +122,9 @@ public class Gui {
 		});
 	}
 
-	public static void drawBlockIcon(BlockType blockType, int x, int y, int size) {
+	public static void drawBlockIcon(Block blockType, int x, int y, int size) {
 		Texture texture = Renderer.getWorldRenderer().blockTexture;
-		Vector2f[] uv = blockType.textureUVSides;
+		Vector2f[] uv = blockType.getTexture().getSideUV();
 
 		renderTasks.add(() -> {
 			textureBuffer.shader.setTexture(0, texture);
@@ -144,7 +144,7 @@ public class Gui {
 
 	public static void drawStack(ItemStack stack, int x, int y, int size) {
 		if (stack.item instanceof BlockItem) {
-			BlockType blockType = ((BlockItem) stack.item).getBlockType();
+			Block blockType = ((BlockItem) stack.item).getBlock();
 			Gui.drawBlockIcon(blockType, x, y, size);
 			Gui.drawCenteredTextWithShadow(Integer.toString(stack.amount), (int) (x + size * 0.9f), (int) (y + size * 0.9f), Color.WHITE);
 		}

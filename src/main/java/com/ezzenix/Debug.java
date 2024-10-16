@@ -11,7 +11,6 @@ import com.ezzenix.world.Chunk;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 
 public class Debug {
 	public static boolean wireframeMode = false;

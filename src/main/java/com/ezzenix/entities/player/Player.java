@@ -1,8 +1,6 @@
 package com.ezzenix.entities.player;
 
 import com.ezzenix.client.Client;
-import com.ezzenix.client.gui.Gui;
-import com.ezzenix.client.gui.Hud;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.Entity;

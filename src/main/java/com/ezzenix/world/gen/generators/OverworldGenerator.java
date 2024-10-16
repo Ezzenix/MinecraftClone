@@ -1,6 +1,7 @@
 package com.ezzenix.world.gen.generators;
 
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Block;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.world.Chunk;
@@ -33,10 +34,10 @@ public class OverworldGenerator extends ChunkGenerator {
 					float density = (float) y / (16 * 4);
 
 					if (value > density) {
-						chunk.setBlock(new BlockPos(absoluteX, y, absoluteZ), (y <= 26) ? ((y <= 18) ? BlockType.STONE : BlockType.SAND) : BlockType.GRASS_BLOCK);
+						chunk.setBlock(new BlockPos(absoluteX, y, absoluteZ), (y <= 26) ? ((y <= 18) ? Blocks.STONE : Blocks.SAND) : Blocks.GRASS_BLOCK);
 					} else {
 						if (y <= 25) {
-							chunk.setBlock(new BlockPos(absoluteX, y, absoluteZ), BlockType.WATER);
+							chunk.setBlock(new BlockPos(absoluteX, y, absoluteZ), Blocks.WATER);
 						}
 					}
 				}
@@ -51,12 +52,12 @@ public class OverworldGenerator extends ChunkGenerator {
 
 					BlockPos blockPos = new BlockPos(absoluteX, y, absoluteZ);
 					BlockPos blockPosBelow = blockPos.add(0, -1, 0);
-					BlockType blockType = chunk.getBlock(blockPos);
-					BlockType blockTypeBelow = chunk.getBlock(blockPosBelow);
+					Block blockType = chunk.getBlock(blockPos);
+					Block blockTypeBelow = chunk.getBlock(blockPosBelow);
 
-					if (blockTypeBelow == BlockType.GRASS_BLOCK && blockType == BlockType.AIR) {
+					if (blockTypeBelow == Blocks.GRASS_BLOCK && blockType == Blocks.AIR) {
 						if (Math.random() > 0.78f) {
-							chunk.setBlock(blockPos, Math.random() > 0.15f ? BlockType.GRASS : BlockType.POPPY);
+							chunk.setBlock(blockPos, Math.random() > 0.15f ? Blocks.GRASS : Blocks.POPPY);
 						} else if (Math.random() > 0.98f) {
 							placeTree(chunk, blockPos);
 						}
@@ -85,17 +86,17 @@ public class OverworldGenerator extends ChunkGenerator {
 		}
 
 		for (BlockPos pos : leavesPositions) {
-			BlockType block = chunk.getBlock(pos);
-			if (block == null || block == BlockType.AIR) {
-				chunk.setBlock(pos, BlockType.OAK_LEAVES);
+			Block block = chunk.getBlock(pos);
+			if (block == null || block == Blocks.AIR) {
+				chunk.setBlock(pos, Blocks.OAK_LEAVES);
 			}
 		}
 
 		// Logs
-		chunk.setBlock(blockPos.add(new BlockPos(0, 0, 0)), BlockType.OAK_LOG);
-		chunk.setBlock(blockPos.add(new BlockPos(0, 1, 0)), BlockType.OAK_LOG);
-		chunk.setBlock(blockPos.add(new BlockPos(0, 2, 0)), BlockType.OAK_LOG);
-		chunk.setBlock(blockPos.add(new BlockPos(0, 3, 0)), BlockType.OAK_LOG);
-		chunk.setBlock(blockPos.add(new BlockPos(0, 4, 0)), BlockType.OAK_LOG);
+		chunk.setBlock(blockPos.add(new BlockPos(0, 0, 0)), Blocks.OAK_LOG);
+		chunk.setBlock(blockPos.add(new BlockPos(0, 1, 0)), Blocks.OAK_LOG);
+		chunk.setBlock(blockPos.add(new BlockPos(0, 2, 0)), Blocks.OAK_LOG);
+		chunk.setBlock(blockPos.add(new BlockPos(0, 3, 0)), Blocks.OAK_LOG);
+		chunk.setBlock(blockPos.add(new BlockPos(0, 4, 0)), Blocks.OAK_LOG);
 	}
 }

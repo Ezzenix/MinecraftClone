@@ -1,6 +1,7 @@
 package com.ezzenix.physics;
 
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Block;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.client.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.Entity;
@@ -22,7 +23,7 @@ public class Physics {
 	private static void stepEntity(Entity entity, float deltaTime) {
 		World world = entity.getWorld();
 
-		BlockType blockAtEntity = world.getBlock(BlockPos.from(entity.getPosition()));
+		Block blockAtEntity = world.getBlock(BlockPos.from(entity.getPosition()));
 
 		entity.isInFluid = blockAtEntity != null && blockAtEntity.isFluid();
 
@@ -76,8 +77,8 @@ public class Physics {
 					for (int y = newBlockPos.y - 1; y <= newBlockPos.y + 2; y++) {
 						for (int z = newBlockPos.z - 1; z <= newBlockPos.z + 1; z++) {
 							BlockPos blockPos = new BlockPos(x, y, z);
-							BlockType blockType = world.getBlock(blockPos);
-							if (blockType == null || blockType == BlockType.AIR) continue;
+							Block blockType = world.getBlock(blockPos);
+							if (blockType == null || blockType == Blocks.AIR) continue;
 
 							if (blockPos.equals(newBlockPos) && axisVector.y != 1) continue;
 							if (blockPos.equals(newBlockPos.add(0, 1, 0)) && axisVector.y != 1) continue;

@@ -1,6 +1,6 @@
 package com.ezzenix.client.input;
 
-import com.ezzenix.blocks.BlockType;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.client.Client;
 import com.ezzenix.client.gui.chat.ChatScreen;
 import com.ezzenix.client.gui.screen.InventoryScreen;
@@ -37,7 +37,7 @@ public class Keyboard {
 		Input.keyDown(GLFW_KEY_KP_1, () -> {
 			BlockPos blockPos = Client.getPlayer().getBlockPos();
 			if (blockPos.isValid()) {
-				Client.getWorld().setBlock(blockPos, BlockType.STONE);
+				Client.getWorld().setBlock(blockPos, Blocks.STONE);
 			}
 		});
 
