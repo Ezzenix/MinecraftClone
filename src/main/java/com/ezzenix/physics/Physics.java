@@ -2,7 +2,7 @@ package com.ezzenix.physics;
 
 import com.ezzenix.blocks.Block;
 import com.ezzenix.blocks.Blocks;
-import com.ezzenix.client.Client;
+import com.ezzenix.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.Entity;
 import com.ezzenix.math.BlockPos;
@@ -23,7 +23,7 @@ public class Physics {
 	private static void stepEntity(Entity entity, float deltaTime) {
 		World world = entity.getWorld();
 
-		Block blockAtEntity = world.getBlock(BlockPos.from(entity.getPosition()));
+		Block blockAtEntity = world.getBlockState(new BlockPos(entity.getPosition())).getBlock();
 
 		entity.isInFluid = blockAtEntity != null && blockAtEntity.isFluid();
 
@@ -67,7 +67,7 @@ public class Physics {
 			Vector3f newPosition = new Vector3f(entityPosition).add(vel);
 			entity.setPosition(newPosition);
 
-			BlockPos newBlockPos = BlockPos.from(newPosition);
+			BlockPos newBlockPos = new BlockPos(newPosition);
 
 			Vector3f intersection = new Vector3f();
 			float highestLength = 0;
@@ -77,7 +77,7 @@ public class Physics {
 					for (int y = newBlockPos.y - 1; y <= newBlockPos.y + 2; y++) {
 						for (int z = newBlockPos.z - 1; z <= newBlockPos.z + 1; z++) {
 							BlockPos blockPos = new BlockPos(x, y, z);
-							Block blockType = world.getBlock(blockPos);
+							Block blockType = world.getBlockState(blockPos).getBlock();
 							if (blockType == null || blockType == Blocks.AIR) continue;
 
 							if (blockPos.equals(newBlockPos) && axisVector.y != 1) continue;
@@ -148,12 +148,6 @@ public class Physics {
 		float deltaTime = Scheduler.getDeltaTime() * gameSpeed;
 
 		for (Entity entity : Client.getWorld().getEntities()) {
-			//Vector3f position = entity.getPosition();
-			//Vector3f targetPosition = new Vector3f(position).add(new Vector3f(entity.getVelocity()).mul(deltaTime));
-			//float distance = position.distance(targetPosition);
-
-			//int checks = (int)distance*5;
-
 			stepEntity(entity, deltaTime);
 		}
 	}

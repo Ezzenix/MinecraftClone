@@ -1,6 +1,6 @@
 package com.ezzenix.entities.player;
 
-import com.ezzenix.client.Client;
+import com.ezzenix.Client;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.Entity;
@@ -8,6 +8,7 @@ import com.ezzenix.inventory.Inventory;
 import com.ezzenix.inventory.ItemStack;
 import com.ezzenix.item.Item;
 import com.ezzenix.item.Items;
+import com.ezzenix.physics.Raycast;
 import com.ezzenix.world.World;
 import org.joml.Math;
 import org.joml.Quaternionf;
@@ -34,6 +35,7 @@ public class Player extends Entity {
 		this.inventory.setSlot(5, new ItemStack(Items.OAK_PLANKS, 16));
 		this.inventory.setSlot(6, new ItemStack(Items.OAK_LEAVES, 16));
 		this.inventory.setSlot(7, new ItemStack(Items.POPPY, 16));
+		this.inventory.setSlot(8, new ItemStack(Items.OAK_LOG, 16));
 
 		for (int i = 0; i < 9; i++) {
 			int slot = i;

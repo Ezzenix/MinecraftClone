@@ -1,10 +1,11 @@
 package com.ezzenix.item;
 
 import com.ezzenix.blocks.Block;
-import com.ezzenix.client.Client;
+import com.ezzenix.Client;
 import com.ezzenix.entities.Entity;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
+import com.ezzenix.math.ChunkPos;
 import com.ezzenix.physics.Physics;
 import com.ezzenix.physics.Raycast;
 import org.joml.Vector3i;
@@ -29,7 +30,7 @@ public class BlockItem extends Item {
 					if (entity.boundingBox.getIntersection(blockBoundingBox).length() > 0) return;
 				}
 
-				Client.getWorld().setBlock(blockPos, this.blockType);
+				Client.getWorld().setBlockState(blockPos, this.blockType.getDefaultState());
 			}
 		}
 	}

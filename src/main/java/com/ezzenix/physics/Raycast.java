@@ -56,7 +56,7 @@ public class Raycast {
 
 		while (distance < maxDistance) {
 			BlockPos voxelBlockPos = new BlockPos(currentVoxel.x, currentVoxel.y, currentVoxel.z);
-			Block voxelBlock = world.getBlock(voxelBlockPos);
+			Block voxelBlock = world.getBlockState(voxelBlockPos).getBlock();
 			if (voxelBlock != Blocks.AIR && voxelBlock != null && !voxelBlock.isFluid()) {
 				Vector3i normal = currentVoxel.add(previousVoxel.mul(-1)).mul(-1);
 				Direction hitDirection = Direction.getFace(normal);
@@ -69,21 +69,21 @@ public class Raycast {
 
 			if (tMax.x < tMax.y) {
 				if (tMax.x < tMax.z) {
-					currentVoxel.x += step.x;
+					currentVoxel.x += (int) step.x;
 					distance = tMax.x;
 					tMax.x += tDelta.x;
 				} else {
-					currentVoxel.z += step.z;
+					currentVoxel.z += (int) step.z;
 					distance = tMax.z;
 					tMax.z += tDelta.z;
 				}
 			} else {
 				if (tMax.y < tMax.z) {
-					currentVoxel.y += step.y;
+					currentVoxel.y += (int) step.y;
 					distance = tMax.y;
 					tMax.y += tDelta.y;
 				} else {
-					currentVoxel.z += step.z;
+					currentVoxel.z += (int) step.z;
 					distance = tMax.z;
 					tMax.z += tDelta.z;
 				}

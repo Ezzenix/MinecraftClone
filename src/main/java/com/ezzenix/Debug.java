@@ -1,13 +1,13 @@
 package com.ezzenix;
 
-import com.ezzenix.client.Client;
-import com.ezzenix.client.gui.DebugHud;
-import com.ezzenix.client.rendering.LineRenderer;
-import com.ezzenix.client.rendering.Renderer;
+import com.ezzenix.Client;
+import com.ezzenix.gui.DebugHud;
+import com.ezzenix.rendering.LineRenderer;
+import com.ezzenix.rendering.Renderer;
 import com.ezzenix.engine.Input;
 import com.ezzenix.entities.player.Player;
 import com.ezzenix.math.ChunkPos;
-import com.ezzenix.world.Chunk;
+import com.ezzenix.world.chunk.Chunk;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -51,14 +51,14 @@ public class Debug {
 
 	public static void renderChunkBorders() {
 		Player player = Client.getPlayer();
-		ChunkPos chunkPos = ChunkPos.from(player.getBlockPos());
+		ChunkPos chunkPos = new ChunkPos(player.getBlockPos());
 
 		int viewDistance = 1;
 
 		for (int x = chunkPos.x * Chunk.CHUNK_WIDTH - Chunk.CHUNK_WIDTH * viewDistance; x <= chunkPos.x * Chunk.CHUNK_WIDTH + Chunk.CHUNK_WIDTH * viewDistance; x += Chunk.CHUNK_WIDTH) {
 			for (int z = chunkPos.z * Chunk.CHUNK_WIDTH - Chunk.CHUNK_WIDTH * viewDistance; z <= chunkPos.z * Chunk.CHUNK_WIDTH + Chunk.CHUNK_WIDTH * viewDistance; z += Chunk.CHUNK_WIDTH) {
 				Vector3f color = new Vector3f((float) 244 / 255, (float) 255 / 255, (float) 128 / 255);
-				LineRenderer.drawBox(new Vector3f(x, 0, z), new Vector3f(x + Chunk.CHUNK_WIDTH, Chunk.CHUNK_HEIGHT, z + Chunk.CHUNK_WIDTH), color);
+				LineRenderer.drawBox(new Vector3f(x, 0, z), new Vector3f(x + Chunk.CHUNK_WIDTH, Chunk.CHUNK_HEIGHT + 1, z + Chunk.CHUNK_WIDTH), color);
 			}
 		}
 	}

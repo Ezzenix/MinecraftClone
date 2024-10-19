@@ -1,7 +1,5 @@
 package com.ezzenix;
 
-import com.ezzenix.state.TestBlock;
-
 public class Game {
 	public static void main(String[] args) {
 		/*
@@ -24,9 +22,9 @@ public class Game {
 		}
 		 */
 
-		new TestBlock();
+		//new TestBlock();
 
 
-		//Client.init();
+		Client.init();
 	}
 }

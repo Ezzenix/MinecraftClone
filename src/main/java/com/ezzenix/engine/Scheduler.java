@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public class Scheduler {
+	private static final ConcurrentLinkedQueue<Runnable> mainThreadTasks = new ConcurrentLinkedQueue<>();
 	private static final ConcurrentLinkedQueue<SchedulerRunnable> runnables = new ConcurrentLinkedQueue<>();
 	private static float deltaTime = (float) 1 / 60;
 	private static long lastUpdate = System.nanoTime();
@@ -75,6 +76,10 @@ public class Scheduler {
 		return t / 1000f;
 	}
 
+	public static boolean isMainThread() {
+		return Thread.currentThread().getName().equals("main");
+	}
+
 	public static SchedulerRunnable bindToUpdate(Runnable runnable) {
 		SchedulerRunnable schedulerRunnable = new SchedulerRunnable(runnable);
 		runnables.add(schedulerRunnable);
@@ -85,6 +90,20 @@ public class Scheduler {
 		SchedulerRunnable schedulerRunnable = new SchedulerRunnable(runnable, interval);
 		runnables.add(schedulerRunnable);
 		return schedulerRunnable;
+	}
+
+	/*
+	 * Schedule a task to run on the main thread. Can be run from any thread.
+	 */
+	public static void recordMainThreadCall(Runnable t) {
+		mainThreadTasks.offer(t);
+	}
+
+	public static void runMainThreadTasks() {
+		Runnable task;
+		while ((task = mainThreadTasks.poll()) != null) {
+			task.run();
+		}
 	}
 
 	public static class SchedulerRunnable {

@@ -1,6 +1,8 @@
 package com.ezzenix.engine.opengl;
 
-import com.ezzenix.client.resource.ResourceManager;
+import com.ezzenix.Client;
+import com.ezzenix.resource.ResourceManager;
+import com.ezzenix.engine.Scheduler;
 import org.joml.*;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
@@ -15,8 +17,13 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
 	private final int programId;
-	private final HashMap<String, Integer> uniformLocations = new HashMap<>();
+	private final HashMap<String, Uniform> uniforms = new HashMap<>();
 	private final Texture[] samplers = new Texture[3];
+
+	private final Uniform uniformViewMatrix;
+	private final Uniform uniformProjectionMatrix;
+	private final Uniform uniformGameTime;
+	private final Uniform uniformModelMatrix;
 
 	public Shader(String vertexShaderPath, String fragmentShaderPath) {
 		// create shader program
@@ -41,8 +48,13 @@ public class Shader {
 		if (GL20.glGetProgrami(programId, GL20.GL_VALIDATE_STATUS) == GL_FALSE)
 			throw new RuntimeException("Error validating shader: " + glGetProgramInfoLog(programId, 1024));
 
+		// load uniforms
 		initializeUniforms(vertexShaderPath);
 		initializeUniforms(fragmentShaderPath);
+		this.uniformViewMatrix = getUniform("viewMatrix");
+		this.uniformProjectionMatrix = getUniform("projectionMatrix");
+		this.uniformGameTime = getUniform("gameTime");
+		this.uniformModelMatrix = getUniform("modelMatrix");
 
 		// cleanup
 		glDetachShader(programId, vertexShader);
@@ -89,7 +101,8 @@ public class Shader {
 					String uniformName = tokens[2].replaceAll(";", "");
 					int location = glGetUniformLocation(programId, uniformName);
 					if (location != -1) {
-						uniformLocations.put(uniformName, location);
+						Uniform uniform = new Uniform(location);
+						this.uniforms.put(uniformName, uniform);
 						//System.out.println("Added uniform " + uniformName + " at location " + location);
 					} else {
 						System.err.println("Uniform " + uniformName + " is defined in shader/" + shaderPath + " but is never used");
@@ -119,13 +132,20 @@ public class Shader {
 		return shaderId;
 	}
 
+	public Uniform getUniform(String name) {
+		return this.uniforms.get(name);
+	}
+
 	public void setTexture(int slot, Texture texture) {
 		if (slot < 0 || slot >= this.samplers.length)
 			throw new RuntimeException("Sampler slot " + slot + " is not a valid slot");
 
 		if (this.samplers[slot] == null) {
 			this.bind();
-			this.setUniform("sampler" + slot, slot);
+			Uniform uniform = getUniform("sampler" + slot);
+			if (uniform != null) {
+				uniform.set(slot);
+			}
 		}
 
 		this.samplers[slot] = texture;
@@ -142,53 +162,34 @@ public class Shader {
 		}
 	}
 
-	public int getLocation(String uniformName) {
-		return uniformLocations.get(uniformName);
-	}
-
-	public void setUniform(String uniformName, Matrix4f value) {
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer matBuffer = stack.mallocFloat(16);
-			value.get(matBuffer);
-			glUniformMatrix4fv(getLocation(uniformName), false, matBuffer);
+	public void setModelMatrix(Matrix4f value) {
+		if (this.uniformModelMatrix != null) {
+			this.uniformModelMatrix.set(value);
 		}
 	}
 
-	public void setUniform(String uniformName, Matrix3f value) {
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer matBuffer = stack.mallocFloat(9);
-			value.get(matBuffer);
-			glUniformMatrix3fv(getLocation(uniformName), false, matBuffer);
+	public void setUniforms(Matrix4f modelMatrix) {
+		if (this.uniformProjectionMatrix != null) {
+			this.uniformProjectionMatrix.set(Client.getCamera().getProjectionMatrix());
+		}
+		if (this.uniformViewMatrix != null) {
+			this.uniformViewMatrix.set(Client.getCamera().getViewMatrix());
+		}
+		if (this.uniformModelMatrix != null && modelMatrix != null) {
+			this.uniformModelMatrix.set(modelMatrix);
+		}
+		if (this.uniformGameTime != null) {
+			this.uniformGameTime.set(Scheduler.getClock());
 		}
 	}
 
-	public void setUniform(String uniformName, Vector4f value) {
-		glUniform4f(getLocation(uniformName), value.x, value.y, value.z, value.w);
-	}
-
-	public void setUniform(String uniformName, Vector3f value) {
-		glUniform3f(getLocation(uniformName), value.x, value.y, value.z);
-	}
-
-	public void setUniform(String uniformName, Vector2f value) {
-		glUniform2f(getLocation(uniformName), value.x, value.y);
-	}
-
-	public void setUniform(String uniformName, float value) {
-		glUniform1f(getLocation(uniformName), value);
-	}
-
-	public void setUniform(String uniformName, int value) {
-		glUniform1i(getLocation(uniformName), value);
-	}
-
-	public void setUniform(String uniformName, int[] value) {
-		glUniform1iv(getLocation(uniformName), value);
+	public void setUniforms() {
+		setUniforms(null);
 	}
 
 	public void cleanup() {
 		glUseProgram(0);
 		glDeleteProgram(programId);
-		uniformLocations.clear();
+		uniforms.clear();
 	}
 }

@@ -1,7 +1,7 @@
 package com.ezzenix.engine.opengl;
 
-import com.ezzenix.client.Client;
-import com.ezzenix.client.resource.ResourceManager;
+import com.ezzenix.Client;
+import com.ezzenix.resource.ResourceManager;
 import com.ezzenix.engine.Signal;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;

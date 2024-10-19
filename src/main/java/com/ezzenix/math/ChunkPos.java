@@ -13,14 +13,25 @@ public class ChunkPos {
 		this.z = z;
 	}
 
-	public static ChunkPos from(BlockPos blockPos) {
-		int chunkX = blockPos.x >> 4; // Divide by chunk size (16)
-		int chunkZ = blockPos.z >> 4; // Divide by chunk size (16)
-		return new ChunkPos(chunkX, chunkZ);
+	public ChunkPos(long pos) {
+		this.x = (int) pos;
+		this.z = (int) (pos >> 32);
 	}
 
-	public static ChunkPos from(Vector3f position) {
-		return ChunkPos.from(BlockPos.from(position));
+	public ChunkPos(BlockPos blockPos) {
+		this(blockPos.x >> 4, blockPos.z >> 4);
+	}
+
+	public ChunkPos(Vector3f position) {
+		this(new BlockPos(position));
+	}
+
+	public long toLong() {
+		return toLong(this.x, this.z);
+	}
+
+	public static long toLong(int chunkX, int chunkZ) {
+		return (long) chunkX & 4294967295L | ((long) chunkZ & 4294967295L) << 32;
 	}
 
 	public float distanceTo(ChunkPos other) {

@@ -1,6 +1,6 @@
 package com.ezzenix.math;
 
-import com.ezzenix.client.rendering.LineRenderer;
+import com.ezzenix.rendering.LineRenderer;
 import org.joml.FrustumIntersection;
 import org.joml.Math;
 import org.joml.Matrix4f;

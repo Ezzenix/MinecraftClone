@@ -7,9 +7,9 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class State {
+public class State<S extends State<S>> {
 	private final Map<Property<?>, Comparable<?>> properties;
-	private Table<Property<?>, Comparable<?>, State> transitionTable;
+	private Table<Property<?>, Comparable<?>, S> transitionTable;
 
 	public State(Map<Property<?>, Comparable<?>> properties) {
 		this.properties = properties;
@@ -23,7 +23,8 @@ public class State {
 		return this.properties.get(property);
 	}
 
-	public <T extends Comparable<T>, V extends T> State with(Property<T> property, V value) {
+	@SuppressWarnings("unchecked")
+	public <T extends Comparable<T>, V extends T> S with(Property<T> property, V value) {
 		Comparable<?> comparable = this.properties.get(property);
 
 		if (comparable == null) {
@@ -31,10 +32,10 @@ public class State {
 		}
 
 		if (comparable.equals(value)) {
-			return this;
+			return (S) this;
 		}
 
-		State nextState = this.transitionTable.get(property, value);
+		S nextState = this.transitionTable.get(property, value);
 		if (nextState == null) {
 			throw new IllegalStateException("Cannot set property " + property.getClass().getSimpleName() + " to " + value + " as it is not an allowed value");
 		}
@@ -56,7 +57,7 @@ public class State {
 		return map;
 	}
 
-	public void setTransitionTable(Table<Property<?>, Comparable<?>, State> transitionTable) {
+	public void setTransitionTable(Table<Property<?>, Comparable<?>, S> transitionTable) {
 		this.transitionTable = transitionTable;
 	}
 
@@ -64,8 +65,8 @@ public class State {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		State state = (State) o;
-		return Objects.equals(properties, state.properties);
+		S state = (S) o;
+		return Objects.equals(properties, state.getProperties());
 	}
 
 	@Override

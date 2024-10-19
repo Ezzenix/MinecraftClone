@@ -1,6 +1,6 @@
 package com.ezzenix.engine;
 
-import com.ezzenix.client.Client;
+import com.ezzenix.Client;
 import com.ezzenix.engine.opengl.Window;
 
 import java.util.ArrayList;

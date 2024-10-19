@@ -1,6 +1,6 @@
 package com.ezzenix.blocks;
 
-import com.ezzenix.client.Client;
+import com.ezzenix.Client;
 import org.joml.Vector2f;
 
 public class BlockTexture {

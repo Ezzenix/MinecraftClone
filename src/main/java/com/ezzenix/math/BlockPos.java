@@ -1,6 +1,6 @@
 package com.ezzenix.math;
 
-import com.ezzenix.world.Chunk;
+import com.ezzenix.world.chunk.Chunk;
 import org.joml.Vector3f;
 
 import java.util.Objects;
@@ -16,6 +16,10 @@ public class BlockPos {
 		this.z = z;
 	}
 
+	public BlockPos(Vector3f vec) {
+		this((int) Math.floor(vec.x), (int) Math.floor(vec.y), (int) Math.floor(vec.z));
+	}
+
 	public BlockPos add(BlockPos v) {
 		return new BlockPos(x + v.x, y + v.y, z + v.z);
 	}
@@ -23,20 +27,8 @@ public class BlockPos {
 		return new BlockPos(this.x + x, this.y + y, this.z + z);
 	}
 
-	public Vector3f toVector3f(BlockPos v) {
-		return new Vector3f(v.x + 0.5f, v.y + 0.5f, v.z + 0.5f);
-	}
-
-	public static BlockPos from(Vector3f vec) {
-		return new BlockPos(
-			(int) Math.floor(vec.x),
-			(int) Math.floor(vec.y),
-			(int) Math.floor(vec.z)
-		);
-	}
-
-	public static BlockPos from(Chunk chunk, LocalPosition localPosition) {
-		return new BlockPos(chunk.getPos().x * Chunk.CHUNK_WIDTH + localPosition.x, localPosition.y, chunk.getPos().z * Chunk.CHUNK_WIDTH + localPosition.z);
+	public Vector3f toVector3f() {
+		return new Vector3f(x + 0.5f, y + 0.5f, z + 0.5f);
 	}
 
 	public int manhattanDistance(BlockPos other) {

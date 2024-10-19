@@ -10,5 +10,6 @@ public class Items {
 	public static final Item GLASS = new BlockItem(Blocks.GLASS);
 	public static final Item OAK_PLANKS = new BlockItem(Blocks.OAK_PLANKS);
 	public static final Item OAK_LEAVES = new BlockItem(Blocks.OAK_LEAVES);
+	public static final Item OAK_LOG = new BlockItem(Blocks.OAK_LOG);
 	public static final Item POPPY = new BlockItem(Blocks.POPPY);
 }

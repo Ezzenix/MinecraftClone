@@ -8,11 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StateManager {
+public class StateManager<S extends State<S>> {
 	private final ImmutableSortedMap<String, Property<?>> properties;
-	private final ImmutableList<State> states;
+	private final ImmutableList<S> states;
 
-	public StateManager(Property<?>[] properties) {
+	public interface Factory<S> {
+		S create(Map<Property<?>, Comparable<?>> properties);
+	}
+
+	public StateManager(Property<?>[] properties, Factory<S> factory) {
 		Map<String, Property<?>> namedProperties = Maps.newHashMap();
 		for (Property<?> property : properties) {
 			namedProperties.put(property.getName(), property);
@@ -20,24 +24,24 @@ public class StateManager {
 
 		this.properties = ImmutableSortedMap.copyOf(namedProperties);
 
-		Map<Map<Property<?>, Comparable<?>>, State> statesMap = new HashMap<>();
-		List<State> statesList = new ArrayList<>();
+		Map<Map<Property<?>, Comparable<?>>, S> statesMap = new HashMap<>();
+		List<S> statesList = new ArrayList<>();
 
 		// Generate all possible combinations of properties
 		List<Map<Property<?>, Comparable<?>>> allCombinations = generatePropertyCombinations();
 		for (Map<Property<?>, Comparable<?>> combination : allCombinations) {
-			State state = new State(combination);
+			S state = factory.create(combination);
 			statesMap.put(combination, state);
 			statesList.add(state);
 		}
 
 		// Precompute state transitions
-		for (State state : statesList) {
-			Table<Property<?>, Comparable<?>, State> transitionTable = HashBasedTable.create();
+		for (S state : statesList) {
+			Table<Property<?>, Comparable<?>, S> transitionTable = HashBasedTable.create();
 			for (Property<?> property : this.properties.values()) {
 				for (Comparable<?> value : property.getValues()) {
 					if (!value.equals(state.getProperties().get(property))) {
-						State nextState = statesMap.get(state.toMapWith(property, value));
+						S nextState = statesMap.get(state.toMapWith(property, value));
 						transitionTable.put(property, value, nextState);
 					}
 				}
@@ -70,7 +74,7 @@ public class StateManager {
 		}
 	}
 
-	public State getDefaultState() {
+	public S getDefaultState() {
 		return states.getFirst();
 	}
 }

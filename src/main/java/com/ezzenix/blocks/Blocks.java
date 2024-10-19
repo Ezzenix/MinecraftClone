@@ -14,17 +14,12 @@ public class Blocks {
 	public static final Block SAND = new Block("Sand").setTexture("sand");
 	public static final Block OAK_LEAVES = new Block("Oak Leaves").setTexture("oak_leaves").transparent().notSolid();
 	public static final Block OAK_LOG = new Block("Oak Log").setTexture(new BlockTexture().side("oak_log").topBottom("oak_log_top"));
-	public static final Block GRASS = new Block("Grass").setTexture("grass").transparent().flower();
-	public static final Block POPPY = new FlowerBlock("Poppy").setTexture("poppy").transparent().flower();
+	public static final Block GRASS = new PlantBlock("Grass").setTexture("grass").transparent().flower().instantBreak();
+	public static final Block POPPY = new PlantBlock("Poppy").setTexture("poppy").transparent().flower().instantBreak();
 	public static final Block GLASS = new Block("Glass").setTexture("glass").transparent();
 
-	public static byte register(Block block) {
+	public static void register(Block block) {
 		byte newId = (byte) (blockMap.size() + 1);
 		blockMap.put(newId, block);
-		return newId;
-	}
-
-	public static Block getBlockFromId(byte id) {
-		return blockMap.get(id);
 	}
 }

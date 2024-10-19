@@ -1,6 +1,6 @@
 package com.ezzenix.entities;
 
-import com.ezzenix.client.util.Util;
+import com.ezzenix.util.Util;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
@@ -122,7 +122,7 @@ public class Entity {
 	}
 
 	public BlockPos getBlockPos() {
-		return BlockPos.from(position);
+		return new BlockPos(position);
 	}
 
 	public World getWorld() {
