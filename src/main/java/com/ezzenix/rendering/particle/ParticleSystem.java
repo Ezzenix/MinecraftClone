@@ -1,26 +1,25 @@
 package com.ezzenix.rendering.particle;
 
-import com.ezzenix.Client;
+import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.math.BlockPos;
-import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
-import com.ezzenix.engine.opengl.Shader;
 import org.joml.Math;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_FLOAT;
+import static org.lwjgl.opengl.GL30.GL_INT;
 
 public class ParticleSystem {
 	public static final List<Particle> particles = new ArrayList<>();
 
 	private static final Shader shader = new Shader("particle");
-	private static final VertexBuffer vertexBuffer = new VertexBuffer(shader, new VertexFormat(GL_FLOAT, 3, GL_INT, 1), VertexBuffer.Usage.DYNAMIC);
+	private static final VertexBuffer vertexBuffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_INT, 1), VertexBuffer.Usage.DYNAMIC);
 
 	public static void render() {
+		/*
 		Camera camera = Client.getCamera();
 		Vector3f direction = camera.getLookVector().mul(-1);
 
@@ -40,6 +39,7 @@ public class ParticleSystem {
 		vertexBuffer.draw();
 
 		glEnable(GL_CULL_FACE);
+		 */
 	}
 
 	public static void createBlockBreakParticles(BlockPos blockPos) {

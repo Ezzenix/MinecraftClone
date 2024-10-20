@@ -1,6 +1,5 @@
 package com.ezzenix.world.chunk;
 
-import com.ezzenix.blocks.Block;
 import com.ezzenix.blocks.BlockState;
 import com.ezzenix.blocks.Blocks;
 

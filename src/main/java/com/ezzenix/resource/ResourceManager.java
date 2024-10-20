@@ -10,6 +10,10 @@ import java.util.stream.Collectors;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 
 public class ResourceManager {
+	public static File getFile(String path) {
+		return new File("src/main/resources/" + path);
+	}
+
 	public static String readFile(String path) {
 		InputStream inputStream = ResourceManager.class.getClassLoader().getResourceAsStream(path);
 		if (inputStream == null) {
@@ -27,19 +31,17 @@ public class ResourceManager {
 		return source;
 	}
 
-	public static BufferedImage loadImage(String path) {
-		path = "src/main/resources/" + path;
-
-		File file = new File(path);
-
-		BufferedImage image;
+	public static BufferedImage loadImage(File file) {
 		try {
-			image = ImageIO.read(file);
+			return ImageIO.read(file);
 		} catch (IOException e) {
+			System.err.println("Failed to read image: " + file.getAbsolutePath());
 			throw new RuntimeException(e);
 		}
+	}
 
-		return image;
+	public static BufferedImage loadImage(String path) {
+		return loadImage(new File("src/main/resources/" + path));
 	}
 
 	public static ByteBuffer parseBufferedImage(BufferedImage image) {

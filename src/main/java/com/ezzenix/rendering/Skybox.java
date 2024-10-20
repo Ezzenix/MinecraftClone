@@ -1,48 +1,32 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.Client;
-import com.ezzenix.rendering.util.VertexBuffer;
-import com.ezzenix.rendering.util.VertexFormat;
-import com.ezzenix.resource.ResourceManager;
-import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
-import org.joml.Math;
-import org.joml.Matrix4f;
-
-import static org.lwjgl.opengl.GL11.*;
+import com.ezzenix.util.Identifier;
 
 public class Skybox {
-	Texture texture;
-	Shader shader;
-	Mesh mesh;
-
-	VertexBuffer vertexBuffer;
-
-	VertexBuffer sunVertexBuffer;
-
-	private final Texture skyboxTexture = new Texture(ResourceManager.loadImage("skybox.png"));
-	private final Texture sunTexture = new Texture(ResourceManager.loadImage("sun.png"));
+	private final Shader shader;
+	//private final VertexBuffer vertexBuffer;
+	//private final VertexBuffer sunVertexBuffer;
+	private final Texture skyboxTexture = Client.getTextureManager().getTexture(Identifier.of("sky/skybox"));
+	private final Texture sunTexture = Client.getTextureManager().getTexture(Identifier.of("sky/sun"));
 
 	public Skybox() {
-		this.shader = new Shader("skybox");
+		shader = new Shader("skybox");
 
-		this.sunVertexBuffer = new VertexBuffer(this.shader, new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.STATIC);
+		/*
+		sunVertexBuffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.STATIC);
 		int SUN_SIZE = 8;
-		this.sunVertexBuffer.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0).next();
-		this.sunVertexBuffer.vertex(-SUN_SIZE, -100, SUN_SIZE).texture(0, 1).next();
-		this.sunVertexBuffer.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1).next();
-		this.sunVertexBuffer.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1).next();
-		this.sunVertexBuffer.vertex(SUN_SIZE, -100, -SUN_SIZE).texture(1, 0).next();
-		this.sunVertexBuffer.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0).next();
-		this.sunVertexBuffer.upload();
+		sunVertexBuffer.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0).next();
+		sunVertexBuffer.vertex(-SUN_SIZE, -100, SUN_SIZE).texture(0, 1).next();
+		sunVertexBuffer.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1).next();
+		sunVertexBuffer.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1).next();
+		sunVertexBuffer.vertex(SUN_SIZE, -100, -SUN_SIZE).texture(1, 0).next();
+		sunVertexBuffer.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0).next();
+		sunVertexBuffer.upload();
 
-		initVertexBuffer();
-	}
-
-	private void initVertexBuffer() {
-		VertexBuffer buffer = this.vertexBuffer = new VertexBuffer(this.shader, new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.STATIC);
-
+		vertexBuffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.STATIC);
 		float[] vertices = new float[]{
 			// Bottom face
 			-1.0f, -1.0f, -1.0f, 0 / 3f, 0 / 2f,
@@ -94,19 +78,26 @@ public class Skybox {
 		};
 		float SIZE = 1000;
 		for (int i = 0; i < vertices.length; i += 5) {
-			buffer.vertex(vertices[i] * SIZE, vertices[i + 1] * SIZE, vertices[i + 2] * SIZE).texture(vertices[i + 3], vertices[i + 4]).next();
+			vertexBuffer.vertex(vertices[i] * SIZE, vertices[i + 1] * SIZE, vertices[i + 2] * SIZE).texture(vertices[i + 3], vertices[i + 4]).next();
 		}
+		vertexBuffer.upload();
 
-		this.vertexBuffer.upload();
+		initVertexBuffer();
+		 */
+	}
+
+	private void initVertexBuffer() {
+
 	}
 
 	public void render() {
+		/*
 		Matrix4f modelMatrix = new Matrix4f().translate(Client.getCamera().getPosition());
 
+		shader.setTexture(0, skyboxTexture);
 		shader.bind();
 		shader.setUniforms();
 
-		shader.setTexture(0, skyboxTexture);
 		shader.setModelMatrix(modelMatrix);
 		vertexBuffer.draw();
 
@@ -119,9 +110,11 @@ public class Skybox {
 		modelMatrix.rotate(Math.toRadians(180 + 60), 1, 0, 0);
 
 		shader.setTexture(0, sunTexture);
+		shader.bind();
 		shader.setModelMatrix(modelMatrix);
 		sunVertexBuffer.draw();
 
 		glDepthMask(true);
+		 */
 	}
 }

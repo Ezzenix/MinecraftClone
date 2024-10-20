@@ -1,8 +1,8 @@
 package com.ezzenix.engine.opengl;
 
 import com.ezzenix.Client;
-import com.ezzenix.resource.ResourceManager;
 import com.ezzenix.engine.Signal;
+import com.ezzenix.resource.ResourceManager;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
@@ -18,7 +18,6 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.getCapabilities;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.MemoryUtil.memUTF8;

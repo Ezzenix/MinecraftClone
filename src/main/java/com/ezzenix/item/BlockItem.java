@@ -1,11 +1,10 @@
 package com.ezzenix.item;
 
-import com.ezzenix.blocks.Block;
 import com.ezzenix.Client;
+import com.ezzenix.blocks.Block;
 import com.ezzenix.entities.Entity;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
-import com.ezzenix.math.ChunkPos;
 import com.ezzenix.physics.Physics;
 import com.ezzenix.physics.Raycast;
 import org.joml.Vector3i;

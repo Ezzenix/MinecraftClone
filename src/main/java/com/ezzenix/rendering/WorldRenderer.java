@@ -1,36 +1,28 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.Debug;
 import com.ezzenix.Client;
-import com.ezzenix.enums.Direction;
-import com.ezzenix.math.BlockPos;
-import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
+import com.ezzenix.Debug;
 import com.ezzenix.engine.opengl.Shader;
-import com.ezzenix.engine.opengl.Texture;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
-import com.ezzenix.rendering.chunkbuilder.UnitCube;
+import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
+import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
-import com.ezzenix.resource.ResourceManager;
-import com.ezzenix.world.chunk.Chunk;
+import com.ezzenix.util.Identifier;
 import com.ezzenix.world.World;
+import com.ezzenix.world.chunk.Chunk;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class WorldRenderer {
 	public final Shader worldShader = new Shader("world.vert", "world.frag");
 	public final Shader waterShader = new Shader("water.vert", "water.frag");
-	public final Texture blockTexture;
-
-	private final Vector2f textureAtlasSize;
 
 	private final Shader blockOverlayShader;
 	private final VertexBuffer blockOverlayBuffer;
@@ -38,26 +30,19 @@ public class WorldRenderer {
 	public int chunksRenderedCount = 0;
 
 	public WorldRenderer() {
-		BufferedImage blockAtlasImage = Client.getTextureManager().blockAtlas.getAtlasImage();
-		blockTexture = new Texture(blockAtlasImage);
-		textureAtlasSize = new Vector2f(blockAtlasImage.getWidth(), blockAtlasImage.getHeight());
-		//blockTexture.generateMipmap();
-		//blockTexture.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		blockTexture.setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
 		this.blockOverlayShader = new Shader("block_overlay");
-		this.blockOverlayShader.setTexture(0, new Texture(ResourceManager.loadImage("break_overlay.png")));
-		this.blockOverlayBuffer = new VertexBuffer(blockOverlayShader, new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.DYNAMIC);
+		this.blockOverlayShader.setTexture(0, Client.getTextureManager().getTexture(Identifier.of("break_overlay")));
+		this.blockOverlayBuffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.DYNAMIC);
 	}
 
-	public void render(long window) {
+	public void render() {
 		World world = Client.getWorld();
 		if (world == null) return;
 
 		boolean renderWireframe = Debug.wireframeMode;
 		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		blockTexture.bind();
+		Client.getTextureManager().blockAtlas.getTexture().bind();
 
 		Camera camera = Client.getCamera();
 		ChunkPos cameraChunkPos = new ChunkPos(camera.getPosition());
@@ -72,29 +57,8 @@ public class WorldRenderer {
 		chunks.sort((a, b) -> Float.compare(cameraChunkPos.distanceTo(b.getPos()), cameraChunkPos.distanceTo(a.getPos())));
 		chunksRenderedCount = chunks.size();
 
-		worldShader.bind();
-		worldShader.setUniforms();
-		for (Chunk chunk : chunks) {
-			ChunkBuilder.BuiltChunk builtChunk = chunk.getBuiltChunk();
-			worldShader.setModelMatrix(builtChunk.getTranslationMatrix());
-			builtChunk.vertexBufferSolid.draw();
-		}
-
-		waterShader.bind();
-		waterShader.setUniforms();
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-		glDepthMask(false);
-		for (Chunk chunk : chunks) {
-			ChunkBuilder.BuiltChunk builtChunk = chunk.getBuiltChunk();
-			waterShader.setModelMatrix(builtChunk.getTranslationMatrix());
-			builtChunk.vertexBufferTransparent.draw();
-		}
-		//glDisable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDepthMask(true);
+		renderChunkLayer(RenderLayer.SOLID, chunks);
+		renderChunkLayer(RenderLayer.TRANSLUCENT, chunks);
 
 		if (Client.getInteractionManager().getBreakingPos() != null) {
 			renderDamage(Client.getInteractionManager().getBreakingPos(), Client.getInteractionManager().getBreakingProgress());
@@ -103,7 +67,18 @@ public class WorldRenderer {
 		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	public void renderChunkLayer(RenderLayer layer, List<Chunk> chunks) {
+		layer.apply();
+		for (Chunk chunk : chunks) {
+			layer.getShader().setModelMatrix(chunk.getBuiltChunk().getTranslationMatrix());
+			VertexBuffer vertexBuffer = chunk.getBuiltChunk().buffers.get(layer);
+			vertexBuffer.draw();
+		}
+		layer.unapply();
+	}
+
 	public void renderDamage(BlockPos blockPos, float progress) {
+		/*
 		float x = blockPos.x;
 		float y = blockPos.y;
 		float z = blockPos.z;
@@ -132,6 +107,7 @@ public class WorldRenderer {
 		blockOverlayShader.bind();
 		blockOverlayShader.setUniforms();
 		blockOverlayBuffer.draw();
+		 */
 	}
 
 	public void reloadAllChunks() {
@@ -141,7 +117,6 @@ public class WorldRenderer {
 		for (Chunk chunk : world.getChunkManager().getChunks()) {
 			ChunkBuilder.BuiltChunk builtChunk = chunk.getBuiltChunk();
 			if (builtChunk != null) {
-				builtChunk.dispose();
 				builtChunk.rebuild();
 			}
 		}

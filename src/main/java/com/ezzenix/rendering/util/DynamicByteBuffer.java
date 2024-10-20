@@ -7,14 +7,14 @@ public class DynamicByteBuffer {
 	private int size;
 
 	public DynamicByteBuffer(int initialSize) {
-		if (initialSize < 32) initialSize = 32;
+		//if (initialSize < 32) initialSize = 32;
 		this.buffer = GlAllocationUtils.allocateByteBuffer(initialSize);
 		this.size = 0;
 	}
 
 	private void grow() {
 		int currentCapacity = this.buffer.capacity();
-		if (this.size + 128 <= currentCapacity) return;
+		if (this.size <= currentCapacity) return;
 
 		int newSize = this.size * 2;
 

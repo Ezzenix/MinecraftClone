@@ -1,8 +1,7 @@
 package com.ezzenix.rendering.particle;
 
-import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.engine.Scheduler;
-import org.joml.Matrix4f;
+import com.ezzenix.rendering.util.VertexBuffer;
 import org.joml.Vector3f;
 
 public class Particle {
@@ -52,6 +51,7 @@ public class Particle {
 	}
 
 	public void render(VertexBuffer vertexBuffer, Vector3f direction) {
+		/*
 		Vector3f position = new Vector3f(this.posX, this.posY, this.posZ);
 
 		Matrix4f lookAtMatrix = new Matrix4f().lookAt(
@@ -81,5 +81,6 @@ public class Particle {
 			Vector3f v = vertices[index];
 			vertexBuffer.vertex(v.x, v.y, v.z).color(this.color).next();
 		}
+		 */
 	}
 }

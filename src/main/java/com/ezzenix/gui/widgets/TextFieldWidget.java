@@ -1,10 +1,10 @@
 package com.ezzenix.gui.widgets;
 
 import com.ezzenix.Client;
+import com.ezzenix.engine.Scheduler;
 import com.ezzenix.gui.Color;
 import com.ezzenix.gui.FontRenderer;
 import com.ezzenix.gui.Gui;
-import com.ezzenix.engine.Scheduler;
 
 import static org.lwjgl.glfw.GLFW.*;
 

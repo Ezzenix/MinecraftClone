@@ -1,13 +1,13 @@
 package com.ezzenix.gui;
 
 import com.ezzenix.Client;
-import com.ezzenix.rendering.Renderer;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.player.Player;
 import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.physics.Raycast;
+import com.ezzenix.rendering.Renderer;
 import org.joml.Vector3f;
 
 import java.lang.management.GarbageCollectorMXBean;
@@ -18,7 +18,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class DebugHud {
 	private static boolean isEnabled = false;

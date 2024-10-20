@@ -1,9 +1,9 @@
 package com.ezzenix.gui;
 
 import com.ezzenix.Client;
-import com.ezzenix.gui.chat.ChatHud;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.player.Player;
+import com.ezzenix.gui.chat.ChatHud;
 import com.ezzenix.inventory.ItemStack;
 
 public class Hud {

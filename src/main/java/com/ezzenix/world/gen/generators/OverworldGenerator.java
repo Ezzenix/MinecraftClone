@@ -1,7 +1,6 @@
 package com.ezzenix.world.gen.generators;
 
 import com.ezzenix.blocks.Block;
-import com.ezzenix.blocks.BlockState;
 import com.ezzenix.blocks.Blocks;
 import com.ezzenix.engine.core.FastNoiseLite;
 import com.ezzenix.math.BlockPos;

@@ -7,8 +7,6 @@ import com.ezzenix.engine.Scheduler;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.physics.Raycast;
 
-import java.util.Map;
-
 public class InteractionManager {
 	private boolean isBreaking = false;
 	private BlockPos breakingPos = null;

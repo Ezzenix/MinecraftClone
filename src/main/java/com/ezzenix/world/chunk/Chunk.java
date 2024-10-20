@@ -2,11 +2,11 @@ package com.ezzenix.world.chunk;
 
 import com.ezzenix.blocks.BlockState;
 import com.ezzenix.blocks.Blocks;
-import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
 import com.ezzenix.math.ChunkPos;
+import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
 import com.ezzenix.world.World;
 import org.joml.Vector3f;
 

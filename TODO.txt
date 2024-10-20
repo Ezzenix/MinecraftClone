@@ -1,10 +1,7 @@
 defer chunk mesh update
 better physics (fixed step) and movement
 actual world ticking
+matrixstack
 steal minecrafts viewbobbing (gamerenderer line 830)
 gametime / daynight cycle (move sun and change skybox)
 texturemanager and identifier system
-
-RenderLayers (renderphases)
-VertexBuffer (gl buffers, uploading)
-VertexBuilder (creating vertex buffers)

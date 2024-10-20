@@ -1,22 +1,26 @@
 package com.ezzenix.resource;
 
+import com.ezzenix.engine.opengl.Texture;
 import org.joml.Vector2f;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TextureAtlas<KeyType> {
 	private final HashMap<KeyType, Vector2f[]> uvMap;
 	private final BufferedImage atlasImage;
+	private final Texture texture;
 
-	private TextureAtlas(HashMap<KeyType, BufferedImage> imageMap) {
+	private TextureAtlas(Map<KeyType, BufferedImage> imageMap) {
 		this.uvMap = new HashMap<>();
 		this.atlasImage = createTextureAtlas(imageMap);
+		this.texture = new Texture(this.atlasImage);
 	}
 
 	private BufferedImage createTextureAtlas(Map<KeyType, BufferedImage> imageMap) {
@@ -65,25 +69,33 @@ public class TextureAtlas<KeyType> {
 		return this.atlasImage;
 	}
 
+	public Texture getTexture() {
+		return this.texture;
+	}
+
+	private static TextureAtlas<String> fromFiles(File[] files) {
+		return new TextureAtlas<>(Arrays.stream(files).collect(Collectors.toMap(
+			file -> file.getName().replace(".png", ""),
+			ResourceManager::loadImage
+		)));
+	}
+
 	public static TextureAtlas<String> fromDirectory(String directoryPath) {
-		HashMap<String, BufferedImage> imageMap = new HashMap<>();
-
-		File directory = new File(directoryPath);
+		File directory = new File("src/main/resources/textures/" + directoryPath);
 		File[] imageFiles = directory.listFiles();
-		if (imageFiles == null) {
-			System.err.println("TextureAtlas failed to read directory " + directoryPath);
-			return null;
+		if (imageFiles == null)
+			throw new RuntimeException("Failed to read directory " + directoryPath);
+
+		return TextureAtlas.fromFiles(imageFiles);
+	}
+
+	public static TextureAtlas<String> fromFilePaths(List<String> filePaths) {
+		File[] imageFiles = new File[filePaths.size()];
+		for (int i = 0; i < filePaths.size(); i++) {
+			String path = filePaths.get(i);
+			imageFiles[i] = new File("src/main/resources/textures/" + path);
 		}
 
-		for (File imageFile : imageFiles) {
-			try {
-				imageMap.put(imageFile.getName().replace(".png", ""), ImageIO.read(imageFile));
-			} catch (IOException e) {
-				System.err.println("Failed to read image: " + imageFile.getAbsolutePath());
-				e.printStackTrace();
-			}
-		}
-
-		return new TextureAtlas<>(imageMap);
+		return TextureAtlas.fromFiles(imageFiles);
 	}
 }

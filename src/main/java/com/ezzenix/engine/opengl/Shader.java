@@ -1,19 +1,15 @@
 package com.ezzenix.engine.opengl;
 
 import com.ezzenix.Client;
-import com.ezzenix.resource.ResourceManager;
 import com.ezzenix.engine.Scheduler;
-import org.joml.*;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.system.MemoryStack;
+import com.ezzenix.resource.ResourceManager;
+import org.joml.Matrix4f;
 
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Shader {
 	private final int programId;
@@ -40,12 +36,12 @@ public class Shader {
 
 		// link
 		glLinkProgram(programId);
-		if (glGetProgrami(programId, GL20.GL_LINK_STATUS) == GL_FALSE)
+		if (glGetProgrami(programId, GL_LINK_STATUS) == GL_FALSE)
 			throw new RuntimeException("Could not link shader: " + glGetProgramInfoLog(programId, 1024));
 
 		// validate
 		glValidateProgram(programId);
-		if (GL20.glGetProgrami(programId, GL20.GL_VALIDATE_STATUS) == GL_FALSE)
+		if (glGetProgrami(programId, GL_VALIDATE_STATUS) == GL_FALSE)
 			throw new RuntimeException("Error validating shader: " + glGetProgramInfoLog(programId, 1024));
 
 		// load uniforms
@@ -122,7 +118,7 @@ public class Shader {
 		glShaderSource(shaderId, shaderSource);
 		glCompileShader(shaderId);
 
-		if (glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL_FALSE) {
+		if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == GL_FALSE) {
 			System.out.println(shaderSource);
 			throw new RuntimeException("Could not compile shader " + path + ": " + glGetShaderInfoLog(shaderId, 1024));
 		}
@@ -160,6 +156,10 @@ public class Shader {
 				this.samplers[i].bind();
 			}
 		}
+	}
+
+	public void unbind() {
+		glUseProgram(0);
 	}
 
 	public void setModelMatrix(Matrix4f value) {

@@ -1,10 +1,10 @@
 package com.ezzenix.world.chunk;
 
-import com.ezzenix.blocks.BlockState;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class PalettedContainer<T> {
 	private final Palette<T> palette = new Palette<>();

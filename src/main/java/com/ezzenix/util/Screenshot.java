@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Screenshot {
 	static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss", Locale.ROOT);
@@ -55,7 +55,7 @@ public class Screenshot {
 		String string = dateTimeFormatter.format(ZonedDateTime.now());
 		int i = 1;
 		File file;
-		while ((file = new File(directory, string + (String) (i == 1 ? "" : "_" + i) + ".png")).exists()) {
+		while ((file = new File(directory, string + (i == 1 ? "" : "_" + i) + ".png")).exists()) {
 			++i;
 		}
 		return file;

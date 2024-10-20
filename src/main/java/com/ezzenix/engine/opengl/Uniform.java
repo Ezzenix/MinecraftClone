@@ -6,8 +6,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glUniform1iv;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Uniform {
 	private final int location;

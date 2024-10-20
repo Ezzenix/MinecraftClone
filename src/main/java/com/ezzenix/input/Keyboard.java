@@ -1,15 +1,15 @@
 package com.ezzenix.input;
 
-import com.ezzenix.blocks.Blocks;
 import com.ezzenix.Client;
-import com.ezzenix.gui.chat.ChatScreen;
-import com.ezzenix.gui.screen.InventoryScreen;
-import com.ezzenix.gui.screen.PauseScreen;
-import com.ezzenix.util.Screenshot;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.core.Profiler;
 import com.ezzenix.engine.opengl.Window;
+import com.ezzenix.gui.chat.ChatScreen;
+import com.ezzenix.gui.screen.InventoryScreen;
+import com.ezzenix.gui.screen.PauseScreen;
 import com.ezzenix.math.BlockPos;
+import com.ezzenix.util.Screenshot;
 import org.joml.Vector3f;
 
 import java.io.File;

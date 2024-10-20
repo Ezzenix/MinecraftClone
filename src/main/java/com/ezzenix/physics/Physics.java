@@ -1,8 +1,8 @@
 package com.ezzenix.physics;
 
+import com.ezzenix.Client;
 import com.ezzenix.blocks.Block;
 import com.ezzenix.blocks.Blocks;
-import com.ezzenix.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.Entity;
 import com.ezzenix.math.BlockPos;

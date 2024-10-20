@@ -1,9 +1,9 @@
 package com.ezzenix.gui.chat;
 
 import com.ezzenix.Client;
+import com.ezzenix.engine.Scheduler;
 import com.ezzenix.gui.Color;
 import com.ezzenix.gui.Gui;
-import com.ezzenix.engine.Scheduler;
 import org.joml.Math;
 
 import java.util.ArrayList;

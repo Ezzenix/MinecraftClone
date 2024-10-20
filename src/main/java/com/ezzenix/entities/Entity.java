@@ -1,10 +1,10 @@
 package com.ezzenix.entities;
 
-import com.ezzenix.util.Util;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
 import com.ezzenix.physics.Raycast;
+import com.ezzenix.util.Util;
 import com.ezzenix.world.World;
 import org.joml.Math;
 import org.joml.Vector3f;

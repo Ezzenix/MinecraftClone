@@ -1,145 +1,99 @@
 package com.ezzenix.gui;
 
+import com.ezzenix.Client;
 import com.ezzenix.blocks.Block;
-import com.ezzenix.rendering.Renderer;
-import com.ezzenix.rendering.util.VertexBuffer;
-import com.ezzenix.rendering.util.VertexFormat;
-import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.inventory.ItemStack;
 import com.ezzenix.item.BlockItem;
+import com.ezzenix.rendering.util.RenderLayer;
+import com.ezzenix.rendering.util.VertexFormat;
+import com.ezzenix.resource.ResourceManager;
+import com.ezzenix.util.BufferBuilder;
 import org.joml.Vector2f;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Gui {
 
-	//public static final FontRenderer FONT_RENDERER = FontRenderer.fromFile(new File("src/main/resources/fonts/minecraft.ttf"), 18);
-	public static final FontRenderer FONT_RENDERER = new FontRenderer(new File("src/main/resources/fonts/minecraft.ttf"), 18);
+	public static final FontRenderer FONT_RENDERER = new FontRenderer(ResourceManager.getFile("fonts/minecraft.ttf"), 18);
 
+	private static final Shader RECTANGLE_SHADER = new Shader("gui/frame");
+	private static final RenderLayer RECTANGLE_LAYER = new RenderLayer(RECTANGLE_SHADER).format(new VertexFormat(GL_FLOAT, 2, GL_INT, 1)).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	private static final VertexBuffer rectangleBuffer = new VertexBuffer(new Shader("gui/frame"), new VertexFormat(GL_FLOAT, 2, GL_INT, 1), VertexBuffer.Usage.DYNAMIC);
-	private static final VertexBuffer fontBuffer = new VertexBuffer(new Shader("gui/text"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2, GL_INT, 1), VertexBuffer.Usage.DYNAMIC);
-	private static final VertexBuffer textureBuffer = new VertexBuffer(new Shader("gui/image"), new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2), VertexBuffer.Usage.DYNAMIC);
+	private static final Shader TEXTURE_SHADER = new Shader("gui/image");
+	private static final RenderLayer TEXTURE_LAYER = new RenderLayer(TEXTURE_SHADER).format(new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2)).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	private static boolean shouldRecomputeThisFrame = false;
-	private static long lastGuiRecompute = 0;
-	private static final long GUI_RENDER_INTERVAL = (long) (0.0166 * 1E9); // 60 FPS
+	private static final Shader FONT_SHADER = new Shader("gui/text");
+	private static final RenderLayer FONT_LAYER = new RenderLayer(FONT_SHADER).format(new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2, GL_INT, 1)).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	private static final List<Runnable> renderTasks = new ArrayList<>();
+	private static final BufferBuilder.Immediate consumer = new BufferBuilder.Immediate();
 
 	static {
-		Scheduler.bindToUpdate(() -> {
-			long now = System.nanoTime();
-			shouldRecomputeThisFrame = (now - lastGuiRecompute > GUI_RENDER_INTERVAL);
-			if (shouldRecomputeThisFrame) {
-				lastGuiRecompute = now;
-			}
-		});
-	}
-
-	private static void uploadAndDraw(VertexBuffer buffer) {
-		if (shouldRecomputeThisFrame) {
-			buffer.upload();
-		}
-		buffer.draw();
-	}
-
-	public static void renderBatch() {
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		uploadAndDraw(rectangleBuffer);
-
-		for (Runnable task : renderTasks) {
-			task.run();
-		}
-		renderTasks.clear();
-
-		FONT_RENDERER.getTexture().bind();
-		uploadAndDraw(fontBuffer);
-
-		glUseProgram(0);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+		FONT_SHADER.setTexture(0, FONT_RENDERER.getTexture());
 	}
 
 	public static void drawRect(int x, int y, int width, int height, int color) {
-		if (!shouldRecomputeThisFrame) return;
+		BufferBuilder builder = consumer.getBuilder(RECTANGLE_LAYER);
 
-		rectangleBuffer.vertex(x, y).color(color).next();
-		rectangleBuffer.vertex(x, y + height).color(color).next();
-		rectangleBuffer.vertex(x + width, y + height).color(color).next();
+		builder.vertex(x, y).color(color).next();
+		builder.vertex(x, y + height).color(color).next();
+		builder.vertex(x + width, y + height).color(color).next();
+		builder.vertex(x + width, y + height).color(color).next();
+		builder.vertex(x + width, y).color(color).next();
+		builder.vertex(x, y).color(color).next();
 
-		rectangleBuffer.vertex(x + width, y + height).color(color).next();
-		rectangleBuffer.vertex(x + width, y).color(color).next();
-		rectangleBuffer.vertex(x, y).color(color).next();
+		consumer.draw(RECTANGLE_LAYER);
 	}
 
 	public static void drawRect(int x, int y, int width, int height, float r, float g, float b, float a) {
-		if (!shouldRecomputeThisFrame) return;
-
 		drawRect(x, y, width, height, Color.pack(r, g, b, a));
 	}
 
 	public static void drawRectGradient(int x, int y, int width, int height, float r, float g, float b, float a, float r2, float g2, float b2, float a2) {
-		if (!shouldRecomputeThisFrame) return;
+		BufferBuilder builder = consumer.getBuilder(RECTANGLE_LAYER);
 
 		int colorTop = Color.pack(r, g, b, a);
 		int colorBottom = Color.pack(r2, g2, b2, a2);
 
-		rectangleBuffer.vertex(x, y).color(colorTop).next();
-		rectangleBuffer.vertex(x, y + height).color(colorBottom).next();
-		rectangleBuffer.vertex(x + width, y + height).color(colorBottom).next();
+		builder.vertex(x, y).color(colorTop).next();
+		builder.vertex(x, y + height).color(colorBottom).next();
+		builder.vertex(x + width, y + height).color(colorBottom).next();
+		builder.vertex(x + width, y + height).color(colorBottom).next();
+		builder.vertex(x + width, y).color(colorTop).next();
+		builder.vertex(x, y).color(colorTop).next();
 
-		rectangleBuffer.vertex(x + width, y + height).color(colorBottom).next();
-		rectangleBuffer.vertex(x + width, y).color(colorTop).next();
-		rectangleBuffer.vertex(x, y).color(colorTop).next();
+		consumer.draw(RECTANGLE_LAYER);
 	}
 
 	public static void drawTexture(Texture texture, int x, int y, int width, int height) {
-		renderTasks.add(() -> {
-			textureBuffer.shader.setTexture(0, texture);
+		BufferBuilder builder = consumer.getBuilder(TEXTURE_LAYER);
 
-			textureBuffer.vertex(x, y).texture(0, 0).next();
-			textureBuffer.vertex(x, y + height).texture(0, 1).next();
-			textureBuffer.vertex(x + width, y + height).texture(1, 1).next();
+		builder.vertex(x, y).texture(0, 0).next();
+		builder.vertex(x, y + height).texture(0, 1).next();
+		builder.vertex(x + width, y + height).texture(1, 1).next();
+		builder.vertex(x + width, y + height).texture(1, 1).next();
+		builder.vertex(x + width, y).texture(1, 0).next();
+		builder.vertex(x, y).texture(0, 0).next();
 
-			textureBuffer.vertex(x + width, y + height).texture(1, 1).next();
-			textureBuffer.vertex(x + width, y).texture(1, 0).next();
-			textureBuffer.vertex(x, y).texture(0, 0).next();
-
-			textureBuffer.upload();
-			textureBuffer.draw();
-		});
+		TEXTURE_SHADER.setTexture(0, texture);
+		consumer.draw(TEXTURE_LAYER);
 	}
 
 	public static void drawBlockIcon(Block blockType, int x, int y, int size) {
-		Texture texture = Renderer.getWorldRenderer().blockTexture;
+		BufferBuilder builder = consumer.getBuilder(TEXTURE_LAYER);
+
 		Vector2f[] uv = blockType.getTexture().getSideUV();
 
-		renderTasks.add(() -> {
-			textureBuffer.shader.setTexture(0, texture);
+		builder.vertex(x, y).texture(uv[0]).next();
+		builder.vertex(x, y + size).texture(uv[1]).next();
+		builder.vertex(x + size, y + size).texture(uv[2]).next();
+		builder.vertex(x + size, y + size).texture(uv[2]).next();
+		builder.vertex(x + size, y).texture(uv[3]).next();
+		builder.vertex(x, y).texture(uv[0]).next();
 
-			textureBuffer.vertex(x, y).texture(uv[0]).next();
-			textureBuffer.vertex(x, y + size).texture(uv[1]).next();
-			textureBuffer.vertex(x + size, y + size).texture(uv[2]).next();
-
-			textureBuffer.vertex(x + size, y + size).texture(uv[2]).next();
-			textureBuffer.vertex(x + size, y).texture(uv[3]).next();
-			textureBuffer.vertex(x, y).texture(uv[0]).next();
-
-			textureBuffer.upload();
-			textureBuffer.draw();
-		});
+		TEXTURE_SHADER.setTexture(0, Client.getTextureManager().blockAtlas.getTexture());
+		consumer.draw(TEXTURE_LAYER);
 	}
 
 	public static void drawStack(ItemStack stack, int x, int y, int size) {
@@ -151,8 +105,6 @@ public class Gui {
 	}
 
 	public static void drawButtonRect(int x, int y, int width, int height, boolean hovered) {
-		if (!shouldRecomputeThisFrame) return;
-
 		int frameColor = !hovered ? Color.pack(111, 111, 111, 255) : Color.pack(122, 122, 122, 255);
 		int frameDarkerColor = Color.pack(0, 0, 0, 30);
 		int borderColor = !hovered ? Color.pack(0, 0, 0, 155) : Color.pack(255, 255, 255, 255);
@@ -180,13 +132,17 @@ public class Gui {
 		drawTextWithShadow(text, centerX - textWidth / 2, centerY - FONT_RENDERER.fontSize / 2, color);
 	}
 
+	public static void drawText(String text, int x, int y, int color, boolean shadow) {
+		BufferBuilder builder = consumer.getBuilder(FONT_LAYER);
+		FONT_RENDERER.draw(builder, x, y, text, color, shadow);
+		consumer.draw(FONT_LAYER);
+	}
+
 	public static void drawText(String text, int x, int y, int color) {
-		if (!shouldRecomputeThisFrame) return;
-		FONT_RENDERER.draw(fontBuffer, x, y, text, color, false);
+		drawText(text, x, y, color, false);
 	}
 
 	public static void drawTextWithShadow(String text, int x, int y, int color) {
-		if (!shouldRecomputeThisFrame) return;
-		FONT_RENDERER.draw(fontBuffer, x, y, text, color, true);
+		drawText(text, x, y, color, true);
 	}
 }

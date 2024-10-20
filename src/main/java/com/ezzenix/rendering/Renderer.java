@@ -1,15 +1,14 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.Debug;
 import com.ezzenix.Client;
-import com.ezzenix.gui.Gui;
-import com.ezzenix.rendering.particle.ParticleSystem;
+import com.ezzenix.Debug;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.physics.Raycast;
+import com.ezzenix.rendering.particle.ParticleSystem;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
 	private static WorldRenderer worldRenderer;
@@ -42,7 +41,7 @@ public class Renderer {
 
 		skybox.render();
 
-		worldRenderer.render(window.getHandle());
+		worldRenderer.render();
 		Debug.render();
 		LineRenderer.renderBatch();
 
@@ -53,8 +52,6 @@ public class Renderer {
 		if (Client.getScreen() != null) {
 			Client.getScreen().render();
 		}
-
-		Gui.renderBatch();
 
 		glfwSwapBuffers(window.getHandle());
 	}

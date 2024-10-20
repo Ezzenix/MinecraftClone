@@ -1,7 +1,6 @@
 package com.ezzenix.blocks;
 
-import com.ezzenix.enums.Direction;
-import com.ezzenix.math.BlockPos;
+import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.state.StateManager;
 import com.ezzenix.state.property.Property;
 
@@ -120,6 +119,14 @@ public class Block {
 
 	public BlockTexture getTexture() {
 		return this.texture;
+	}
+
+	public RenderLayer getRenderLayer() {
+		if (this.isTransparent()) {
+			return RenderLayer.TRANSLUCENT;
+		} else {
+			return RenderLayer.SOLID;
+		}
 	}
 
 	@Override

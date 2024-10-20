@@ -12,6 +12,9 @@ public class GlAllocationUtils {
 			throw new IllegalArgumentException("Invalid buffer size: " + size);
 
 		long address = ALLOCATOR.malloc(size);
+		if (address == 0L)
+			throw new OutOfMemoryError("Failed to allocate " + size + " bytes");
+
 		return MemoryUtil.memByteBuffer(address, size);
 	}
 

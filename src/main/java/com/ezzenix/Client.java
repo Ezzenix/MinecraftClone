@@ -1,26 +1,28 @@
 package com.ezzenix;
 
+import com.ezzenix.engine.Input;
+import com.ezzenix.engine.Scheduler;
+import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.entities.player.InteractionManager;
+import com.ezzenix.entities.player.Player;
 import com.ezzenix.gui.Hud;
 import com.ezzenix.gui.screen.Screen;
 import com.ezzenix.gui.widgets.TextFieldWidget;
 import com.ezzenix.input.Keyboard;
 import com.ezzenix.input.Mouse;
+import com.ezzenix.math.ChunkPos;
 import com.ezzenix.options.GameOptions;
+import com.ezzenix.physics.Physics;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Renderer;
 import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
 import com.ezzenix.resource.TextureManager;
-import com.ezzenix.engine.Input;
-import com.ezzenix.engine.Scheduler;
-import com.ezzenix.engine.opengl.Window;
-import com.ezzenix.entities.player.Player;
-import com.ezzenix.math.ChunkPos;
-import com.ezzenix.physics.Physics;
 import com.ezzenix.world.World;
 import com.ezzenix.world.chunk.ChunkManager;
 import com.ezzenix.world.gen.WorldGenerator;
 import com.ezzenix.world.gen.generators.OverworldGenerator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Vector3f;
 
 import java.io.File;
@@ -28,6 +30,7 @@ import java.io.File;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 
 public class Client {
+	public static Logger LOGGER = LogManager.getLogger("e");
 
 	private static Screen currentScreen;
 
@@ -59,7 +62,7 @@ public class Client {
 		window.setTitle("Minecraft");
 		window.centerWindow();
 		window.setVSync(false);
-		window.setIcon("icon.png");
+		window.setIcon("textures/icon.png");
 
 		textureManager = new TextureManager();
 
@@ -80,14 +83,14 @@ public class Client {
 		Input.initialize(window);
 
 		Scheduler.setInterval(() -> {
-			ChunkPos chunkPos = new ChunkPos(player.getPosition());
-			Client.getWorld().getChunkManager().loadChunksAround(chunkPos.x, chunkPos.z, 10);
+			//ChunkPos chunkPos = new ChunkPos(player.getPosition());
+			//Client.getWorld().getChunkManager().loadChunksAround(chunkPos.x, chunkPos.z, 10);
 		}, 500);
-		//for (int x = 0; x < 15; x++) {
-		//	for (int z = 0; z < 15; z++) {
-		//		Client.getWorld().getChunkManager().getChunk(new ChunkPos(x, z), true, ChunkManager.ChunkState.FULL);
-		//	}
-		//}
+		for (int x = 0; x < 35; x++) {
+			for (int z = 0; z < 35; z++) {
+				Client.getWorld().getChunkManager().getChunk(new ChunkPos(x, z), true, ChunkManager.ChunkState.FULL);
+			}
+		}
 
 		// update loop
 		while (!window.shouldClose()) {

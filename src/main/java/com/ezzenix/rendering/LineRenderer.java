@@ -1,6 +1,5 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.Client;
 import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
 import org.joml.Vector3f;
@@ -10,9 +9,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL30.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.*;
 
 public class LineRenderer {
 	private static final Shader debugShader = new Shader("debugLine.vert", "debugLine.frag");

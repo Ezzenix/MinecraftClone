@@ -1,12 +1,10 @@
 package com.ezzenix.rendering.util;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glVertexAttribIPointer;
+import static org.lwjgl.opengl.GL30.*;
 
 public class VertexFormat {
 	public static VertexFormat POSITION_COLOR = new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 4);
+	public static VertexFormat POSITION_UV_AO = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2, GL_FLOAT, 1);
 
 	int[] types;
 	int[] sizes;

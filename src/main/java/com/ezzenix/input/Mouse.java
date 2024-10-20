@@ -1,16 +1,10 @@
 package com.ezzenix.input;
 
-import com.ezzenix.blocks.Blocks;
 import com.ezzenix.Client;
-import com.ezzenix.gui.screen.Screen;
-import com.ezzenix.rendering.particle.BlockBreakParticle;
 import com.ezzenix.engine.Input;
 import com.ezzenix.engine.opengl.Window;
+import com.ezzenix.gui.screen.Screen;
 import com.ezzenix.item.Item;
-import com.ezzenix.math.BlockPos;
-import com.ezzenix.physics.Raycast;
-import com.ezzenix.rendering.particle.ParticleSystem;
-import org.joml.Math;
 
 import static org.lwjgl.glfw.GLFW.*;
 
