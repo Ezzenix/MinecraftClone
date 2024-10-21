@@ -8,6 +8,8 @@ temp
 
 run/
 
+logs/
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
