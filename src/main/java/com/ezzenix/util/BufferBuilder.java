@@ -16,7 +16,7 @@ public class BufferBuilder {
 	private final BufferAllocator allocator;
 	private final VertexFormat vertexFormat;
 
-	private int vertexCount = 0;
+	public int vertexCount = 0;
 	private boolean isMakingVertex = false;
 	private boolean building = true;
 
@@ -24,10 +24,6 @@ public class BufferBuilder {
 		this.allocator = allocator;
 		this.vertexFormat = format;
 		this.allocator.ensureNotClosed();
-	}
-
-	public BufferBuilder(int initialSize, VertexFormat format) {
-		this(new BufferAllocator(initialSize), format);
 	}
 
 	public BuiltBuffer end() {

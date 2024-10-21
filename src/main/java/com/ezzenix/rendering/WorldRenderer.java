@@ -5,7 +5,8 @@ import com.ezzenix.Debug;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
-import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
+import com.ezzenix.rendering.chunk.BuiltChunkStorage;
+import com.ezzenix.rendering.chunk.ChunkBuilder;
 import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
@@ -29,10 +30,14 @@ public class WorldRenderer {
 
 	public int chunksRenderedCount = 0;
 
+	private BuiltChunkStorage builtChunkStorage;
+
 	public WorldRenderer() {
 		this.blockOverlayShader = new Shader("block_overlay");
 		this.blockOverlayShader.setTexture(0, Client.getTextureManager().getTexture(Identifier.of("break_overlay")));
 		this.blockOverlayBuffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.DYNAMIC);
+
+		this.builtChunkStorage = new BuiltChunkStorage();
 	}
 
 	public void render() {
@@ -41,6 +46,12 @@ public class WorldRenderer {
 
 		boolean renderWireframe = Debug.wireframeMode;
 		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		RenderSystem.setShaderFogColor(-1);
+		RenderSystem.setShaderFogStartEnd(100, 900);
+
+		this.builtChunkStorage.update();
+		ChunkBuilder.pollQueue();
 
 		Client.getTextureManager().blockAtlas.getTexture().bind();
 
@@ -54,7 +65,7 @@ public class WorldRenderer {
 
 		// Get chunks in frustum and sort them by distance to camera
 		List<Chunk> chunks = new ArrayList<>(world.getChunkManager().getChunks().stream().filter(chunk -> chunk.getBoundingBox().checkFrustum(frustumIntersection)).toList());
-		chunks.sort((a, b) -> Float.compare(cameraChunkPos.distanceTo(b.getPos()), cameraChunkPos.distanceTo(a.getPos())));
+		chunks.sort((a, b) -> Integer.compare(cameraChunkPos.distanceTo(b.getPos()), cameraChunkPos.distanceTo(a.getPos())));
 		chunksRenderedCount = chunks.size();
 
 		renderChunkLayer(RenderLayer.SOLID, chunks);
@@ -70,9 +81,12 @@ public class WorldRenderer {
 	public void renderChunkLayer(RenderLayer layer, List<Chunk> chunks) {
 		layer.apply();
 		for (Chunk chunk : chunks) {
-			layer.getShader().setModelMatrix(chunk.getBuiltChunk().getTranslationMatrix());
-			VertexBuffer vertexBuffer = chunk.getBuiltChunk().buffers.get(layer);
-			vertexBuffer.draw();
+			ChunkBuilder.BuiltChunk builtChunk = getBuiltChunkStorage().getBuiltChunk(chunk);
+			if (builtChunk != null) {
+				layer.getShader().setModelMatrix(builtChunk.getTranslationMatrix());
+				VertexBuffer vertexBuffer = builtChunk.buffers.get(layer);
+				vertexBuffer.draw();
+			}
 		}
 		layer.unapply();
 	}
@@ -117,8 +131,13 @@ public class WorldRenderer {
 		for (Chunk chunk : world.getChunkManager().getChunks()) {
 			ChunkBuilder.BuiltChunk builtChunk = chunk.getBuiltChunk();
 			if (builtChunk != null) {
-				builtChunk.rebuild();
+				builtChunk.clear();
+				builtChunk.scheduleRebuild();
 			}
 		}
+	}
+
+	public BuiltChunkStorage getBuiltChunkStorage() {
+		return this.builtChunkStorage;
 	}
 }

@@ -15,7 +15,7 @@ import com.ezzenix.options.GameOptions;
 import com.ezzenix.physics.Physics;
 import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Renderer;
-import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
+import com.ezzenix.rendering.chunk.ChunkBuilder;
 import com.ezzenix.resource.TextureManager;
 import com.ezzenix.world.World;
 import com.ezzenix.world.chunk.ChunkManager;
@@ -86,8 +86,8 @@ public class Client {
 			//ChunkPos chunkPos = new ChunkPos(player.getPosition());
 			//Client.getWorld().getChunkManager().loadChunksAround(chunkPos.x, chunkPos.z, 10);
 		}, 500);
-		for (int x = 0; x < 35; x++) {
-			for (int z = 0; z < 35; z++) {
+		for (int x = 0; x < 20; x++) {
+			for (int z = 0; z < 20; z++) {
 				Client.getWorld().getChunkManager().getChunk(new ChunkPos(x, z), true, ChunkManager.ChunkState.FULL);
 			}
 		}
@@ -113,7 +113,6 @@ public class Client {
 
 		interactionManager.update();
 
-		ChunkBuilder.pollQueue();
 		WorldGenerator.pollQueue();
 		Scheduler.runMainThreadTasks();
 

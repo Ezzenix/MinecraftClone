@@ -2,6 +2,7 @@ package com.ezzenix.engine.opengl;
 
 import com.ezzenix.Client;
 import com.ezzenix.engine.Scheduler;
+import com.ezzenix.rendering.RenderSystem;
 import com.ezzenix.resource.ResourceManager;
 import org.joml.Matrix4f;
 
@@ -16,10 +17,14 @@ public class Shader {
 	private final HashMap<String, Uniform> uniforms = new HashMap<>();
 	private final Texture[] samplers = new Texture[3];
 
-	private final Uniform uniformViewMatrix;
-	private final Uniform uniformProjectionMatrix;
-	private final Uniform uniformGameTime;
-	private final Uniform uniformModelMatrix;
+	private final Uniform viewMatrix;
+	private final Uniform projectionMatrix;
+	private final Uniform gameTime;
+	private final Uniform modelMatrix;
+	private final Uniform fogStart;
+	private final Uniform fogEnd;
+	private final Uniform fogColor;
+	private final Uniform cameraPosition;
 
 	public Shader(String vertexShaderPath, String fragmentShaderPath) {
 		// create shader program
@@ -47,10 +52,14 @@ public class Shader {
 		// load uniforms
 		initializeUniforms(vertexShaderPath);
 		initializeUniforms(fragmentShaderPath);
-		this.uniformViewMatrix = getUniform("viewMatrix");
-		this.uniformProjectionMatrix = getUniform("projectionMatrix");
-		this.uniformGameTime = getUniform("gameTime");
-		this.uniformModelMatrix = getUniform("modelMatrix");
+		this.viewMatrix = getUniform("viewMatrix");
+		this.projectionMatrix = getUniform("projectionMatrix");
+		this.gameTime = getUniform("gameTime");
+		this.modelMatrix = getUniform("modelMatrix");
+		this.fogStart = getUniform("fogStart");
+		this.fogEnd = getUniform("fogEnd");
+		this.fogColor = getUniform("fogColor");
+		this.cameraPosition = getUniform("cameraPosition");
 
 		// cleanup
 		glDetachShader(programId, vertexShader);
@@ -163,23 +172,35 @@ public class Shader {
 	}
 
 	public void setModelMatrix(Matrix4f value) {
-		if (this.uniformModelMatrix != null) {
-			this.uniformModelMatrix.set(value);
+		if (this.modelMatrix != null) {
+			this.modelMatrix.set(value);
 		}
 	}
 
 	public void setUniforms(Matrix4f modelMatrix) {
-		if (this.uniformProjectionMatrix != null) {
-			this.uniformProjectionMatrix.set(Client.getCamera().getProjectionMatrix());
+		if (this.projectionMatrix != null) {
+			this.projectionMatrix.set(Client.getCamera().getProjectionMatrix());
 		}
-		if (this.uniformViewMatrix != null) {
-			this.uniformViewMatrix.set(Client.getCamera().getViewMatrix());
+		if (this.viewMatrix != null) {
+			this.viewMatrix.set(Client.getCamera().getViewMatrix());
 		}
-		if (this.uniformModelMatrix != null && modelMatrix != null) {
-			this.uniformModelMatrix.set(modelMatrix);
+		if (this.modelMatrix != null && modelMatrix != null) {
+			this.modelMatrix.set(modelMatrix);
 		}
-		if (this.uniformGameTime != null) {
-			this.uniformGameTime.set(Scheduler.getClock());
+		if (this.gameTime != null) {
+			this.gameTime.set(Scheduler.getClock());
+		}
+		if (this.fogStart != null) {
+			this.fogStart.set(RenderSystem.getShaderFogStart());
+		}
+		if (this.fogEnd != null) {
+			this.fogEnd.set(RenderSystem.getShaderFogEnd());
+		}
+		if (this.fogColor != null) {
+			this.fogColor.set(RenderSystem.getShaderFogColor());
+		}
+		if (this.cameraPosition != null) {
+			this.cameraPosition.set(Client.getCamera().getPosition());
 		}
 	}
 

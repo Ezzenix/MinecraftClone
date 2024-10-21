@@ -4,6 +4,7 @@ import com.ezzenix.Client;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.entities.Entity;
+import com.ezzenix.math.ChunkPos;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -93,6 +94,10 @@ public class Camera {
 
 	public Vector3f getPosition() {
 		return new Vector3f(entity.getPosition()).add(0, entity.getEyeHeight(), 0);
+	}
+
+	public ChunkPos getChunkPos() {
+		return new ChunkPos(this.getPosition());
 	}
 
 	public Matrix4f getViewProjectionMatrix() {

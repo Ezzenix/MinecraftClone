@@ -30,7 +30,7 @@ public class WorldGenerator {
 				chunk.isGenerating = false;
 				chunk.hasGenerated = true;
 
-				chunk.getBuiltChunk().rebuild();
+				chunk.scheduleRebuild();
 				//chunk.rebuildNeighborMesh(1, 0);
 				//chunk.rebuildNeighborMesh(1, 1);
 				//chunk.rebuildNeighborMesh(0, 1);

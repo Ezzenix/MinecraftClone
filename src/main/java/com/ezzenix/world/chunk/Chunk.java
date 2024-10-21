@@ -2,11 +2,11 @@ package com.ezzenix.world.chunk;
 
 import com.ezzenix.blocks.BlockState;
 import com.ezzenix.blocks.Blocks;
-import com.ezzenix.engine.Scheduler;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.BoundingBox;
 import com.ezzenix.math.ChunkPos;
-import com.ezzenix.rendering.chunkbuilder.ChunkBuilder;
+import com.ezzenix.rendering.Renderer;
+import com.ezzenix.rendering.chunk.ChunkBuilder;
 import com.ezzenix.world.World;
 import org.joml.Vector3f;
 
@@ -15,7 +15,6 @@ public class Chunk {
 	public static final int CHUNK_HEIGHT = 256;
 
 	private final ChunkPos chunkPos;
-	private ChunkBuilder.BuiltChunk builtChunk;
 	private final World world;
 
 	private final PalettedContainer<BlockState> blockStateContainer;
@@ -49,9 +48,7 @@ public class Chunk {
 		this.blockStateContainer.set(x, y, z, blockState);
 
 		if (!this.isGenerating) {
-			if (this.builtChunk != null) {
-				this.builtChunk.rebuild();
-			}
+			this.scheduleRebuild();
 			if (x == 0) rebuildNeighborMesh(-1, 0);
 			if (x == 15) rebuildNeighborMesh(1, 0);
 			if (z == 0) rebuildNeighborMesh(0, -1);
@@ -70,7 +67,7 @@ public class Chunk {
 	public void rebuildNeighborMesh(int deltaX, int deltaZ) {
 		Chunk chunk = world.getChunkManager().getChunk(new ChunkPos(this.chunkPos.x + deltaX, this.chunkPos.z + deltaZ), false);
 		if (chunk != null && chunk.getBuiltChunk() != null) {
-			chunk.getBuiltChunk().rebuild();
+			chunk.getBuiltChunk().scheduleRebuild();
 		}
 	}
 
@@ -94,18 +91,19 @@ public class Chunk {
 		return this.boundingBox;
 	}
 
+	public void scheduleRebuild() {
+		ChunkBuilder.BuiltChunk builtChunk = getBuiltChunk();
+		if (builtChunk != null) {
+			builtChunk.scheduleRebuild();
+		}
+	}
+
 	public ChunkBuilder.BuiltChunk getBuiltChunk() {
-		if (this.builtChunk != null) {
-			return this.builtChunk;
-		}
-		if (Scheduler.isMainThread()) {
-			this.builtChunk = new ChunkBuilder.BuiltChunk(this);
-		}
-		return this.builtChunk;
+		return Renderer.getWorldRenderer().getBuiltChunkStorage().getBuiltChunk(this);
 	}
 
 	public void dispose() {
 		this.isDisposed = true;
-		this.getBuiltChunk().dispose();
+		this.getBuiltChunk().delete();
 	}
 }

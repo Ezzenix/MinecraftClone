@@ -1,4 +1,4 @@
-package com.ezzenix.rendering.chunkbuilder;
+package com.ezzenix.rendering.chunk;
 
 import com.ezzenix.enums.Direction;
 import org.joml.Vector3f;

@@ -34,10 +34,10 @@ public class ChunkPos {
 		return (long) chunkX & 4294967295L | ((long) chunkZ & 4294967295L) << 32;
 	}
 
-	public float distanceTo(ChunkPos other) {
-		float dx = this.x - other.x;
-		float dy = this.z - other.z;
-		return (float) Math.sqrt(dx * dx + dy * dy);
+	public int distanceTo(ChunkPos other) {
+		int dx = this.x - other.x;
+		int dy = this.z - other.z;
+		return (int) Math.sqrt(dx * dx + dy * dy);
 	}
 
 	public String toString() {

@@ -1,4 +1,4 @@
-package com.ezzenix.rendering.chunkbuilder;
+package com.ezzenix.rendering.chunk;
 
 import com.ezzenix.Client;
 import com.ezzenix.blocks.Block;
@@ -9,10 +9,12 @@ import com.ezzenix.engine.Scheduler;
 import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
+import com.ezzenix.rendering.Renderer;
 import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
 import com.ezzenix.util.BufferBuilder;
+import com.ezzenix.util.BuiltBuffer;
 import com.ezzenix.world.World;
 import com.ezzenix.world.chunk.Chunk;
 import com.google.common.collect.Maps;
@@ -24,40 +26,79 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL30.GL_FLOAT;
 
 public class ChunkBuilder {
-	private static final PriorityBlockingQueue<RebuildTask> taskQueue = Queues.newPriorityBlockingQueue();
 	private static final ExecutorService executorService = Executors.newFixedThreadPool(1);
 
 	private static final VertexFormat VERTEX_FORMAT = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2, GL_FLOAT, 1); // pos, uv, ao
 
-	public static void pollQueue() {
-		RebuildTask task = taskQueue.poll();
-		if (task == null) return;
+	private static final BlockBufferBuilderPool buffersPool = BlockBufferBuilderPool.allocate(12);
+	private static boolean isBuilding;
 
-		CompletableFuture<Map<RenderLayer, BufferBuilder>> future = CompletableFuture.supplyAsync(task::run, executorService);
-		future.thenAccept(builders -> {
-			if (builders == null) return;
-			Scheduler.recordMainThreadCall(() -> {
-				for (RenderLayer layer : task.builtChunk.buffers.keySet()) {
-					BufferBuilder builder = builders.get(layer);
-					if (builder != null) {
-						VertexBuffer buffer = task.builtChunk.buffers.get(layer);
-						buffer.upload(builder.end());
-					}
+	public static BuiltChunk getNextChunk() {
+		int shortestDistance = Integer.MAX_VALUE;
+		BuiltChunk builtChunk = null;
+		for (BuiltChunk v : Renderer.getWorldRenderer().getBuiltChunkStorage().getBuiltChunks()) {
+			if (v.needsRebuild) {
+				int distance = v.getChunk().getPos().distanceTo(Client.getCamera().getChunkPos());
+				if (distance < shortestDistance) {
+					shortestDistance = distance;
+					builtChunk = v;
 				}
-				task.builtChunk.currentRebuildTask = null;
-			});
+			}
+		}
+		return builtChunk;
+	}
+
+	public static void pollQueue() {
+		if (isBuilding) return;
+		if (buffersPool.hasNoAvailableBuilder()) return;
+
+		BuiltChunk builtChunk = getNextChunk();
+		if (builtChunk == null) return;
+		builtChunk.needsRebuild = false;
+
+		BlockBufferAllocatorStorage blockBufferAllocatorStorage = buffersPool.acquire();
+		if (blockBufferAllocatorStorage == null) return;
+
+		isBuilding = true;
+
+		System.out.println(builtChunk.getChunk().getPos());
+
+		CompletableFuture<Map<RenderLayer, BufferBuilder>> future = CompletableFuture.supplyAsync(() -> rebuildChunk(builtChunk, blockBufferAllocatorStorage), executorService);
+		future.thenAccept(builders -> {
+			if (builders != null) {
+				Scheduler.recordMainThreadCall(() -> {
+					for (RenderLayer layer : builtChunk.buffers.keySet()) {
+						BufferBuilder builder = builders.get(layer);
+						if (builder != null) {
+							VertexBuffer buffer = builtChunk.buffers.get(layer);
+							BuiltBuffer builtBuffer = builder.end();
+							if (builtBuffer != null) {
+								buffer.upload(builtBuffer);
+							}
+						}
+					}
+
+					blockBufferAllocatorStorage.clear();
+					buffersPool.release(blockBufferAllocatorStorage);
+					isBuilding = false;
+
+					pollQueue();
+				});
+			}
 		}).exceptionally(ex -> {
-			ex.printStackTrace();
+			Client.LOGGER.warn(ex);
 			return null;
 		});
 	}
@@ -65,13 +106,16 @@ public class ChunkBuilder {
 	public static class BuiltChunk {
 		private final Chunk chunk;
 		private final Matrix4f translationMatrix;
-		RebuildTask currentRebuildTask;
+		private boolean needsRebuild;
 
 		public final Map<RenderLayer, VertexBuffer> buffers;
+
 
 		public BuiltChunk(Chunk chunk) {
 			this.chunk = chunk;
 			this.translationMatrix = new Matrix4f().translate(new Vector3f(chunk.getPos().x * Chunk.CHUNK_WIDTH, 0, chunk.getPos().z * Chunk.CHUNK_WIDTH));
+
+			this.needsRebuild = true;
 
 			this.buffers = Maps.newHashMap();
 			for (RenderLayer layer : RenderLayer.BLOCK_LAYERS) {
@@ -79,13 +123,8 @@ public class ChunkBuilder {
 			}
 		}
 
-		public void rebuild() {
-			if (this.currentRebuildTask != null) {
-				return;
-			}
-			RebuildTask task = new RebuildTask(this);
-			taskQueue.offer(task);
-			this.currentRebuildTask = task;
+		public void scheduleRebuild() {
+			this.needsRebuild = true;
 		}
 
 		public Chunk getChunk() {
@@ -96,41 +135,16 @@ public class ChunkBuilder {
 			return translationMatrix;
 		}
 
-		public void dispose() {
+		public void clear() {
+			for (VertexBuffer vertexBuffer : this.buffers.values()) {
+				vertexBuffer.clear();
+			}
+		}
+
+		public void delete() {
 			for (VertexBuffer vertexBuffer : this.buffers.values()) {
 				vertexBuffer.close();
 			}
-		}
-	}
-
-	private static class RebuildTask implements Comparable<RebuildTask> {
-		private final BuiltChunk builtChunk;
-		private final AtomicBoolean cancelled = new AtomicBoolean(false);
-
-		public RebuildTask(BuiltChunk builtChunk) {
-			this.builtChunk = builtChunk;
-		}
-
-		public Map<RenderLayer, BufferBuilder> run() {
-			if (cancelled.get()) return null;
-
-			Map<RenderLayer, BufferBuilder> builders = rebuildChunk(this.builtChunk);
-
-			if (cancelled.get()) return null;
-			return builders;
-		}
-
-		public void cancel() {
-			this.cancelled.set(true);
-		}
-
-		public float getDistance() {
-			return this.builtChunk.getChunk().getPos().distanceTo(new ChunkPos(Client.getCamera().getPosition()));
-		}
-
-		@Override
-		public int compareTo(@NotNull ChunkBuilder.RebuildTask rebuildTask) {
-			return Floats.compare(this.getDistance(), rebuildTask.getDistance());
 		}
 	}
 
@@ -197,7 +211,9 @@ public class ChunkBuilder {
 		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
 	}
 
-	public static Map<RenderLayer, BufferBuilder> rebuildChunk(BuiltChunk builtChunk) {
+	public static Map<RenderLayer, BufferBuilder> rebuildChunk(BuiltChunk builtChunk, BlockBufferAllocatorStorage blockBufferAllocatorStorage) {
+		long start = System.currentTimeMillis();
+
 		Chunk chunk = builtChunk.getChunk();
 		World world = chunk.getWorld();
 		BlockPos chunkBlockPos = new BlockPos(chunk.getWorldPos());
@@ -205,8 +221,6 @@ public class ChunkBuilder {
 		Map<RenderLayer, BufferBuilder> builders = Maps.newHashMap();
 
 		//System.out.println("rebuilding chunk " + chunk.getPos());
-
-		long start = System.currentTimeMillis();
 
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y <= Chunk.CHUNK_HEIGHT; y++) {
@@ -218,7 +232,7 @@ public class ChunkBuilder {
 					if (block == Blocks.AIR) continue;
 
 					RenderLayer layer = block.getRenderLayer();
-					BufferBuilder builder = builders.computeIfAbsent(layer, v -> new BufferBuilder(400000, VERTEX_FORMAT));
+					BufferBuilder builder = builders.computeIfAbsent(layer, v -> new BufferBuilder(blockBufferAllocatorStorage.get(v), VERTEX_FORMAT));
 
 					if (block instanceof PlantBlock) {
 						Vector3f midPos = new Vector3f(x + 0.5f, y, z + 0.5f);
@@ -262,6 +276,8 @@ public class ChunkBuilder {
 				}
 			}
 		}
+
+		System.out.println((System.currentTimeMillis() - start) + "ms");
 
 		return builders;
 	}

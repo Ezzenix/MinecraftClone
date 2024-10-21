@@ -9,8 +9,8 @@ import java.util.Collection;
 import static org.lwjgl.opengl.GL30.*;
 
 public class RenderLayer {
-	public static RenderLayer SOLID = new RenderLayer(Renderer.getWorldRenderer().worldShader).format(VertexFormat.POSITION_UV_AO).cull().depth(GL_LESS);
-	public static RenderLayer TRANSLUCENT = new RenderLayer(Renderer.getWorldRenderer().waterShader).format(VertexFormat.POSITION_UV_AO).cull().blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS).depthMask(false);
+	public static RenderLayer SOLID = new RenderLayer(Renderer.getWorldRenderer().worldShader).format(VertexFormat.POSITION_UV_AO).cull().depth(GL_LESS).setExpectedBufferSize(400000);
+	public static RenderLayer TRANSLUCENT = new RenderLayer(Renderer.getWorldRenderer().waterShader).format(VertexFormat.POSITION_UV_AO).cull().blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS).depthMask(false).setExpectedBufferSize(400000);
 
 	public static Collection<RenderLayer> BLOCK_LAYERS = ImmutableList.of(SOLID, TRANSLUCENT);
 
@@ -22,6 +22,7 @@ public class RenderLayer {
 	private int blendFactorS = GL_NONE;
 	private int blendFactorD = GL_NONE;
 	private VertexFormat vertexFormat;
+	private int expectedBufferSize;
 
 	public RenderLayer(Shader shader) {
 		this.shader = shader;
@@ -56,6 +57,15 @@ public class RenderLayer {
 	public RenderLayer colorMask(boolean mask) {
 		this.colorMask = mask;
 		return this;
+	}
+
+	public RenderLayer setExpectedBufferSize(int size) {
+		this.expectedBufferSize = size;
+		return this;
+	}
+
+	public int getExpectedBufferSize() {
+		return this.expectedBufferSize;
 	}
 
 	public Shader getShader() {

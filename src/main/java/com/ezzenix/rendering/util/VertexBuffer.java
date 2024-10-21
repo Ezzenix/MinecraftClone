@@ -87,7 +87,13 @@ public class VertexBuffer implements AutoCloseable {
 		return this.vertexBufferId == -1;
 	}
 
+	public void clear() {
+		this.vertexCount = 0;
+	}
+
 	public void close() {
+		this.clear();
+
 		if (this.vertexBufferId >= 0) {
 			glDeleteBuffers(this.vertexBufferId);
 			this.vertexBufferId = -1;
