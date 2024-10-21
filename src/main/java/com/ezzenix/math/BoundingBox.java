@@ -33,7 +33,7 @@ public class BoundingBox {
 		this(0, 0, 0, 0, 0, 0);
 	}
 
-	public void render(Vector3f color) {
+	public void render(int color) {
 		LineRenderer.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(maxX, minY, minZ), color);
 		LineRenderer.drawLine(new Vector3f(minX, minY, minZ), new Vector3f(minX, minY, maxZ), color);
 		LineRenderer.drawLine(new Vector3f(maxX, minY, minZ), new Vector3f(maxX, minY, maxZ), color);
@@ -51,7 +51,7 @@ public class BoundingBox {
 	}
 
 	public void render() {
-		this.render(new Vector3f(0, 1, 0));
+		this.render(-1);
 	}
 
 	public boolean checkFrustum(Matrix4f projectionMatrix, Matrix4f viewMatrix) {

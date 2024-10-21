@@ -59,7 +59,7 @@ public class Physics {
 		boolean isGrounded = false;
 
 		if (Client.getOptions().thirdPerson) {
-			entity.boundingBox.render(new Vector3f(1, 1, 1));
+			entity.boundingBox.render();
 		}
 
 		for (Vector3f axisVector : axisVectors) {

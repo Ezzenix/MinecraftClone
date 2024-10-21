@@ -6,12 +6,15 @@ public class VertexFormat {
 	public static VertexFormat POSITION_COLOR = new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 4);
 	public static VertexFormat POSITION_UV_AO = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2, GL_FLOAT, 1);
 
-	int[] types;
-	int[] sizes;
+	private final int[] types;
+	private final int[] sizes;
+	private final DrawMode drawMode;
 
-	public VertexFormat(int... data) {
+	public VertexFormat(DrawMode drawMode, int... data) {
 		if (data.length % 2 != 0)
 			throw new RuntimeException("VertexFormat data array length must be even number");
+
+		this.drawMode = drawMode;
 
 		types = new int[data.length / 2];
 		sizes = new int[data.length / 2];
@@ -20,6 +23,14 @@ public class VertexFormat {
 			types[i / 2] = data[i];
 			sizes[i / 2] = data[i + 1];
 		}
+	}
+
+	public VertexFormat(int... data) {
+		this(DrawMode.TRIANGLES, data);
+	}
+
+	public DrawMode getDrawMode() {
+		return this.drawMode;
 	}
 
 	private static int getBytes(int type, int size) {
@@ -47,6 +58,17 @@ public class VertexFormat {
 			}
 			glEnableVertexAttribArray(i);
 			pointer += getBytes(types[i], sizes[i]);
+		}
+	}
+
+	public enum DrawMode {
+		TRIANGLES(GL_TRIANGLES),
+		LINES(GL_LINES);
+
+		public final int id;
+
+		DrawMode(int id) {
+			this.id = id;
 		}
 	}
 }

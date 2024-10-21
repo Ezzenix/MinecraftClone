@@ -1,69 +1,38 @@
 package com.ezzenix.rendering;
 
-import com.ezzenix.engine.opengl.Mesh;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.rendering.util.RenderLayer;
+import com.ezzenix.rendering.util.VertexFormat;
+import com.ezzenix.util.BufferBuilder;
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryStack;
 
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_FLOAT;
+import static org.lwjgl.opengl.GL30.GL_INT;
 
 public class LineRenderer {
-	private static final Shader debugShader = new Shader("debugLine.vert", "debugLine.frag");
-
-	private static final List<Float> vertexBatch = new ArrayList<>();
+	private static final VertexFormat FORMAT = new VertexFormat(VertexFormat.DrawMode.LINES, GL_FLOAT, 3, GL_INT, 1);
+	private static final RenderLayer LINES = new RenderLayer(new Shader("debugLine")).format(FORMAT);
+	private static final BufferBuilder.Immediate consumer = new BufferBuilder.Immediate();
 
 	public static void renderBatch() {
-		try (
-			MemoryStack stack = MemoryStack.stackPush()
-		) {
-			debugShader.bind();
-			debugShader.setUniforms();
-
-			FloatBuffer buffer = Mesh.convertToBuffer(vertexBatch, stack);
-			Mesh mesh = new Mesh(buffer, vertexBatch.size() / 6, GL_LINES);
-			vertexBatch.clear();
-
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
-			glEnableVertexAttribArray(0);
-
-			glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
-			glEnableVertexAttribArray(1);
-
-			glLineWidth(3f);
-			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-			glEnable(GL_LINE_SMOOTH);
-			mesh.render();
-			glDepthFunc(GL_LESS);
-			mesh.dispose();
-			glLineWidth(1f);
-		}
+		glEnable(GL_DEPTH_TEST);
+		consumer.draw(LINES);
+		glDisable(GL_DEPTH_TEST);
 	}
 
-	public static void drawLine(Vector3f pos1, Vector3f pos2, Vector3f color) {
-		vertexBatch.add(pos1.x);
-		vertexBatch.add(pos1.y);
-		vertexBatch.add(pos1.z);
-		vertexBatch.add(color.x);
-		vertexBatch.add(color.y);
-		vertexBatch.add(color.z);
+	public static void drawLine(Vector3f pos1, Vector3f pos2, int color) {
+		BufferBuilder builder = consumer.getBuilder(LINES);
 
-		vertexBatch.add(pos2.x);
-		vertexBatch.add(pos2.y);
-		vertexBatch.add(pos2.z);
-		vertexBatch.add(color.x);
-		vertexBatch.add(color.y);
-		vertexBatch.add(color.z);
+		builder.vertex(pos1).color(color).next();
+		builder.vertex(pos2).color(color).next();
 	}
 
 	public static void drawLine(Vector3f pos1, Vector3f pos2) {
-		drawLine(pos1, pos2, new Vector3f(1, 1, 1));
+		drawLine(pos1, pos2, -1);
 	}
 
-	public static void drawBox(Vector3f corner1, Vector3f corner2, Vector3f color) {
+	public static void drawBox(Vector3f corner1, Vector3f corner2, int color) {
 		float minX = Math.min(corner1.x, corner2.x);
 		float maxX = Math.max(corner1.x, corner2.x);
 		float minY = Math.min(corner1.y, corner2.y);
@@ -87,11 +56,11 @@ public class LineRenderer {
 		drawLine(new Vector3f(minX, maxY, maxZ), new Vector3f(maxX, maxY, maxZ), color);
 	}
 
-	public static void highlightVoxel(Vector3f voxel, Vector3f color) {
+	public static void highlightVoxel(Vector3f voxel, int color) {
 		drawBox(voxel, new Vector3f(voxel).add(1, 1, 1), color);
 	}
 
 	public static void highlightVoxel(Vector3f voxel) {
-		highlightVoxel(voxel, new Vector3f(1, 1, 1));
+		highlightVoxel(voxel, -1);
 	}
 }

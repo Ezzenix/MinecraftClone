@@ -17,6 +17,8 @@ public class VertexBuffer implements AutoCloseable {
 
 	private int vertexCount;
 
+	private int drawModeId;
+
 	public enum Usage {
 		STATIC(GL_STATIC_DRAW),
 		DYNAMIC(GL_DYNAMIC_DRAW);
@@ -32,6 +34,8 @@ public class VertexBuffer implements AutoCloseable {
 		this.vertexBufferId = glGenBuffers();
 		//this.indexBufferId = glGenBuffers();
 		this.vertexArrayId = glGenVertexArrays();
+
+		this.drawModeId = vertexFormat.getDrawMode().id;
 
 		glBindVertexArray(this.vertexArrayId);
 		glBindBuffer(GL_ARRAY_BUFFER, this.vertexBufferId);
@@ -53,7 +57,7 @@ public class VertexBuffer implements AutoCloseable {
 	public void draw() {
 		if (this.vertexCount == 0) return;
 		this.bind();
-		glDrawArrays(GL_TRIANGLES, 0, this.vertexCount);
+		glDrawArrays(this.drawModeId, 0, this.vertexCount);
 		this.unbind();
 	}
 
