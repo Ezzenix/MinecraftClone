@@ -3,10 +3,13 @@ package com.ezzenix.rendering;
 import com.ezzenix.Client;
 import com.ezzenix.Debug;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.rendering.chunk.BuiltChunkStorage;
 import com.ezzenix.rendering.chunk.ChunkBuilder;
+import com.ezzenix.rendering.chunk.UnitCube;
+import com.ezzenix.rendering.util.BufferBuilder;
 import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
@@ -15,6 +18,7 @@ import com.ezzenix.world.World;
 import com.ezzenix.world.chunk.Chunk;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +30,14 @@ public class WorldRenderer {
 	public final Shader waterShader = new Shader("water.vert", "water.frag");
 
 	private final Shader blockOverlayShader;
+
 	//private final VertexBuffer blockOverlayBuffer;
+	private final static BufferBuilder.Immediate immediate = new BufferBuilder.Immediate();
 
 	public int chunksRenderedCount = 0;
 
 	private BuiltChunkStorage builtChunkStorage;
+
 
 	public WorldRenderer() {
 		this.blockOverlayShader = new Shader("block_overlay");
@@ -41,7 +48,6 @@ public class WorldRenderer {
 	}
 
 	public void render() {
-		/*
 		World world = Client.getWorld();
 		if (world == null) return;
 
@@ -49,7 +55,7 @@ public class WorldRenderer {
 		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		RenderSystem.setShaderFogColor(-1);
-		RenderSystem.setShaderFogStartEnd(100, 900);
+		RenderSystem.setShaderFogStartEnd(80, 850);
 
 		this.builtChunkStorage.update();
 		ChunkBuilder.pollQueue();
@@ -77,7 +83,6 @@ public class WorldRenderer {
 		}
 
 		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		 */
 	}
 
 	public void renderChunkLayer(RenderLayer layer, List<Chunk> chunks) {
@@ -94,40 +99,31 @@ public class WorldRenderer {
 	}
 
 	public void renderDamage(BlockPos blockPos, float progress) {
-		/*
-		float x = blockPos.x;
-		float y = blockPos.y;
-		float z = blockPos.z;
+		Vector3f mid = blockPos.toVector3f();
+
+		BufferBuilder builder = immediate.getBuilder(RenderLayer.BREAK_OVERLAY);
 
 		for (Direction direction : Direction.values()) {
-
 			Vector3f[] face = UnitCube.getFace(direction);
 
-			Vector3f v0 = new Vector3f(blockPos.x, blockPos.y, blockPos.z).add(face[0]);
-			Vector3f v1 = new Vector3f(blockPos.x, blockPos.y, blockPos.z).add(face[1]);
-			Vector3f v2 = new Vector3f(blockPos.x, blockPos.y, blockPos.z).add(face[2]);
-			Vector3f v3 = new Vector3f(blockPos.x, blockPos.y, blockPos.z).add(face[3]);
+			Vector3f v0 = new Vector3f(mid).add(new Vector3f(face[0]).mul(1.01f));
+			Vector3f v1 = new Vector3f(mid).add(new Vector3f(face[1]).mul(1.01f));
+			Vector3f v2 = new Vector3f(mid).add(new Vector3f(face[2]).mul(1.01f));
+			Vector3f v3 = new Vector3f(mid).add(new Vector3f(face[3]).mul(1.0f));
 
-			blockOverlayBuffer.vertex(v0).texture(0, 0).next();
-			blockOverlayBuffer.vertex(v1).texture(0, 1).next();
-			blockOverlayBuffer.vertex(v2).texture(1, 1).next();
-
-			blockOverlayBuffer.vertex(v2).texture(1, 1).next();
-			blockOverlayBuffer.vertex(v3).texture(1, 0).next();
-			blockOverlayBuffer.vertex(v0).texture(0, 0).next();
-
+			builder.vertex(v0).texture(0, 0).next();
+			builder.vertex(v1).texture(0, 1).next();
+			builder.vertex(v2).texture(1, 1).next();
+			builder.vertex(v2).texture(1, 1).next();
+			builder.vertex(v3).texture(1, 0).next();
+			builder.vertex(v0).texture(0, 0).next();
 		}
 
-		blockOverlayBuffer.upload();
-
-		blockOverlayShader.bind();
-		blockOverlayShader.setUniforms();
-		blockOverlayBuffer.draw();
-		 */
+		immediate.draw(RenderLayer.BREAK_OVERLAY);
 	}
 
 	public void reloadAllChunks() {
-		System.out.println("Reloading all chunks!");
+		Client.LOGGER.info("Reloading all chunks!");
 		Client.getHud().chatHud.addMessage("Reloading all chunks");
 		World world = Client.getWorld();
 		for (Chunk chunk : world.getChunkManager().getChunks()) {

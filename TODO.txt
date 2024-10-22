@@ -5,3 +5,7 @@ matrixstack
 steal minecrafts viewbobbing (gamerenderer line 830)
 gametime / daynight cycle (move sun and change skybox)
 texturemanager and identifier system
+ChunkManager.getChunk() LRU-cache
+sounds
+implement textures into renderlayer
+polygon offset layering (see minecraft)

@@ -35,7 +35,6 @@ public class BuiltChunkStorage {
 					long key = ChunkPos.toLong(x, z);
 					ChunkBuilder.BuiltChunk builtChunk = builtChunks.get(key);
 					if (builtChunk == null) {
-						System.out.println("create");
 						builtChunk = new ChunkBuilder.BuiltChunk(chunk);
 						builtChunks.put(key, builtChunk);
 					}

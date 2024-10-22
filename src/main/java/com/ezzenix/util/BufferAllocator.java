@@ -14,11 +14,13 @@ public class BufferAllocator implements AutoCloseable {
 	private int prevOffset;
 
 	public BufferAllocator(int size) {
+		if (size < 0)
+			throw new IllegalArgumentException("Invalid allocator size " + size);
+
 		this.size = size;
 		this.pointer = allocator.malloc(size);
-		if (this.pointer == 0L) {
+		if (this.pointer == 0L)
 			throw new OutOfMemoryError("Failed to allocate " + size + " bytes");
-		}
 	}
 
 	public long allocate(int size) {
@@ -36,12 +38,11 @@ public class BufferAllocator implements AutoCloseable {
 			int j = Math.max(this.size + i, targetSize);
 			this.grow(j);
 		}
-
 	}
 
 	private void grow(int targetSize) {
-		this.pointer = allocator.realloc(this.pointer, (long) targetSize);
 		Client.LOGGER.info("Needed to grow buffer from {} bytes to {} bytes", this.size, targetSize);
+		this.pointer = allocator.realloc(this.pointer, (long) targetSize);
 		if (this.pointer == 0L) {
 			throw new OutOfMemoryError("Failed to resize buffer from " + this.size + " bytes to " + targetSize + " bytes");
 		} else {
@@ -72,7 +73,7 @@ public class BufferAllocator implements AutoCloseable {
 			MemoryUtil.memCopy(this.pointer + (long) this.prevOffset, this.pointer, (long) i);
 		}
 
-		this.offset = i;
+		this.offset = 0;
 		this.prevOffset = 0;
 	}
 

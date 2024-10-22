@@ -31,7 +31,7 @@ public class Game {
 		//new TestBlock();
 
 
-		//Client.init();
+		Client.init();
 
 
 		/*
@@ -73,6 +73,7 @@ public class Game {
 		 */
 
 
+		/*
 		Window window = new Window();
 
 		VertexBuffer vertexBuffer = new VertexBuffer(VertexFormat.POSITION_COLOR, VertexBuffer.Usage.DYNAMIC, 2);
@@ -82,12 +83,11 @@ public class Game {
 
 		ByteBuffer buff = vertexBuffer.allocator.getAllocated();
 		System.out.println(buff.getFloat());
-		System.out.println(buff.getFloat());
-		System.out.println(buff.getFloat());
-		System.out.println(buff.getFloat());
-
-
+		//System.out.println(buff.getFloat());
+		//System.out.println(buff.getFloat());
+		//System.out.println(buff.getFloat());
 
 		System.out.println("hi");
+		 */
 	}
 }

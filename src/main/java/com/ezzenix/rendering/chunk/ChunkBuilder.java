@@ -9,6 +9,7 @@ import com.ezzenix.engine.Scheduler;
 import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.rendering.Renderer;
+import com.ezzenix.rendering.util.BufferBuilder;
 import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL30.GL_FLOAT;
 
@@ -34,11 +36,14 @@ public class ChunkBuilder {
 
 	private static boolean isBuilding;
 
+	private static final Map<RenderLayer, BufferBuilder> builders = RenderLayer.BLOCK_LAYERS.stream()
+		.collect(Collectors.toMap(layer -> layer, layer -> new BufferBuilder(layer.getExpectedBufferSize())));
+
 	public static BuiltChunk getNextChunk() {
 		int shortestDistance = Integer.MAX_VALUE;
 		BuiltChunk builtChunk = null;
 		for (BuiltChunk v : Renderer.getWorldRenderer().getBuiltChunkStorage().getBuiltChunks()) {
-			if (v.needsRebuild) {
+			if (v.needsRebuild && v.getChunk().hasGenerated) {
 				int distance = v.getChunk().getPos().distanceTo(Client.getCamera().getChunkPos());
 				if (distance < shortestDistance) {
 					shortestDistance = distance;
@@ -58,16 +63,23 @@ public class ChunkBuilder {
 
 		isBuilding = true;
 
+		//System.out.println("rebuilding " + builtChunk.getChunk().getPos());
+
+		for (BufferBuilder builder : builders.values()) {
+			builder.clear();
+		}
+
 		CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> rebuildChunk(builtChunk), executorService);
-		future.thenAccept(builders -> {
-			if (builders != null) {
+		future.thenAccept(success -> {
+			if (success) {
 				Scheduler.recordMainThreadCall(() -> {
-					for (VertexBuffer buffer : builtChunk.buffers.values()) {
-						buffer.upload();
+					for (RenderLayer layer : RenderLayer.BLOCK_LAYERS) {
+						BufferBuilder builder = builders.get(layer);
+						VertexBuffer buffer = builtChunk.buffers.get(layer);
+						buffer.upload(builder);
 					}
 
 					isBuilding = false;
-					pollQueue();
 				});
 			}
 		}).exceptionally(ex -> {
@@ -92,7 +104,7 @@ public class ChunkBuilder {
 
 			this.buffers = Maps.newHashMap();
 			for (RenderLayer layer : RenderLayer.BLOCK_LAYERS) {
-				buffers.put(layer, new VertexBuffer(VERTEX_FORMAT, VertexBuffer.Usage.DYNAMIC, layer.getExpectedBufferSize()));
+				buffers.put(layer, new VertexBuffer(VERTEX_FORMAT, VertexBuffer.Usage.DYNAMIC));
 			}
 		}
 
@@ -174,26 +186,20 @@ public class ChunkBuilder {
 		};
 	}
 
-	private static void addQuad(VertexBuffer buffer, Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3, Vector2f[] uv, float[] ao) {
-		buffer.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
-		buffer.vertex(v1.x, v1.y, v1.z).texture(uv[1]).putFloat(ao[1]).next();
-		buffer.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
+	private static void addQuad(BufferBuilder builder, Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3, Vector2f[] uv, float[] ao) {
+		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
+		builder.vertex(v1.x, v1.y, v1.z).texture(uv[1]).putFloat(ao[1]).next();
+		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
 
-		buffer.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
-		buffer.vertex(v3.x, v3.y, v3.z).texture(uv[3]).putFloat(ao[3]).next();
-		buffer.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
+		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
+		builder.vertex(v3.x, v3.y, v3.z).texture(uv[3]).putFloat(ao[3]).next();
+		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
 	}
 
 	public static boolean rebuildChunk(BuiltChunk builtChunk) {
-		long start = System.currentTimeMillis();
-
 		Chunk chunk = builtChunk.getChunk();
 		World world = chunk.getWorld();
 		BlockPos chunkBlockPos = new BlockPos(chunk.getWorldPos());
-
-		Map<RenderLayer, VertexBuffer> buffers = builtChunk.buffers;
-
-		//System.out.println("rebuilding chunk " + chunk.getPos());
 
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y <= Chunk.CHUNK_HEIGHT; y++) {
@@ -205,7 +211,7 @@ public class ChunkBuilder {
 					if (block == Blocks.AIR) continue;
 
 					RenderLayer layer = block.getRenderLayer();
-					VertexBuffer buffer = buffers.get(layer);
+					BufferBuilder builder = builders.get(layer);
 
 					if (block instanceof PlantBlock) {
 						Vector3f midPos = new Vector3f(x + 0.5f, y, z + 0.5f);
@@ -214,7 +220,7 @@ public class ChunkBuilder {
 						for (float deg = 45; deg <= (45 + 90 * 4); deg += 90) {
 							Vector3f lookVector = new Vector3f((float) -Math.cos(Math.toRadians(deg)), 0.0f, (float) -Math.sin(Math.toRadians(deg)));
 							lookVector.mul((float) Math.pow(flowerSize, 4));
-							addQuad(buffer,
+							addQuad(builder,
 								new Vector3f(midPos).add(-lookVector.x, flowerSize, -lookVector.z),
 								new Vector3f(midPos).add(-lookVector.x, 0, -lookVector.z),
 								new Vector3f(midPos).add(lookVector.x, 0, lookVector.z),
@@ -239,18 +245,17 @@ public class ChunkBuilder {
 						};
 						float[] ao = calculateAO(world, blockPos, direction);
 
-						Vector3f v0 = new Vector3f(x, y, z).add(unitCubeFace[0]);
-						Vector3f v1 = new Vector3f(x, y, z).add(unitCubeFace[1]);
-						Vector3f v2 = new Vector3f(x, y, z).add(unitCubeFace[2]);
-						Vector3f v3 = new Vector3f(x, y, z).add(unitCubeFace[3]);
+						Vector3f mid = new Vector3f(x + 0.5f, y + 0.5f, z + 0.5f);
+						Vector3f v0 = new Vector3f(mid).add(unitCubeFace[0]);
+						Vector3f v1 = new Vector3f(mid).add(unitCubeFace[1]);
+						Vector3f v2 = new Vector3f(mid).add(unitCubeFace[2]);
+						Vector3f v3 = new Vector3f(mid).add(unitCubeFace[3]);
 
-						addQuad(buffer, v0, v1, v2, v3, uv, ao);
+						addQuad(builder, v0, v1, v2, v3, uv, ao);
 					}
 				}
 			}
 		}
-
-		System.out.println((System.currentTimeMillis() - start) + "ms");
 
 		return true;
 	}

@@ -3,24 +3,24 @@ package com.ezzenix.world.chunk;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.world.World;
 import com.ezzenix.world.gen.WorldGenerator;
-import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkManager {
 	World world;
-	Long2ObjectMap<Chunk> chunks;
+	ConcurrentHashMap<Long, Chunk> chunks;
 
 	public ChunkManager(World world) {
 		this.world = world;
-		this.chunks = new Long2ObjectArrayMap<>();
+		this.chunks = new ConcurrentHashMap<>();
 	}
 
 	public Chunk getChunk(ChunkPos chunkPos, boolean create, ChunkState chunkState) {
 		Chunk chunk = chunks.get(chunkPos.toLong());
+
 		if (chunk == null && create) {
 			chunk = new Chunk(chunkPos, this.world);
 			if (chunkState == ChunkState.FULL) {

@@ -66,12 +66,6 @@ public class Mouse {
 		Input.mouseButton1Down(() -> {
 			if (Client.isPaused()) return;
 			if (Client.getScreen() != null) return;
-			//Raycast result = Client.getPlayer().raycast();
-			//if (result != null) {
-			//	BlockPos blockPos = result.blockPos;
-			//	Client.getWorld().setBlockState(blockPos, Blocks.AIR.getDefaultState());
-			//	ParticleSystem.createBlockBreakParticles(blockPos);
-			//}
 		});
 	}
 

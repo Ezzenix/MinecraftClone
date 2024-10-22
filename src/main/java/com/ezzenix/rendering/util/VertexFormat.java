@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL30.*;
 public class VertexFormat {
 	public static VertexFormat POSITION_COLOR = new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 4);
 	public static VertexFormat POSITION_UV_AO = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2, GL_FLOAT, 1);
+	public static VertexFormat POSITION_UV = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2);
 
 	private final int[] types;
 	private final int[] sizes;

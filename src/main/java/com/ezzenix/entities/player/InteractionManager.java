@@ -6,6 +6,7 @@ import com.ezzenix.blocks.Blocks;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.physics.Raycast;
+import com.ezzenix.rendering.particle.ParticleSystem;
 
 public class InteractionManager {
 	private boolean isBreaking = false;
@@ -56,6 +57,7 @@ public class InteractionManager {
 
 		if (breakingPos != null && getBreakingProgress() == 1) {
 			Client.getWorld().setBlockState(breakingPos, Blocks.AIR.getDefaultState());
+			ParticleSystem.createBlockBreakParticles(breakingPos);
 		}
 	}
 }

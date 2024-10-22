@@ -17,4 +17,8 @@ public class Util {
 		lookVector.cross(upVector, rightVector).normalize();
 		return lookVector;
 	}
+
+	public static void memoize() {
+		// TODO
+	}
 }

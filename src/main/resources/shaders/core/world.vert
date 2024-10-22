@@ -21,6 +21,6 @@ void main() {
     texCoord = textureCoord;
     ambientOcclusion = aoFactor;
 
-    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-    vertexDistance = fog_distance(cameraPosition - worldPosition.xyz, 0);
+    vec3 worldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+    vertexDistance = fog_distance(cameraPosition - worldPos, 0);
 }

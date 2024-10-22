@@ -1,7 +1,9 @@
 package com.ezzenix.rendering.util;
 
+import com.ezzenix.Client;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.rendering.Renderer;
+import com.ezzenix.util.Identifier;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -11,6 +13,14 @@ import static org.lwjgl.opengl.GL30.*;
 public class RenderLayer {
 	public static RenderLayer SOLID = new RenderLayer(Renderer.getWorldRenderer().worldShader).format(VertexFormat.POSITION_UV_AO).cull().depth(GL_LESS).setExpectedBufferSize(400000);
 	public static RenderLayer TRANSLUCENT = new RenderLayer(Renderer.getWorldRenderer().waterShader).format(VertexFormat.POSITION_UV_AO).cull().blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS).depthMask(false).setExpectedBufferSize(400000);
+
+	private static final Shader BLOCK_OVERLAY_SHADER = new Shader("block_overlay");
+
+	static {
+		BLOCK_OVERLAY_SHADER.setTexture(0, Client.getTextureManager().getTexture(Identifier.of("break_overlay")));
+	}
+
+	public static RenderLayer BREAK_OVERLAY = new RenderLayer(BLOCK_OVERLAY_SHADER).format(VertexFormat.POSITION_UV).cull().depth(GL_LESS).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	public static Collection<RenderLayer> BLOCK_LAYERS = ImmutableList.of(SOLID, TRANSLUCENT);
 
@@ -22,7 +32,7 @@ public class RenderLayer {
 	private int blendFactorS = GL_NONE;
 	private int blendFactorD = GL_NONE;
 	private VertexFormat vertexFormat;
-	private int expectedBufferSize;
+	private int expectedBufferSize = 256;
 
 	public RenderLayer(Shader shader) {
 		this.shader = shader;

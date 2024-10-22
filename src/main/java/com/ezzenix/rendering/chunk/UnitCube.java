@@ -8,45 +8,45 @@ import java.util.Map;
 
 public class UnitCube {
 	public static Vector3f[] UP = new Vector3f[]{
-		new Vector3f(0f, 1f, 0f),
-		new Vector3f(0f, 1f, 1f),
-		new Vector3f(1f, 1f, 1f),
-		new Vector3f(1f, 1f, 0f),
+		new Vector3f(-0.5f, 0.5f, -0.5f),
+		new Vector3f(-0.5f, 0.5f, 0.5f),
+		new Vector3f(0.5f, 0.5f, 0.5f),
+		new Vector3f(0.5f, 0.5f, -0.5f),
 	};
 
 	public static Vector3f[] SOUTH = new Vector3f[]{
-		new Vector3f(0f, 1f, 1f),
-		new Vector3f(0f, 0f, 1f),
-		new Vector3f(1f, 0f, 1f),
-		new Vector3f(1f, 1f, 1f),
+		new Vector3f(-0.5f, 0.5f, 0.5f),
+		new Vector3f(-0.5f, -0.5f, 0.5f),
+		new Vector3f(0.5f, -0.5f, 0.5f),
+		new Vector3f(0.5f, 0.5f, 0.5f),
 	};
 
 	public static Vector3f[] WEST = new Vector3f[]{
-		new Vector3f(0f, 1f, 0f),
-		new Vector3f(0f, 0f, 0f),
-		new Vector3f(0f, 0f, 1f),
-		new Vector3f(0f, 1f, 1f),
+		new Vector3f(-0.5f, 0.5f, -0.5f),
+		new Vector3f(-0.5f, -0.5f, -0.5f),
+		new Vector3f(-0.5f, -0.5f, 0.5f),
+		new Vector3f(-0.5f, 0.5f, 0.5f),
 	};
 
 	public static Vector3f[] EAST = new Vector3f[]{
-		new Vector3f(1f, 1f, 1f),
-		new Vector3f(1f, 0f, 1f),
-		new Vector3f(1f, 0f, 0f),
-		new Vector3f(1f, 1f, 0f),
+		new Vector3f(0.5f, 0.5f, 0.5f),
+		new Vector3f(0.5f, -0.5f, 0.5f),
+		new Vector3f(0.5f, -0.5f, -0.5f),
+		new Vector3f(0.5f, 0.5f, -0.5f),
 	};
 
 	public static Vector3f[] NORTH = new Vector3f[]{
-		new Vector3f(1f, 1f, 0f),
-		new Vector3f(1f, 0f, 0f),
-		new Vector3f(0f, 0f, 0f),
-		new Vector3f(0f, 1f, 0f),
+		new Vector3f(0.5f, 0.5f, -0.5f),
+		new Vector3f(0.5f, -0.5f, -0.5f),
+		new Vector3f(-0.5f, -0.5f, -0.5f),
+		new Vector3f(-0.5f, 0.5f, -0.5f),
 	};
 
 	public static Vector3f[] DOWN = new Vector3f[]{
-		new Vector3f(0f, 0f, 1f),
-		new Vector3f(0f, 0f, 0f),
-		new Vector3f(1f, 0f, 0f),
-		new Vector3f(1f, 0f, 1f),
+		new Vector3f(-0.5f, -0.5f, 0.5f),
+		new Vector3f(-0.5f, -0.5f, -0.5f),
+		new Vector3f(0.5f, -0.5f, -0.5f),
+		new Vector3f(0.5f, -0.5f, 0.5f),
 	};
 
 	private static final Map<Direction, Vector3f[]> MAP = new EnumMap<>(Direction.class);

@@ -1,45 +1,42 @@
 package com.ezzenix.rendering.particle;
 
+import com.ezzenix.Client;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.math.BlockPos;
-import com.ezzenix.rendering.util.VertexBuffer;
+import com.ezzenix.rendering.Camera;
+import com.ezzenix.rendering.util.BufferBuilder;
+import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.rendering.util.VertexFormat;
 import org.joml.Math;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL30.GL_FLOAT;
-import static org.lwjgl.opengl.GL30.GL_INT;
+import static org.lwjgl.opengl.GL11.*;
 
 public class ParticleSystem {
 	public static final List<Particle> particles = new ArrayList<>();
 
-	private static final Shader shader = new Shader("particle");
-	private static final VertexBuffer buffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_INT, 1), VertexBuffer.Usage.DYNAMIC, 2048);
+	private static final Shader SHADER = new Shader("particle");
+	private static final RenderLayer LAYER = new RenderLayer(SHADER).format(new VertexFormat(GL_FLOAT, 3, GL_INT, 1));
+	private static final BufferBuilder.Immediate immediate = new BufferBuilder.Immediate();
 
 	public static void render() {
-		/*
+		if (particles.isEmpty()) return;
+
+		BufferBuilder builder = immediate.getBuilder(LAYER);
+
 		Camera camera = Client.getCamera();
 		Vector3f direction = camera.getLookVector().mul(-1);
 
-		glDisable(GL_CULL_FACE);
-
-		shader.bind();
-		shader.setUniforms();
-
 		for (Particle particle : particles.stream().toList()) {
 			particle.update();
-		}
-		for (Particle particle : particles) {
-			particle.render(vertexBuffer, direction);
+			particle.draw(builder, direction);
 		}
 
-		vertexBuffer.upload();
-		vertexBuffer.draw();
-
-		glEnable(GL_CULL_FACE);
-		 */
+		immediate.draw(LAYER);
 	}
 
 	public static void createBlockBreakParticles(BlockPos blockPos) {

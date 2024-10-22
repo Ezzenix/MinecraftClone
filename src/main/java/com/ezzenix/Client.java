@@ -31,6 +31,7 @@ import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 
 public class Client {
 	public static Logger LOGGER = LogManager.getLogger("e");
+	public static Thread mainThread = Thread.currentThread();
 
 	private static Screen currentScreen;
 
@@ -86,8 +87,8 @@ public class Client {
 			//ChunkPos chunkPos = new ChunkPos(player.getPosition());
 			//Client.getWorld().getChunkManager().loadChunksAround(chunkPos.x, chunkPos.z, 10);
 		}, 500);
-		for (int x = 0; x < 20; x++) {
-			for (int z = 0; z < 20; z++) {
+		for (int x = 0; x < 35; x++) {
+			for (int z = 0; z < 35; z++) {
 				Client.getWorld().getChunkManager().getChunk(new ChunkPos(x, z), true, ChunkManager.ChunkState.FULL);
 			}
 		}

@@ -1,6 +1,7 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.rendering.util.BufferBuilder;
 import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
@@ -13,25 +14,19 @@ import static org.lwjgl.opengl.GL30.GL_INT;
 public class LineRenderer {
 	private static final VertexFormat FORMAT = new VertexFormat(VertexFormat.DrawMode.LINES, GL_FLOAT, 3, GL_INT, 1);
 	private static final RenderLayer LINES = new RenderLayer(new Shader("debugLine")).format(FORMAT);
-	private static final VertexBuffer.Immediate immediate = new VertexBuffer.Immediate();
+	private static final BufferBuilder.Immediate immediate = new BufferBuilder.Immediate();
 
 	public static void renderBatch() {
-		/*
 		glEnable(GL_DEPTH_TEST);
 		immediate.draw(LINES);
 		glDisable(GL_DEPTH_TEST);
-
-		 */
 	}
 
 	public static void drawLine(Vector3f pos1, Vector3f pos2, int color) {
-		/*
-		VertexBuffer buffer = immediate.getBuffer(LINES);
+		BufferBuilder builder = immediate.getBuilder(LINES);
 
-		buffer.vertex(pos1).color(color).next();
-		buffer.vertex(pos2).color(color).next();
-
-		 */
+		builder.vertex(pos1).color(color).next();
+		builder.vertex(pos2).color(color).next();
 	}
 
 	public static void drawLine(Vector3f pos1, Vector3f pos2) {

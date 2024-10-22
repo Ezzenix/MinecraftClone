@@ -46,8 +46,7 @@ public class ChunkPos {
 
 	public boolean equals(Object v) {
 		if (this == v) return true;
-		if (v == null || this.getClass() != v.getClass()) return false;
-		ChunkPos other = (ChunkPos) v;
+		if (!(v instanceof ChunkPos other)) return false;
 		return this.x == other.x && this.z == other.z;
 	}
 
