@@ -16,7 +16,7 @@ public class ParticleSystem {
 	public static final List<Particle> particles = new ArrayList<>();
 
 	private static final Shader shader = new Shader("particle");
-	private static final VertexBuffer vertexBuffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_INT, 1), VertexBuffer.Usage.DYNAMIC);
+	private static final VertexBuffer buffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_INT, 1), VertexBuffer.Usage.DYNAMIC, 2048);
 
 	public static void render() {
 		/*

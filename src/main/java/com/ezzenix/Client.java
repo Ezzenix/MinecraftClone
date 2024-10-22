@@ -74,7 +74,7 @@ public class Client {
 		options.write();
 
 		world = new World(new OverworldGenerator(1337));
-		player = new Player(world, new Vector3f(0, 50, 0));
+		player = new Player(world, new Vector3f(0, 100, 0));
 		camera = new Camera();
 		interactionManager = new InteractionManager();
 

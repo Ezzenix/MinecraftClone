@@ -21,7 +21,7 @@ public class BuiltChunkStorage {
 	public void update() {
 		ChunkPos cameraChunkPos = new ChunkPos(Client.getCamera().getPosition());
 
-		Set<Long> builtChunksToRemove = new HashSet<>(builtChunks.keySet());
+		//Set<Long> builtChunksToRemove = new HashSet<>(builtChunks.keySet());
 
 		for (int i = -viewDistance; i <= viewDistance; i++) {
 			for (int k = -viewDistance; k <= viewDistance; k++) {
@@ -40,17 +40,19 @@ public class BuiltChunkStorage {
 						builtChunks.put(key, builtChunk);
 					}
 
-					builtChunksToRemove.remove(key);
+					//builtChunksToRemove.remove(key);
 				}
 			}
 		}
 
+		/*
 		for (long key : builtChunksToRemove) {
 			ChunkBuilder.BuiltChunk builtChunk = builtChunks.remove(key);
 			if (builtChunk != null) {
 				builtChunk.delete();
 			}
 		}
+		 */
 	}
 
 	public ChunkBuilder.BuiltChunk getBuiltChunk(Chunk chunk) {

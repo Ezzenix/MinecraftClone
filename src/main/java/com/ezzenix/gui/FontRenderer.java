@@ -1,7 +1,7 @@
 package com.ezzenix.gui;
 
 import com.ezzenix.engine.opengl.Texture;
-import com.ezzenix.util.BufferBuilder;
+import com.ezzenix.rendering.util.VertexBuffer;
 import org.joml.Math;
 
 import javax.imageio.ImageIO;
@@ -146,10 +146,10 @@ public class FontRenderer {
 		return width;
 	}
 
-	public void draw(BufferBuilder vertexBuilder, int x, int y, String text, int color, boolean shadow) {
+	public void draw(VertexBuffer buffer, int x, int y, String text, int color, boolean shadow) {
 		if (shadow) {
 			float a = Color.unpack(color)[3];
-			draw(vertexBuilder, x - 1, y + 2, text, Color.pack(0.03f, 0.03f, 0.03f, 0.4f * a), false);
+			draw(buffer, x - 1, y + 2, text, Color.pack(0.03f, 0.03f, 0.03f, 0.4f * a), false);
 		}
 
 		y -= 5; // TODO: Make this a better way, font offset to align top of text
@@ -168,13 +168,13 @@ public class FontRenderer {
 			int width = glyph.width;
 			int height = glyph.height;
 
-			vertexBuilder.vertex(x, y).texture(glyph.minU, glyph.minV).color(color).next();
-			vertexBuilder.vertex(x, y + height).texture(glyph.minU, glyph.maxV).color(color).next();
-			vertexBuilder.vertex(x + width, y + height).texture(glyph.maxU, glyph.maxV).color(color).next();
+			buffer.vertex(x, y).texture(glyph.minU, glyph.minV).color(color).next();
+			buffer.vertex(x, y + height).texture(glyph.minU, glyph.maxV).color(color).next();
+			buffer.vertex(x + width, y + height).texture(glyph.maxU, glyph.maxV).color(color).next();
 
-			vertexBuilder.vertex(x + width, y + height).texture(glyph.maxU, glyph.maxV).color(color).next();
-			vertexBuilder.vertex(x + width, y).texture(glyph.maxU, glyph.minV).color(color).next();
-			vertexBuilder.vertex(x, y).texture(glyph.minU, glyph.minV).color(color).next();
+			buffer.vertex(x + width, y + height).texture(glyph.maxU, glyph.maxV).color(color).next();
+			buffer.vertex(x + width, y).texture(glyph.maxU, glyph.minV).color(color).next();
+			buffer.vertex(x, y).texture(glyph.minU, glyph.minV).color(color).next();
 
 			x += width;
 		}

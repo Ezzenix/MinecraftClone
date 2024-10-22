@@ -7,9 +7,9 @@ import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.inventory.ItemStack;
 import com.ezzenix.item.BlockItem;
 import com.ezzenix.rendering.util.RenderLayer;
+import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
 import com.ezzenix.resource.ResourceManager;
-import com.ezzenix.util.BufferBuilder;
 import org.joml.Vector2f;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -27,23 +27,23 @@ public class Gui {
 	private static final Shader FONT_SHADER = new Shader("gui/text");
 	private static final RenderLayer FONT_LAYER = new RenderLayer(FONT_SHADER).format(new VertexFormat(GL_FLOAT, 2, GL_FLOAT, 2, GL_INT, 1)).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	private static final BufferBuilder.Immediate consumer = new BufferBuilder.Immediate();
+	private static final VertexBuffer.Immediate immediate = new VertexBuffer.Immediate();
 
 	static {
 		FONT_SHADER.setTexture(0, FONT_RENDERER.getTexture());
 	}
 
 	public static void drawRect(int x, int y, int width, int height, int color) {
-		BufferBuilder builder = consumer.getBuilder(RECTANGLE_LAYER);
+		VertexBuffer buffer = immediate.getBuffer(RECTANGLE_LAYER);
 
-		builder.vertex(x, y).color(color).next();
-		builder.vertex(x, y + height).color(color).next();
-		builder.vertex(x + width, y + height).color(color).next();
-		builder.vertex(x + width, y + height).color(color).next();
-		builder.vertex(x + width, y).color(color).next();
-		builder.vertex(x, y).color(color).next();
+		buffer.vertex(x, y).color(color).next();
+		buffer.vertex(x, y + height).color(color).next();
+		buffer.vertex(x + width, y + height).color(color).next();
+		buffer.vertex(x + width, y + height).color(color).next();
+		buffer.vertex(x + width, y).color(color).next();
+		buffer.vertex(x, y).color(color).next();
 
-		consumer.draw(RECTANGLE_LAYER);
+		immediate.draw(RECTANGLE_LAYER);
 	}
 
 	public static void drawRect(int x, int y, int width, int height, float r, float g, float b, float a) {
@@ -51,49 +51,49 @@ public class Gui {
 	}
 
 	public static void drawRectGradient(int x, int y, int width, int height, float r, float g, float b, float a, float r2, float g2, float b2, float a2) {
-		BufferBuilder builder = consumer.getBuilder(RECTANGLE_LAYER);
+		VertexBuffer buffer = immediate.getBuffer(RECTANGLE_LAYER);
 
 		int colorTop = Color.pack(r, g, b, a);
 		int colorBottom = Color.pack(r2, g2, b2, a2);
 
-		builder.vertex(x, y).color(colorTop).next();
-		builder.vertex(x, y + height).color(colorBottom).next();
-		builder.vertex(x + width, y + height).color(colorBottom).next();
-		builder.vertex(x + width, y + height).color(colorBottom).next();
-		builder.vertex(x + width, y).color(colorTop).next();
-		builder.vertex(x, y).color(colorTop).next();
+		buffer.vertex(x, y).color(colorTop).next();
+		buffer.vertex(x, y + height).color(colorBottom).next();
+		buffer.vertex(x + width, y + height).color(colorBottom).next();
+		buffer.vertex(x + width, y + height).color(colorBottom).next();
+		buffer.vertex(x + width, y).color(colorTop).next();
+		buffer.vertex(x, y).color(colorTop).next();
 
-		consumer.draw(RECTANGLE_LAYER);
+		immediate.draw(RECTANGLE_LAYER);
 	}
 
 	public static void drawTexture(Texture texture, int x, int y, int width, int height) {
-		BufferBuilder builder = consumer.getBuilder(TEXTURE_LAYER);
+		VertexBuffer buffer = immediate.getBuffer(TEXTURE_LAYER);
 
-		builder.vertex(x, y).texture(0, 0).next();
-		builder.vertex(x, y + height).texture(0, 1).next();
-		builder.vertex(x + width, y + height).texture(1, 1).next();
-		builder.vertex(x + width, y + height).texture(1, 1).next();
-		builder.vertex(x + width, y).texture(1, 0).next();
-		builder.vertex(x, y).texture(0, 0).next();
+		buffer.vertex(x, y).texture(0, 0).next();
+		buffer.vertex(x, y + height).texture(0, 1).next();
+		buffer.vertex(x + width, y + height).texture(1, 1).next();
+		buffer.vertex(x + width, y + height).texture(1, 1).next();
+		buffer.vertex(x + width, y).texture(1, 0).next();
+		buffer.vertex(x, y).texture(0, 0).next();
 
 		TEXTURE_SHADER.setTexture(0, texture);
-		consumer.draw(TEXTURE_LAYER);
+		immediate.draw(TEXTURE_LAYER);
 	}
 
 	public static void drawBlockIcon(Block blockType, int x, int y, int size) {
-		BufferBuilder builder = consumer.getBuilder(TEXTURE_LAYER);
+		VertexBuffer buffer = immediate.getBuffer(TEXTURE_LAYER);
 
 		Vector2f[] uv = blockType.getTexture().getSideUV();
 
-		builder.vertex(x, y).texture(uv[0]).next();
-		builder.vertex(x, y + size).texture(uv[1]).next();
-		builder.vertex(x + size, y + size).texture(uv[2]).next();
-		builder.vertex(x + size, y + size).texture(uv[2]).next();
-		builder.vertex(x + size, y).texture(uv[3]).next();
-		builder.vertex(x, y).texture(uv[0]).next();
+		buffer.vertex(x, y).texture(uv[0]).next();
+		buffer.vertex(x, y + size).texture(uv[1]).next();
+		buffer.vertex(x + size, y + size).texture(uv[2]).next();
+		buffer.vertex(x + size, y + size).texture(uv[2]).next();
+		buffer.vertex(x + size, y).texture(uv[3]).next();
+		buffer.vertex(x, y).texture(uv[0]).next();
 
 		TEXTURE_SHADER.setTexture(0, Client.getTextureManager().blockAtlas.getTexture());
-		consumer.draw(TEXTURE_LAYER);
+		immediate.draw(TEXTURE_LAYER);
 	}
 
 	public static void drawStack(ItemStack stack, int x, int y, int size) {
@@ -133,9 +133,9 @@ public class Gui {
 	}
 
 	public static void drawText(String text, int x, int y, int color, boolean shadow) {
-		BufferBuilder builder = consumer.getBuilder(FONT_LAYER);
-		FONT_RENDERER.draw(builder, x, y, text, color, shadow);
-		consumer.draw(FONT_LAYER);
+		VertexBuffer buffer = immediate.getBuffer(FONT_LAYER);
+		FONT_RENDERER.draw(buffer, x, y, text, color, shadow);
+		immediate.draw(FONT_LAYER);
 	}
 
 	public static void drawText(String text, int x, int y, int color) {

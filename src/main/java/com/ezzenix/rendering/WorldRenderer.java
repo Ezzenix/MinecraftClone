@@ -26,7 +26,7 @@ public class WorldRenderer {
 	public final Shader waterShader = new Shader("water.vert", "water.frag");
 
 	private final Shader blockOverlayShader;
-	private final VertexBuffer blockOverlayBuffer;
+	//private final VertexBuffer blockOverlayBuffer;
 
 	public int chunksRenderedCount = 0;
 
@@ -35,12 +35,13 @@ public class WorldRenderer {
 	public WorldRenderer() {
 		this.blockOverlayShader = new Shader("block_overlay");
 		this.blockOverlayShader.setTexture(0, Client.getTextureManager().getTexture(Identifier.of("break_overlay")));
-		this.blockOverlayBuffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.DYNAMIC);
+		//this.blockOverlayBuffer = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.DYNAMIC);
 
 		this.builtChunkStorage = new BuiltChunkStorage();
 	}
 
 	public void render() {
+		/*
 		World world = Client.getWorld();
 		if (world == null) return;
 
@@ -76,6 +77,7 @@ public class WorldRenderer {
 		}
 
 		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		 */
 	}
 
 	public void renderChunkLayer(RenderLayer layer, List<Chunk> chunks) {

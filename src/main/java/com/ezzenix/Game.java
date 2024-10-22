@@ -1,5 +1,11 @@
 package com.ezzenix;
 
+import com.ezzenix.engine.opengl.Window;
+import com.ezzenix.rendering.util.VertexBuffer;
+import com.ezzenix.rendering.util.VertexFormat;
+
+import java.nio.ByteBuffer;
+
 public class Game {
 	public static void main(String[] args) {
 		/*
@@ -25,7 +31,7 @@ public class Game {
 		//new TestBlock();
 
 
-		Client.init();
+		//Client.init();
 
 
 		/*
@@ -66,5 +72,22 @@ public class Game {
 		System.out.println((System.currentTimeMillis() - st1) + "ms");
 		 */
 
+
+		Window window = new Window();
+
+		VertexBuffer vertexBuffer = new VertexBuffer(VertexFormat.POSITION_COLOR, VertexBuffer.Usage.DYNAMIC, 2);
+		vertexBuffer.vertex(1, 2, 3).next();
+		vertexBuffer.clear();
+		vertexBuffer.putFloat(5);
+
+		ByteBuffer buff = vertexBuffer.allocator.getAllocated();
+		System.out.println(buff.getFloat());
+		System.out.println(buff.getFloat());
+		System.out.println(buff.getFloat());
+		System.out.println(buff.getFloat());
+
+
+
+		System.out.println("hi");
 	}
 }

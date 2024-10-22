@@ -8,32 +8,22 @@ import com.ezzenix.blocks.PlantBlock;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.enums.Direction;
 import com.ezzenix.math.BlockPos;
-import com.ezzenix.math.ChunkPos;
 import com.ezzenix.rendering.Renderer;
 import com.ezzenix.rendering.util.RenderLayer;
 import com.ezzenix.rendering.util.VertexBuffer;
 import com.ezzenix.rendering.util.VertexFormat;
-import com.ezzenix.util.BufferBuilder;
-import com.ezzenix.util.BuiltBuffer;
 import com.ezzenix.world.World;
 import com.ezzenix.world.chunk.Chunk;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
-import com.google.common.primitives.Floats;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL30.GL_FLOAT;
 
@@ -42,7 +32,6 @@ public class ChunkBuilder {
 
 	private static final VertexFormat VERTEX_FORMAT = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2, GL_FLOAT, 1); // pos, uv, ao
 
-	private static final BlockBufferBuilderPool buffersPool = BlockBufferBuilderPool.allocate(12);
 	private static boolean isBuilding;
 
 	public static BuiltChunk getNextChunk() {
@@ -62,38 +51,22 @@ public class ChunkBuilder {
 
 	public static void pollQueue() {
 		if (isBuilding) return;
-		if (buffersPool.hasNoAvailableBuilder()) return;
 
 		BuiltChunk builtChunk = getNextChunk();
 		if (builtChunk == null) return;
 		builtChunk.needsRebuild = false;
 
-		BlockBufferAllocatorStorage blockBufferAllocatorStorage = buffersPool.acquire();
-		if (blockBufferAllocatorStorage == null) return;
-
 		isBuilding = true;
 
-		System.out.println(builtChunk.getChunk().getPos());
-
-		CompletableFuture<Map<RenderLayer, BufferBuilder>> future = CompletableFuture.supplyAsync(() -> rebuildChunk(builtChunk, blockBufferAllocatorStorage), executorService);
+		CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> rebuildChunk(builtChunk), executorService);
 		future.thenAccept(builders -> {
 			if (builders != null) {
 				Scheduler.recordMainThreadCall(() -> {
-					for (RenderLayer layer : builtChunk.buffers.keySet()) {
-						BufferBuilder builder = builders.get(layer);
-						if (builder != null) {
-							VertexBuffer buffer = builtChunk.buffers.get(layer);
-							BuiltBuffer builtBuffer = builder.end();
-							if (builtBuffer != null) {
-								buffer.upload(builtBuffer);
-							}
-						}
+					for (VertexBuffer buffer : builtChunk.buffers.values()) {
+						buffer.upload();
 					}
 
-					blockBufferAllocatorStorage.clear();
-					buffersPool.release(blockBufferAllocatorStorage);
 					isBuilding = false;
-
 					pollQueue();
 				});
 			}
@@ -119,7 +92,7 @@ public class ChunkBuilder {
 
 			this.buffers = Maps.newHashMap();
 			for (RenderLayer layer : RenderLayer.BLOCK_LAYERS) {
-				buffers.put(layer, new VertexBuffer(VERTEX_FORMAT, VertexBuffer.Usage.DYNAMIC));
+				buffers.put(layer, new VertexBuffer(VERTEX_FORMAT, VertexBuffer.Usage.DYNAMIC, layer.getExpectedBufferSize()));
 			}
 		}
 
@@ -201,24 +174,24 @@ public class ChunkBuilder {
 		};
 	}
 
-	private static void addQuad(BufferBuilder builder, Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3, Vector2f[] uv, float[] ao) {
-		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
-		builder.vertex(v1.x, v1.y, v1.z).texture(uv[1]).putFloat(ao[1]).next();
-		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
+	private static void addQuad(VertexBuffer buffer, Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3, Vector2f[] uv, float[] ao) {
+		buffer.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
+		buffer.vertex(v1.x, v1.y, v1.z).texture(uv[1]).putFloat(ao[1]).next();
+		buffer.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
 
-		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
-		builder.vertex(v3.x, v3.y, v3.z).texture(uv[3]).putFloat(ao[3]).next();
-		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
+		buffer.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
+		buffer.vertex(v3.x, v3.y, v3.z).texture(uv[3]).putFloat(ao[3]).next();
+		buffer.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
 	}
 
-	public static Map<RenderLayer, BufferBuilder> rebuildChunk(BuiltChunk builtChunk, BlockBufferAllocatorStorage blockBufferAllocatorStorage) {
+	public static boolean rebuildChunk(BuiltChunk builtChunk) {
 		long start = System.currentTimeMillis();
 
 		Chunk chunk = builtChunk.getChunk();
 		World world = chunk.getWorld();
 		BlockPos chunkBlockPos = new BlockPos(chunk.getWorldPos());
 
-		Map<RenderLayer, BufferBuilder> builders = Maps.newHashMap();
+		Map<RenderLayer, VertexBuffer> buffers = builtChunk.buffers;
 
 		//System.out.println("rebuilding chunk " + chunk.getPos());
 
@@ -232,7 +205,7 @@ public class ChunkBuilder {
 					if (block == Blocks.AIR) continue;
 
 					RenderLayer layer = block.getRenderLayer();
-					BufferBuilder builder = builders.computeIfAbsent(layer, v -> new BufferBuilder(blockBufferAllocatorStorage.get(v), VERTEX_FORMAT));
+					VertexBuffer buffer = buffers.get(layer);
 
 					if (block instanceof PlantBlock) {
 						Vector3f midPos = new Vector3f(x + 0.5f, y, z + 0.5f);
@@ -241,7 +214,7 @@ public class ChunkBuilder {
 						for (float deg = 45; deg <= (45 + 90 * 4); deg += 90) {
 							Vector3f lookVector = new Vector3f((float) -Math.cos(Math.toRadians(deg)), 0.0f, (float) -Math.sin(Math.toRadians(deg)));
 							lookVector.mul((float) Math.pow(flowerSize, 4));
-							addQuad(builder,
+							addQuad(buffer,
 								new Vector3f(midPos).add(-lookVector.x, flowerSize, -lookVector.z),
 								new Vector3f(midPos).add(-lookVector.x, 0, -lookVector.z),
 								new Vector3f(midPos).add(lookVector.x, 0, lookVector.z),
@@ -271,7 +244,7 @@ public class ChunkBuilder {
 						Vector3f v2 = new Vector3f(x, y, z).add(unitCubeFace[2]);
 						Vector3f v3 = new Vector3f(x, y, z).add(unitCubeFace[3]);
 
-						addQuad(builder, v0, v1, v2, v3, uv, ao);
+						addQuad(buffer, v0, v1, v2, v3, uv, ao);
 					}
 				}
 			}
@@ -279,6 +252,6 @@ public class ChunkBuilder {
 
 		System.out.println((System.currentTimeMillis() - start) + "ms");
 
-		return builders;
+		return true;
 	}
 }

@@ -4,18 +4,18 @@ import com.ezzenix.Client;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.ByteBuffer;
+
 public class BufferAllocator implements AutoCloseable {
 	private static final MemoryUtil.MemoryAllocator allocator = MemoryUtil.getAllocator(false);
-	long pointer;
+	private long pointer;
 	private int size;
 	private int offset;
 	private int prevOffset;
-	private int refCount;
-	private int clearCount;
 
 	public BufferAllocator(int size) {
 		this.size = size;
-		this.pointer = allocator.malloc((long) size);
+		this.pointer = allocator.malloc(size);
 		if (this.pointer == 0L) {
 			throw new OutOfMemoryError("Failed to allocate " + size + " bytes");
 		}
@@ -50,43 +50,20 @@ public class BufferAllocator implements AutoCloseable {
 	}
 
 	@Nullable
-	public BuiltBuffer getAllocated() {
+	public ByteBuffer getAllocated() {
 		this.ensureNotClosed();
 		int i = this.prevOffset;
 		int j = this.offset - i;
 		if (j == 0) {
 			return null;
 		} else {
-			this.prevOffset = this.offset;
-			++this.refCount;
-			return new BuiltBuffer(this, i, j, this.clearCount);
+			return MemoryUtil.memByteBuffer(pointer + (long) i, j);
 		}
 	}
 
 	public void clear() {
-		if (this.refCount > 0) {
-			Client.LOGGER.warn("Clearing BufferBuilder with unused batches");
-		}
-
-		this.reset();
-	}
-
-	public void reset() {
 		this.ensureNotClosed();
-		if (this.refCount > 0) {
-			this.forceClear();
-			this.refCount = 0;
-		}
-	}
-
-	boolean clearCountEquals(int clearCount) {
-		return clearCount == this.clearCount;
-	}
-
-	void clearIfUnreferenced() {
-		if (--this.refCount <= 0) {
-			this.forceClear();
-		}
+		this.forceClear();
 	}
 
 	private void forceClear() {
@@ -97,14 +74,12 @@ public class BufferAllocator implements AutoCloseable {
 
 		this.offset = i;
 		this.prevOffset = 0;
-		++this.clearCount;
 	}
 
 	public void close() {
 		if (this.pointer != 0L) {
 			allocator.free(this.pointer);
 			this.pointer = 0L;
-			this.clearCount = -1;
 		}
 	}
 
