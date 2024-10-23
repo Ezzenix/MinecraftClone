@@ -46,7 +46,7 @@ public class Keyboard {
 		});
 
 		Input.keyDown(GLFW_KEY_F6, () -> {
-			Client.getPlayer().noclip = !Client.getPlayer().noclip;
+			Client.getPlayer().noClip = !Client.getPlayer().noClip;
 		});
 
 		Input.keyDown(GLFW_KEY_ESCAPE, () -> {

@@ -19,6 +19,8 @@ public class Particle {
 	float lifetime;
 	float spawnedAt;
 
+	private static final int[] indices = {0, 1, 2, 2, 3, 0};
+
 	public Particle(float x, float y, float z, float vx, float vy, float vz, float size, int color, float lifetime) {
 		this.posX = x;
 		this.posY = y;
@@ -56,7 +58,7 @@ public class Particle {
 
 		Matrix4f lookAtMatrix = new Matrix4f().lookAt(
 			position,
-			new Vector3f(position).add(direction), // add small number otherwise result is NaN
+			new Vector3f(position).add(direction),
 			new Vector3f(0, 1, 0)
 		).invert();
 
@@ -75,11 +77,9 @@ public class Particle {
 			transformationMatrix.transformPosition(vertex);
 		}
 
-		int[] indices = {0, 1, 2, 2, 3, 0};
-
 		for (int index : indices) {
 			Vector3f v = vertices[index];
-			builder.vertex(v.x, v.y, v.z).color(this.color).next();
+			builder.vertex(v.x, v.y, v.z).color(this.color);
 		}
 	}
 }

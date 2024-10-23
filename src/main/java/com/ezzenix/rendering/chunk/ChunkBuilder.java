@@ -37,7 +37,7 @@ public class ChunkBuilder {
 	private static boolean isBuilding;
 
 	private static final Map<RenderLayer, BufferBuilder> builders = RenderLayer.BLOCK_LAYERS.stream()
-		.collect(Collectors.toMap(layer -> layer, layer -> new BufferBuilder(layer.getExpectedBufferSize())));
+		.collect(Collectors.toMap(layer -> layer, BufferBuilder::new));
 
 	public static BuiltChunk getNextChunk() {
 		int shortestDistance = Integer.MAX_VALUE;
@@ -187,13 +187,13 @@ public class ChunkBuilder {
 	}
 
 	private static void addQuad(BufferBuilder builder, Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3, Vector2f[] uv, float[] ao) {
-		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
-		builder.vertex(v1.x, v1.y, v1.z).texture(uv[1]).putFloat(ao[1]).next();
-		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
+		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]);
+		builder.vertex(v1.x, v1.y, v1.z).texture(uv[1]).putFloat(ao[1]);
+		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]);
 
-		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).next();
-		builder.vertex(v3.x, v3.y, v3.z).texture(uv[3]).putFloat(ao[3]).next();
-		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).next();
+		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]);
+		builder.vertex(v3.x, v3.y, v3.z).texture(uv[3]).putFloat(ao[3]);
+		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]);
 	}
 
 	public static boolean rebuildChunk(BuiltChunk builtChunk) {

@@ -63,7 +63,7 @@ public class DebugHud {
 		List<String> lines = new ArrayList<>();
 
 		Player player = Client.getPlayer();
-		Vector3f position = player.getPosition();
+		Vector3f position = player.getPos();
 		Vector3f velocity = player.getVelocity();
 		BlockPos blockPos = new BlockPos(position);
 		ChunkPos chunkPos = new ChunkPos(blockPos);

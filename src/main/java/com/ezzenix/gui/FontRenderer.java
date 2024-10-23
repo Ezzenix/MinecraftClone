@@ -169,13 +169,13 @@ public class FontRenderer {
 			int width = glyph.width;
 			int height = glyph.height;
 
-			builder.vertex(x, y).texture(glyph.minU, glyph.minV).color(color).next();
-			builder.vertex(x, y + height).texture(glyph.minU, glyph.maxV).color(color).next();
-			builder.vertex(x + width, y + height).texture(glyph.maxU, glyph.maxV).color(color).next();
+			builder.vertex(x, y).texture(glyph.minU, glyph.minV).color(color);
+			builder.vertex(x, y + height).texture(glyph.minU, glyph.maxV).color(color);
+			builder.vertex(x + width, y + height).texture(glyph.maxU, glyph.maxV).color(color);
 
-			builder.vertex(x + width, y + height).texture(glyph.maxU, glyph.maxV).color(color).next();
-			builder.vertex(x + width, y).texture(glyph.maxU, glyph.minV).color(color).next();
-			builder.vertex(x, y).texture(glyph.minU, glyph.minV).color(color).next();
+			builder.vertex(x + width, y + height).texture(glyph.maxU, glyph.maxV).color(color);
+			builder.vertex(x + width, y).texture(glyph.maxU, glyph.minV).color(color);
+			builder.vertex(x, y).texture(glyph.minU, glyph.minV).color(color);
 
 			x += width;
 		}

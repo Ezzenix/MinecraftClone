@@ -21,46 +21,6 @@ import java.util.stream.Stream;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 
 public class ResourceManager {
-	static {
-		String resourceDir = "textures/blocks";
-
-		try {
-			List<String> paths = getResourceFiles(resourceDir);
-			for (String path : paths) {
-				System.out.println("Path: " + path);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static List<String> getResourceFiles(String path) throws IOException {
-		List<String> filenames = new ArrayList<>();
-
-		try (
-			InputStream in = getResourceAsStream(path);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-			String resource;
-
-			while ((resource = br.readLine()) != null) {
-				filenames.add(resource);
-			}
-		}
-
-		return filenames;
-	}
-
-	private static InputStream getResourceAsStream(String resource) {
-		final InputStream in
-			= getContextClassLoader().getResourceAsStream(resource);
-
-		return in == null ? ResourceManager.class.getResourceAsStream(resource) : in;
-	}
-
-	private static ClassLoader getContextClassLoader() {
-		return Thread.currentThread().getContextClassLoader();
-	}
-
 	public static File getFile(String path) {
 		return new File("src/main/resources/" + path);
 	}

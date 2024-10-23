@@ -12,55 +12,69 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class BufferBuilder {
+	public final BufferAllocator allocator;
+	private final VertexFormat vertexFormat;
 	public int vertexCount;
-	public BufferAllocator allocator;
 	private boolean isMakingVertex;
+	private long pointer;
 
-	public BufferBuilder(int initialSize) {
+	public BufferBuilder(int initialSize, VertexFormat vertexFormat) {
 		this.vertexCount = 0;
 		this.allocator = new BufferAllocator(initialSize);
 		this.isMakingVertex = false;
+		this.vertexFormat = vertexFormat;
+		this.pointer = 0;
+	}
+
+	public BufferBuilder(RenderLayer layer) {
+		this(layer.getExpectedBufferSize(), layer.getVertexFormat());
 	}
 
 	public ByteBuffer getBuffer() {
-		if (this.vertexCount == 0) return null;
-		return this.allocator.getAllocated();
+		endVertex();
+		if (vertexCount == 0) return null;
+		return allocator.getAllocated();
 	}
 
 	public void clear() {
-		this.vertexCount = 0;
-		this.allocator.clear();
+		vertexCount = 0;
+		allocator.clear();
+	}
+
+	public void close() {
+		allocator.close();
+	}
+
+	public void endVertex() {
+		if (!isMakingVertex) return;
+
+		vertexCount += 1;
+		isMakingVertex = false;
+	}
+
+	private void beginVertex() {
+		endVertex();
+		isMakingVertex = true;
+		pointer = allocator.allocate(vertexFormat.getVertexSizeBytes());
 	}
 
 	public BufferBuilder putFloat(float v) {
-		long l = this.allocator.allocate(Float.BYTES);
-		MemoryUtil.memPutFloat(l, v);
+		MemoryUtil.memPutFloat(pointer, v);
+		pointer += 4L;
 		return this;
 	}
 
 	public BufferBuilder putInt(int v) {
-		long l = this.allocator.allocate(Integer.BYTES);
-		MemoryUtil.memPutInt(l, v);
+		MemoryUtil.memPutInt(pointer, v);
+		pointer += 4L;
 		return this;
 	}
 
-	private void checkMakingVertex() {
-		if (isMakingVertex) {
-			throw new IllegalStateException("Already making vertex, did you forget to call .next()?");
-		} else {
-			isMakingVertex = true;
-		}
-	}
-
-	public void close() {
-		this.allocator.close();
-	}
-
 	public BufferBuilder vertex(float x, float y, float z) {
-		checkMakingVertex();
-		this.putFloat(x);
-		this.putFloat(y);
-		this.putFloat(z);
+		beginVertex();
+		putFloat(x);
+		putFloat(y);
+		putFloat(z);
 		return this;
 	}
 
@@ -69,14 +83,14 @@ public class BufferBuilder {
 	}
 
 	public BufferBuilder vertex(float x, float y) {
-		checkMakingVertex();
-		this.putFloat(GuiUtil.toNormalizedDeviceCoordinateX(x));
-		this.putFloat(GuiUtil.toNormalizedDeviceCoordinateY(y));
+		beginVertex();
+		putFloat(GuiUtil.toNormalizedDeviceCoordinateX(x));
+		putFloat(GuiUtil.toNormalizedDeviceCoordinateY(y));
 		return this;
 	}
 
 	public BufferBuilder color(int packedColor) {
-		this.putInt(packedColor);
+		putInt(packedColor);
 		return this;
 	}
 
@@ -89,23 +103,15 @@ public class BufferBuilder {
 	}
 
 	public BufferBuilder texture(float u, float v) {
-		this.putFloat(u);
-		this.putFloat(v);
+		putFloat(u);
+		putFloat(v);
 		return this;
 	}
 
 	public BufferBuilder texture(Vector2f uv) {
-		this.putFloat(uv.x);
-		this.putFloat(uv.y);
+		putFloat(uv.x);
+		putFloat(uv.y);
 		return this;
-	}
-
-	public void next() {
-		if (!isMakingVertex)
-			throw new IllegalStateException("No vertex was initiated. Call .vertex() before .next()");
-
-		this.vertexCount += 1;
-		this.isMakingVertex = false;
 	}
 
 	// Immediate
@@ -117,7 +123,7 @@ public class BufferBuilder {
 			BufferBuilder builder = builders.get(layer);
 			if (builder != null) return builder;
 
-			builder = new BufferBuilder(layer.getExpectedBufferSize());
+			builder = new BufferBuilder(layer);
 			builders.put(layer, builder);
 			return builder;
 		}

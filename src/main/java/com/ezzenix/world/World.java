@@ -3,6 +3,7 @@ package com.ezzenix.world;
 import com.ezzenix.blocks.BlockState;
 import com.ezzenix.blocks.Blocks;
 import com.ezzenix.entities.Entity;
+import com.ezzenix.entities.EntityDimensions;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.world.chunk.Chunk;
@@ -21,6 +22,12 @@ public class World {
 		this.generator = generator;
 		this.entities = new ArrayList<>();
 		this.chunkManager = new ChunkManager(this);
+	}
+
+	public void tick() {
+		for (Entity entity : this.entities) {
+			entity.tick();
+		}
 	}
 
 	public void setBlockState(BlockPos blockPos, BlockState blockState) {

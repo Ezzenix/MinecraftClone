@@ -18,11 +18,15 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Player extends Entity {
 	public boolean isMoving = false;
 
+	private MovementInput movementInput;
+
 	public Inventory inventory;
 	private int handSlot;
 
 	public Player(World world, Vector3f position) {
 		super(world, position);
+
+		this.movementInput = new MovementInput();
 
 		this.handSlot = 0;
 		this.inventory = new Inventory(9 * 4);
@@ -67,34 +71,16 @@ public class Player extends Entity {
 		return itemStack.item;
 	}
 
+	@Override
+	public float getGravity() {
+		return 0.98f;
+	}
+
 	public void updateMovement() {
-		if (Client.isPaused()) return;
+		this.movementInput.update();
 
-		// get input
-		boolean pressingForward = Input.getKey(GLFW_KEY_W);
-		boolean pressingBack = Input.getKey(GLFW_KEY_S);
-		boolean pressingLeft = Input.getKey(GLFW_KEY_A);
-		boolean pressingRight = Input.getKey(GLFW_KEY_D);
-
-		boolean jumping = Input.getKey(GLFW_KEY_SPACE);
-		boolean sneaking = Input.getKey(GLFW_KEY_LEFT_CONTROL);
-		boolean sprinting = Input.getKey(GLFW_KEY_LEFT_SHIFT);
-
-		if (Client.focusedTextField != null) {
-			pressingForward = false;
-			pressingBack = false;
-			pressingLeft = false;
-			pressingRight = false;
-			jumping = false;
-			sneaking = false;
-			sprinting = false;
-		}
-
-		float movementForward = pressingForward == pressingBack ? 0 : (pressingForward ? 1.0f : -1.0f);
-		float movementSideways = pressingRight == pressingLeft ? 0 : (pressingRight ? 1.0f : -1.0f);
-
-		this.isMoving = pressingForward || pressingBack || pressingLeft || pressingRight;
-		this.setSneaking(sneaking);
+		this.isMoving = movementInput.pressingForward || movementInput.pressingBack || movementInput.pressingLeft || movementInput.pressingRight;
+		this.setSneaking(movementInput.sneaking);
 
 
 		// get vectors
@@ -110,19 +96,19 @@ public class Player extends Entity {
 
 		// move
 		float speed = 13f * Scheduler.getDeltaTime();
-		if (sprinting) speed *= 1.8f;
-		if (sneaking) speed *= 0.5f;
+		if (movementInput.sprinting) speed *= 1.8f;
+		if (movementInput.sneaking) speed *= 0.5f;
 		if (this.isFlying) speed *= 4;
 
 		Vector3f movementVector = new Vector3f();
-		movementVector.add(new Vector3f(lookVector.x, 0, lookVector.z).mul(speed * movementForward));
-		movementVector.add(new Vector3f(rightVector.x, 0, rightVector.z).mul(speed * movementSideways));
+		movementVector.add(new Vector3f(lookVector.x, 0, lookVector.z).mul(speed * movementInput.movementForward));
+		movementVector.add(new Vector3f(rightVector.x, 0, rightVector.z).mul(speed * movementInput.movementSideways));
 
 		if (this.isFlying) {
-			int i = jumping == sneaking ? 0 : (jumping ? 1 : -1);
+			int i = movementInput.jumping == movementInput.sneaking ? 0 : (movementInput.jumping ? 1 : -1);
 			this.applyImpulse(0, i * 40 * Scheduler.getDeltaTime(), 0);
 		} else {
-			if (jumping) {
+			if (movementInput.jumping) {
 				if (this.isGrounded && !this.isInFluid) {
 					this.jump();
 				} else if (this.isInFluid) {

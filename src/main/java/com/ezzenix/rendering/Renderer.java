@@ -49,6 +49,9 @@ public class Renderer {
 		ParticleSystem.render();
 
 		Client.getHud().render();
+		if (Client.getOptions().thirdPerson) {
+			Client.getPlayer().getDimensions().getBoxAt(Client.getPlayer().getPos()).render();
+		}
 
 		if (Client.getScreen() != null) {
 			Client.getScreen().render();

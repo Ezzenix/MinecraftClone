@@ -10,12 +10,14 @@ public class VertexFormat {
 	private final int[] types;
 	private final int[] sizes;
 	private final DrawMode drawMode;
+	private int vertexSizeBytes;
 
 	public VertexFormat(DrawMode drawMode, int... data) {
 		if (data.length % 2 != 0)
 			throw new RuntimeException("VertexFormat data array length must be even number");
 
 		this.drawMode = drawMode;
+		this.vertexSizeBytes = 0;
 
 		types = new int[data.length / 2];
 		sizes = new int[data.length / 2];
@@ -23,6 +25,8 @@ public class VertexFormat {
 		for (int i = 0; i < data.length; i += 2) {
 			types[i / 2] = data[i];
 			sizes[i / 2] = data[i + 1];
+
+			this.vertexSizeBytes += getBytes(data[i], data[i + 1]);
 		}
 	}
 
@@ -44,11 +48,12 @@ public class VertexFormat {
 		};
 	}
 
+	public int getVertexSizeBytes() {
+		return this.vertexSizeBytes;
+	}
+
 	public void use() {
-		int stride = 0;
-		for (int i = 0; i < this.types.length; i++) {
-			stride += getBytes(types[i], sizes[i]);
-		}
+		int stride = this.vertexSizeBytes;
 
 		int pointer = 0;
 		for (int i = 0; i < this.types.length; i++) {

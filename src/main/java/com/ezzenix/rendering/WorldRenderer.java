@@ -113,7 +113,7 @@ public class WorldRenderer {
 	public void renderDamage(BlockPos blockPos, float progress) {
 		Vector3f mid = blockPos.toVector3f();
 
-		int stage = Math.round(progress*9);
+		int stage = Math.round(progress * 9);
 		RenderLayer layer = RenderLayer.BREAK_OVERLAYS[stage];
 		BufferBuilder builder = immediate.getBuilder(layer);
 
@@ -125,12 +125,12 @@ public class WorldRenderer {
 			Vector3f v2 = new Vector3f(mid).add(new Vector3f(face[2]).mul(1.01f));
 			Vector3f v3 = new Vector3f(mid).add(new Vector3f(face[3]).mul(1.0f));
 
-			builder.vertex(v0).texture(0, 0).next();
-			builder.vertex(v1).texture(0, 1).next();
-			builder.vertex(v2).texture(1, 1).next();
-			builder.vertex(v2).texture(1, 1).next();
-			builder.vertex(v3).texture(1, 0).next();
-			builder.vertex(v0).texture(0, 0).next();
+			builder.vertex(v0).texture(0, 0);
+			builder.vertex(v1).texture(0, 1);
+			builder.vertex(v2).texture(1, 1);
+			builder.vertex(v2).texture(1, 1);
+			builder.vertex(v3).texture(1, 0);
+			builder.vertex(v0).texture(0, 0);
 		}
 
 		immediate.draw(layer);

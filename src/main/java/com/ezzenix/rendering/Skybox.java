@@ -20,20 +20,21 @@ public class Skybox {
 
 	private final Shader SHADER = new Shader("skybox");
 
-	private final RenderLayer LAYER = new RenderLayer(SHADER).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS);
-	private final VertexBuffer SKY_BUFFER = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.STATIC);
-	private final VertexBuffer SUN_BUFFER = new VertexBuffer(new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2), VertexBuffer.Usage.STATIC);
+	private final VertexFormat FORMAT = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2);
+	private final RenderLayer LAYER = new RenderLayer(SHADER).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS).format(FORMAT).setExpectedBufferSize(1024);
+	private final VertexBuffer SKY_BUFFER = new VertexBuffer(FORMAT, VertexBuffer.Usage.STATIC);
+	private final VertexBuffer SUN_BUFFER = new VertexBuffer(FORMAT, VertexBuffer.Usage.STATIC);
 
 	public Skybox() {
 
-		BufferBuilder sunBuilder = new BufferBuilder(LAYER.getExpectedBufferSize());
+		BufferBuilder sunBuilder = new BufferBuilder(LAYER);
 		int SUN_SIZE = 8;
-		sunBuilder.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0).next();
-		sunBuilder.vertex(-SUN_SIZE, -100, SUN_SIZE).texture(0, 1).next();
-		sunBuilder.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1).next();
-		sunBuilder.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1).next();
-		sunBuilder.vertex(SUN_SIZE, -100, -SUN_SIZE).texture(1, 0).next();
-		sunBuilder.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0).next();
+		sunBuilder.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0);
+		sunBuilder.vertex(-SUN_SIZE, -100, SUN_SIZE).texture(0, 1);
+		sunBuilder.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1);
+		sunBuilder.vertex(SUN_SIZE, -100, SUN_SIZE).texture(1, 1);
+		sunBuilder.vertex(SUN_SIZE, -100, -SUN_SIZE).texture(1, 0);
+		sunBuilder.vertex(-SUN_SIZE, -100, -SUN_SIZE).texture(0, 0);
 		SUN_BUFFER.upload(sunBuilder);
 
 		float[] vertices = new float[]{
@@ -86,9 +87,9 @@ public class Skybox {
 			-1.0f, -1.0f, 1.0f, 2 / 3f, 2 / 2f,
 		};
 		float SIZE = 1000;
-		BufferBuilder skyBuilder = new BufferBuilder(LAYER.getExpectedBufferSize());
+		BufferBuilder skyBuilder = new BufferBuilder(LAYER);
 		for (int i = 0; i < vertices.length; i += 5) {
-			skyBuilder.vertex(vertices[i] * SIZE, vertices[i + 1] * SIZE, vertices[i + 2] * SIZE).texture(vertices[i + 3], vertices[i + 4]).next();
+			skyBuilder.vertex(vertices[i] * SIZE, vertices[i + 1] * SIZE, vertices[i + 2] * SIZE).texture(vertices[i + 3], vertices[i + 4]);
 		}
 		SKY_BUFFER.upload(skyBuilder);
 		skyBuilder.close();

@@ -19,8 +19,8 @@ public class RenderLayer {
 
 	private static final Shader BLOCK_OVERLAY_SHADER = new Shader("block_overlay");
 	public static RenderLayer[] BREAK_OVERLAYS = IntStream.range(0, 10).mapToObj(i -> {
-		Texture t = Client.getTextureManager().getTexture(Identifier.of("break_overlay/stage_"+i));
-		return new RenderLayer(BLOCK_OVERLAY_SHADER).format(VertexFormat.POSITION_UV).cull().depth(GL_LESS).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).setTexture(t);
+		Texture t = Client.getTextureManager().getTexture(Identifier.of("break_overlay/stage_" + i));
+		return new RenderLayer(BLOCK_OVERLAY_SHADER).format(VertexFormat.POSITION_UV).cull().depth(GL_LESS).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).setTexture(t).setExpectedBufferSize(5000);
 	}).toArray(RenderLayer[]::new);
 
 	public static Collection<RenderLayer> BLOCK_LAYERS = ImmutableList.of(SOLID, TRANSLUCENT);

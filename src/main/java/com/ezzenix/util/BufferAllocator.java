@@ -50,6 +50,11 @@ public class BufferAllocator implements AutoCloseable {
 		}
 	}
 
+	// Careful use
+	public long getPointer() {
+		return this.pointer;
+	}
+
 	@Nullable
 	public ByteBuffer getAllocated() {
 		this.ensureNotClosed();

@@ -37,12 +37,12 @@ public class Gui {
 	public static void drawRect(int x, int y, int width, int height, int color) {
 		BufferBuilder builder = immediate.getBuilder(RECTANGLE_LAYER);
 
-		builder.vertex(x, y).color(color).next();
-		builder.vertex(x, y + height).color(color).next();
-		builder.vertex(x + width, y + height).color(color).next();
-		builder.vertex(x + width, y + height).color(color).next();
-		builder.vertex(x + width, y).color(color).next();
-		builder.vertex(x, y).color(color).next();
+		builder.vertex(x, y).color(color);
+		builder.vertex(x, y + height).color(color);
+		builder.vertex(x + width, y + height).color(color);
+		builder.vertex(x + width, y + height).color(color);
+		builder.vertex(x + width, y).color(color);
+		builder.vertex(x, y).color(color);
 
 		immediate.draw(RECTANGLE_LAYER);
 	}
@@ -57,12 +57,12 @@ public class Gui {
 		int colorTop = Color.pack(r, g, b, a);
 		int colorBottom = Color.pack(r2, g2, b2, a2);
 
-		builder.vertex(x, y).color(colorTop).next();
-		builder.vertex(x, y + height).color(colorBottom).next();
-		builder.vertex(x + width, y + height).color(colorBottom).next();
-		builder.vertex(x + width, y + height).color(colorBottom).next();
-		builder.vertex(x + width, y).color(colorTop).next();
-		builder.vertex(x, y).color(colorTop).next();
+		builder.vertex(x, y).color(colorTop);
+		builder.vertex(x, y + height).color(colorBottom);
+		builder.vertex(x + width, y + height).color(colorBottom);
+		builder.vertex(x + width, y + height).color(colorBottom);
+		builder.vertex(x + width, y).color(colorTop);
+		builder.vertex(x, y).color(colorTop);
 
 		immediate.draw(RECTANGLE_LAYER);
 	}
@@ -70,12 +70,12 @@ public class Gui {
 	public static void drawTexture(Texture texture, int x, int y, int width, int height) {
 		BufferBuilder builder = immediate.getBuilder(TEXTURE_LAYER);
 
-		builder.vertex(x, y).texture(0, 0).next();
-		builder.vertex(x, y + height).texture(0, 1).next();
-		builder.vertex(x + width, y + height).texture(1, 1).next();
-		builder.vertex(x + width, y + height).texture(1, 1).next();
-		builder.vertex(x + width, y).texture(1, 0).next();
-		builder.vertex(x, y).texture(0, 0).next();
+		builder.vertex(x, y).texture(0, 0);
+		builder.vertex(x, y + height).texture(0, 1);
+		builder.vertex(x + width, y + height).texture(1, 1);
+		builder.vertex(x + width, y + height).texture(1, 1);
+		builder.vertex(x + width, y).texture(1, 0);
+		builder.vertex(x, y).texture(0, 0);
 
 		TEXTURE_SHADER.setTexture(0, texture);
 		immediate.draw(TEXTURE_LAYER);
@@ -86,12 +86,12 @@ public class Gui {
 
 		Vector2f[] uv = blockType.getTexture().getSideUV();
 
-		builder.vertex(x, y).texture(uv[0]).next();
-		builder.vertex(x, y + size).texture(uv[1]).next();
-		builder.vertex(x + size, y + size).texture(uv[2]).next();
-		builder.vertex(x + size, y + size).texture(uv[2]).next();
-		builder.vertex(x + size, y).texture(uv[3]).next();
-		builder.vertex(x, y).texture(uv[0]).next();
+		builder.vertex(x, y).texture(uv[0]);
+		builder.vertex(x, y + size).texture(uv[1]);
+		builder.vertex(x + size, y + size).texture(uv[2]);
+		builder.vertex(x + size, y + size).texture(uv[2]);
+		builder.vertex(x + size, y).texture(uv[3]);
+		builder.vertex(x, y).texture(uv[0]);
 
 		TEXTURE_SHADER.setTexture(0, Client.getTextureManager().blockAtlas.getTexture());
 		immediate.draw(TEXTURE_LAYER);

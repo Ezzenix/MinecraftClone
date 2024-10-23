@@ -97,7 +97,7 @@ public class Camera {
 	}
 
 	public Vector3f getPosition() {
-		return new Vector3f(entity.getPosition()).add(0, entity.getEyeHeight(), 0);
+		return new Vector3f(entity.getEyePosition());
 	}
 
 	public ChunkPos getChunkPos() {

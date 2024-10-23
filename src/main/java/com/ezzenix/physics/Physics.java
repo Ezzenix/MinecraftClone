@@ -23,7 +23,7 @@ public class Physics {
 	private static void stepEntity(Entity entity, float deltaTime) {
 		World world = entity.getWorld();
 
-		Block blockAtEntity = world.getBlockState(new BlockPos(entity.getPosition())).getBlock();
+		Block blockAtEntity = world.getBlockState(new BlockPos(entity.getPos())).getBlock();
 
 		entity.isInFluid = blockAtEntity != null && blockAtEntity.isFluid();
 
@@ -55,24 +55,20 @@ public class Physics {
 		}
 
 		Vector3f[] axisVectors = new Vector3f[]{new Vector3f(0, 1, 0), new Vector3f(1, 0, 0), new Vector3f(0, 0, 1)};
-		Vector3f entityPosition = new Vector3f(entity.getPosition());
+		Vector3f entityPosition = new Vector3f(entity.getPos());
 		boolean isGrounded = false;
-
-		if (Client.getOptions().thirdPerson) {
-			entity.boundingBox.render();
-		}
 
 		for (Vector3f axisVector : axisVectors) {
 			Vector3f vel = new Vector3f(entity.getVelocity()).mul(deltaTime).mul(axisVector);
 			Vector3f newPosition = new Vector3f(entityPosition).add(vel);
-			entity.setPosition(newPosition);
+			entity.setPos(newPosition);
 
 			BlockPos newBlockPos = new BlockPos(newPosition);
 
 			Vector3f intersection = new Vector3f();
 			float highestLength = 0;
 
-			if (!entity.noclip) {
+			if (!entity.noClip) {
 				for (int x = newBlockPos.x - 1; x <= newBlockPos.x + 1; x++) {
 					for (int y = newBlockPos.y - 1; y <= newBlockPos.y + 2; y++) {
 						for (int z = newBlockPos.z - 1; z <= newBlockPos.z + 1; z++) {
@@ -84,7 +80,7 @@ public class Physics {
 							if (blockPos.equals(newBlockPos.add(0, 1, 0)) && axisVector.y != 1) continue;
 
 							if (!blockType.isWalkthrough()) {
-								Vector3f intersec = entity.boundingBox.getIntersection(getBlockBoundingBox(blockPos)).mul(axisVector);
+								Vector3f intersec = entity.getDimensions().getBoxAt(entity.getPos()).getIntersection(getBlockBoundingBox(blockPos)).mul(axisVector);
 
 								//getBlockBoundingBox(blockPos).render(intersec.length() > 0 ? new Vector3f(1, 0, 0) : new Vector3f(0, 1, 0));
 
@@ -134,7 +130,7 @@ public class Physics {
 			entity.getVelocity().y = 0;
 		}
 
-		entity.setPosition(entityPosition);
+		entity.setPos(entityPosition);
 		entity.isGrounded = isGrounded;
 
 		if (entity.isGrounded && entity.isFlying) {

@@ -26,7 +26,8 @@ public class BlockItem extends Item {
 
 				BoundingBox blockBoundingBox = Physics.getBlockBoundingBox(blockPos);
 				for (Entity entity : Client.getWorld().getEntities()) {
-					if (entity.boundingBox.getIntersection(blockBoundingBox).length() > 0) return;
+					if (entity.getDimensions().getBoxAt(entity.getPos()).getIntersection(blockBoundingBox).length() > 0)
+						return;
 				}
 
 				Client.getWorld().setBlockState(blockPos, this.blockType.getDefaultState());

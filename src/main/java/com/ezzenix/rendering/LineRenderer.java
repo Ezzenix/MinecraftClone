@@ -25,8 +25,8 @@ public class LineRenderer {
 	public static void drawLine(Vector3f pos1, Vector3f pos2, int color) {
 		BufferBuilder builder = immediate.getBuilder(LINES);
 
-		builder.vertex(pos1).color(color).next();
-		builder.vertex(pos2).color(color).next();
+		builder.vertex(pos1).color(color);
+		builder.vertex(pos2).color(color);
 	}
 
 	public static void drawLine(Vector3f pos1, Vector3f pos2) {

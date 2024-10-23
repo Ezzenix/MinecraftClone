@@ -17,6 +17,7 @@ import com.ezzenix.rendering.Camera;
 import com.ezzenix.rendering.Renderer;
 import com.ezzenix.rendering.chunk.ChunkBuilder;
 import com.ezzenix.resource.TextureManager;
+import com.ezzenix.world.TickManager;
 import com.ezzenix.world.World;
 import com.ezzenix.world.chunk.ChunkManager;
 import com.ezzenix.world.gen.WorldGenerator;
@@ -50,6 +51,7 @@ public class Client {
 	private static Player player;
 	private static World world;
 	private static InteractionManager interactionManager;
+	private static TickManager tickManager;
 
 	public static TextFieldWidget focusedTextField;
 
@@ -78,6 +80,7 @@ public class Client {
 		player = new Player(world, new Vector3f(0, 100, 0));
 		camera = new Camera();
 		interactionManager = new InteractionManager();
+		tickManager = new TickManager();
 
 		Renderer.init();
 
@@ -107,6 +110,7 @@ public class Client {
 
 	private static void update() {
 		Scheduler.update();
+		tickManager.update();
 		player.updateMovement();
 		Physics.step();
 
@@ -184,6 +188,9 @@ public class Client {
 	}
 	public static InteractionManager getInteractionManager() {
 		return interactionManager;
+	}
+	public static TickManager getTickManager() {
+		return tickManager;
 	}
 
 	public static boolean isPaused() {
