@@ -4,6 +4,8 @@ import com.ezzenix.Client;
 import com.ezzenix.Debug;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.enums.Direction;
+import com.ezzenix.enums.SubmersionType;
+import com.ezzenix.gui.Color;
 import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import com.ezzenix.rendering.chunk.BuiltChunkStorage;
@@ -54,11 +56,10 @@ public class WorldRenderer {
 		boolean renderWireframe = Debug.wireframeMode;
 		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		RenderSystem.setShaderFogColor(-1);
-		RenderSystem.setShaderFogStartEnd(80, 850);
-
 		this.builtChunkStorage.update();
 		ChunkBuilder.pollQueue();
+
+		this.updateFog();
 
 		Client.getTextureManager().blockAtlas.getTexture().bind();
 
@@ -83,6 +84,17 @@ public class WorldRenderer {
 		}
 
 		if (renderWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	public void updateFog() {
+		SubmersionType submersionType = Client.getCamera().getCameraSubmersionType();
+		if (submersionType == SubmersionType.WATER) {
+			RenderSystem.setShaderFogColor(Color.pack(0.2f, 0.2f, 1f, 1f));
+			RenderSystem.setShaderFogStartEnd(0, 40);
+		} else {
+			RenderSystem.setShaderFogColor(-1);
+			RenderSystem.setShaderFogStartEnd(80, 850);
+		}
 	}
 
 	public void renderChunkLayer(RenderLayer layer, List<Chunk> chunks) {

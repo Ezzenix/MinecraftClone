@@ -217,7 +217,7 @@ public class ChunkBuilder {
 						Vector3f midPos = new Vector3f(x + 0.5f, y, z + 0.5f);
 						Vector2f[] uv = block.getTexture().getSideUV();
 						float flowerSize = 0.9f;
-						for (float deg = 45; deg <= (45 + 90 * 4); deg += 90) {
+						for (float deg = 45; deg <= (45 + 90 * 2); deg += 90) {
 							Vector3f lookVector = new Vector3f((float) -Math.cos(Math.toRadians(deg)), 0.0f, (float) -Math.sin(Math.toRadians(deg)));
 							lookVector.mul((float) Math.pow(flowerSize, 4));
 							addQuad(builder,

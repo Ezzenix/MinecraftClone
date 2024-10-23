@@ -1,9 +1,13 @@
 package com.ezzenix.rendering;
 
 import com.ezzenix.Client;
+import com.ezzenix.blocks.BlockState;
+import com.ezzenix.blocks.Blocks;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.engine.opengl.Window;
 import com.ezzenix.entities.Entity;
+import com.ezzenix.enums.SubmersionType;
+import com.ezzenix.math.BlockPos;
 import com.ezzenix.math.ChunkPos;
 import org.joml.Math;
 import org.joml.Matrix4f;
@@ -102,5 +106,16 @@ public class Camera {
 
 	public Matrix4f getViewProjectionMatrix() {
 		return new Matrix4f().set(getProjectionMatrix()).mul(getViewMatrix());
+	}
+
+	public SubmersionType getCameraSubmersionType() {
+		BlockPos blockPos = new BlockPos(this.getPosition());
+		BlockState blockState = Client.getWorld().getBlockState(blockPos);
+
+		if (blockState.getBlock() == Blocks.WATER) {
+			return SubmersionType.WATER;
+		}
+
+		return SubmersionType.NONE;
 	}
 }

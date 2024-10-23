@@ -7,15 +7,16 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BuiltChunkStorage {
-	private final Long2ObjectMap<ChunkBuilder.BuiltChunk> builtChunks;
+	private final ConcurrentHashMap<Long, ChunkBuilder.BuiltChunk> builtChunks;
 	private int viewDistance;
 
 	public BuiltChunkStorage() {
 		this.setViewDistance(12);
 
-		this.builtChunks = new Long2ObjectArrayMap<>();
+		this.builtChunks = new ConcurrentHashMap<>();
 	}
 
 	public void update() {
