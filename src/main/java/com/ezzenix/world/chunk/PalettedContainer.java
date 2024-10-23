@@ -32,7 +32,7 @@ public class PalettedContainer<T> {
 
 	private int getIndex(int x, int y, int z) {
 		if (x < 0 || x >= width || y < 0 || y > height || z < 0 || z >= width)
-			throw new IndexOutOfBoundsException("Invalid position: (" + x + ", " + y + ", " + z + ")");
+			throw new IndexOutOfBoundsException("Invalid position (" + x + ", " + y + ", " + z + ")");
 
 		return x + width * (y + height * z);
 	}

@@ -51,6 +51,6 @@ public class ChunkPos {
 	}
 
 	public int hashCode() {
-		return Objects.hash(x, z);
+		return 31 * x + z;
 	}
 }

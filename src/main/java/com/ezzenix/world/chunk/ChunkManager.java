@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkManager {
 	World world;
-	ConcurrentHashMap<Long, Chunk> chunks;
+	ConcurrentHashMap<ChunkPos, Chunk> chunks;
 
 	public ChunkManager(World world) {
 		this.world = world;
@@ -19,14 +19,14 @@ public class ChunkManager {
 	}
 
 	public Chunk getChunk(ChunkPos chunkPos, boolean create, ChunkState chunkState) {
-		Chunk chunk = chunks.get(chunkPos.toLong());
+		Chunk chunk = chunks.get(chunkPos);
 
 		if (chunk == null && create) {
 			chunk = new Chunk(chunkPos, this.world);
 			if (chunkState == ChunkState.FULL) {
 				WorldGenerator.generate(chunk);
 			}
-			chunks.put(chunkPos.toLong(), chunk);
+			chunks.put(chunkPos, chunk);
 		}
 		if (chunk != null && create && chunkState == ChunkState.FULL) {
 			WorldGenerator.generate(chunk);
@@ -44,7 +44,7 @@ public class ChunkManager {
 	}
 
 	public void removeChunk(Chunk chunk) {
-		this.chunks.remove(chunk.getPos().toLong());
+		this.chunks.remove(chunk.getPos());
 		chunk.dispose();
 	}
 

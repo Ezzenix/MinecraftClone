@@ -4,9 +4,9 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RenderSystem {
 
-	private static Capability cullingCapability = new Capability(GL_CULL_FACE);
-	private static Capability depthTestCapability = new Capability(GL_DEPTH_TEST);
-	private static Capability blendCapability = new Capability(GL_BLEND);
+	private static final Capability cullingCapability = new Capability(GL_CULL_FACE);
+	private static final Capability depthTestCapability = new Capability(GL_DEPTH_TEST);
+	private static final Capability blendCapability = new Capability(GL_BLEND);
 
 	private static float shaderFogStart;
 	private static float shaderFogEnd;

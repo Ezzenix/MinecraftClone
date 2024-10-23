@@ -109,22 +109,5 @@ public class Skybox {
 		SUN_BUFFER.draw();
 
 		LAYER.unapply();
-
-		/*
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-		glDepthMask(false);
-
-		modelMatrix.rotate(Math.toRadians(180 + 60), 1, 0, 0);
-
-		shader.setTexture(0, sunTexture);
-		shader.bind();
-		shader.setModelMatrix(modelMatrix);
-		sunVertexBuffer.draw();
-
-		glDepthMask(true);
-		 */
 	}
 }

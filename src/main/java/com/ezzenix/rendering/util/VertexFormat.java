@@ -59,6 +59,8 @@ public class VertexFormat {
 		for (int i = 0; i < this.types.length; i++) {
 			if (this.types[i] == GL_INT) {
 				glVertexAttribIPointer(i, sizes[i], types[i], stride, pointer);
+			} else if (this.types[i] == GL_BOOL) {
+				glVertexAttribPointer(i, sizes[i], GL_UNSIGNED_BYTE, false, stride, pointer);
 			} else {
 				glVertexAttribPointer(i, sizes[i], types[i], false, stride, pointer);
 			}

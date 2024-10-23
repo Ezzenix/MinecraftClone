@@ -6,6 +6,7 @@ plugins {
     id("java")
     id("application")
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("me.champeau.jmh") version "0.7.2" // jmh
 }
 
 group = "com.ezzenix"
@@ -25,6 +26,13 @@ tasks.withType<Jar> {
     }
 }
 
+jmh {
+    iterations = 5;
+    fork = 0;
+    warmup = "1s";
+    timeOnIteration = "1s";
+}
+
 dependencies {
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
@@ -33,6 +41,12 @@ dependencies {
 
     implementation("org.apache.logging.log4j:log4j-api:2.24.1")
     implementation("org.apache.logging.log4j:log4j-core:2.24.1")
+
+    // jmh
+    jmh("commons-io:commons-io:2.7")
+    jmh("org.openjdk.jmh:jmh-core:0.9")
+    jmh("org.openjdk.jmh:jmh-generator-annprocess:0.9")
+    jmh("org.openjdk.jmh:jmh-generator-bytecode:0.9")
 
     implementation("org.joml", "joml", jomlVersion)
     implementation("org.lwjgl", "lwjgl")

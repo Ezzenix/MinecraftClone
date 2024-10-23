@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BuiltChunkStorage {
-	private final ConcurrentHashMap<Long, ChunkBuilder.BuiltChunk> builtChunks;
+	private final ConcurrentHashMap<ChunkPos, ChunkBuilder.BuiltChunk> builtChunks;
 	private int viewDistance;
 
 	public BuiltChunkStorage() {
@@ -30,14 +30,15 @@ public class BuiltChunkStorage {
 				int x = cameraChunkPos.x + i;
 				int z = cameraChunkPos.z + k;
 
-				Chunk chunk = Client.getWorld().getChunkManager().getChunk(new ChunkPos(x, z), false);
+				ChunkPos chunkPos = new ChunkPos(x, z);
+
+				Chunk chunk = Client.getWorld().getChunkManager().getChunk(chunkPos, false);
 				if (chunk != null) {
 
-					long key = ChunkPos.toLong(x, z);
-					ChunkBuilder.BuiltChunk builtChunk = builtChunks.get(key);
+					ChunkBuilder.BuiltChunk builtChunk = builtChunks.get(chunkPos);
 					if (builtChunk == null) {
 						builtChunk = new ChunkBuilder.BuiltChunk(chunk);
-						builtChunks.put(key, builtChunk);
+						builtChunks.put(chunkPos, builtChunk);
 					}
 
 					//builtChunksToRemove.remove(key);
@@ -56,7 +57,7 @@ public class BuiltChunkStorage {
 	}
 
 	public ChunkBuilder.BuiltChunk getBuiltChunk(Chunk chunk) {
-		return builtChunks.get(chunk.getPos().toLong());
+		return builtChunks.get(chunk.getPos());
 	}
 
 	public void scheduleRebuild(Chunk chunk) {

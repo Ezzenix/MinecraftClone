@@ -3,6 +3,7 @@ package com.ezzenix.rendering.util;
 import com.ezzenix.Client;
 import com.ezzenix.engine.opengl.Shader;
 import com.ezzenix.engine.opengl.Texture;
+import com.ezzenix.rendering.RenderSystem;
 import com.ezzenix.rendering.Renderer;
 import com.ezzenix.util.Identifier;
 import com.google.common.collect.ImmutableList;
@@ -100,10 +101,10 @@ public class RenderLayer {
 		getShader().bind();
 		getShader().setUniforms();
 		if (this.cull_face) {
-			glEnable(GL_CULL_FACE);
+			RenderSystem.enableCulling();
 		}
 		if (this.depth_func != GL_NONE) {
-			glEnable(GL_DEPTH_TEST);
+			RenderSystem.enableDepthTest();
 			glDepthFunc(this.depth_func);
 		}
 		if (!this.depthMask) {
@@ -113,7 +114,7 @@ public class RenderLayer {
 			glColorMask(false, false, false, false);
 		}
 		if (this.blendFactorS != GL_NONE && this.blendFactorD != GL_NONE) {
-			glEnable(GL_BLEND);
+			RenderSystem.enableBlend();
 			glBlendFunc(this.blendFactorS, this.blendFactorD);
 		}
 	}
@@ -121,10 +122,10 @@ public class RenderLayer {
 	public void unapply() {
 		getShader().unbind();
 		if (this.cull_face) {
-			glDisable(GL_CULL_FACE);
+			RenderSystem.disableCulling();
 		}
 		if (this.depth_func != GL_NONE) {
-			glDisable(GL_DEPTH_TEST);
+			RenderSystem.disableDepthTest();
 			glDepthFunc(GL_LESS);
 		}
 		if (!this.depthMask) {
@@ -134,7 +135,7 @@ public class RenderLayer {
 			glColorMask(true, true, true, true);
 		}
 		if (this.blendFactorS != GL_NONE && this.blendFactorD != GL_NONE) {
-			glDisable(GL_BLEND);
+			RenderSystem.disableBlend();
 			glBlendFunc(this.blendFactorS, this.blendFactorD);
 		}
 	}
