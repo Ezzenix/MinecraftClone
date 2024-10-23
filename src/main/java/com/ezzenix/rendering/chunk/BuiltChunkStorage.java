@@ -55,8 +55,7 @@ public class BuiltChunkStorage {
 	}
 
 	public ChunkBuilder.BuiltChunk getBuiltChunk(Chunk chunk) {
-		long key = chunk.getPos().toLong();
-		return builtChunks.get(key);
+		return builtChunks.get(chunk.getPos().toLong());
 	}
 
 	public void scheduleRebuild(Chunk chunk) {

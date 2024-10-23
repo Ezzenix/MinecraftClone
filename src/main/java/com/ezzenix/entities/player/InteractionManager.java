@@ -47,7 +47,7 @@ public class InteractionManager {
 
 	public void update() {
 		boolean leftMb = Client.getMouse().isMouseButton1Down();
-		if (leftMb) {
+		if (leftMb && !Client.isPaused() && Client.getScreen() == null) {
 			Raycast raycast = Client.getPlayer().raycast();
 			BlockPos targetPos = raycast != null ? raycast.blockPos : null;
 			setBreakingPos(targetPos);
