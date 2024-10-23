@@ -15,8 +15,10 @@ import java.util.stream.IntStream;
 import static org.lwjgl.opengl.GL30.*;
 
 public class RenderLayer {
-	public static RenderLayer SOLID = new RenderLayer(Renderer.getWorldRenderer().worldShader).format(VertexFormat.POSITION_UV_AO).cull().depth(GL_LESS).setExpectedBufferSize(400000);
-	public static RenderLayer TRANSLUCENT = new RenderLayer(Renderer.getWorldRenderer().waterShader).format(VertexFormat.POSITION_UV_AO).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS).depthMask(false).setExpectedBufferSize(400000);
+	private static VertexFormat FORMAT = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2, GL_FLOAT, 1, GL_INT, 1);
+	public static RenderLayer SOLID = new RenderLayer(new Shader("solid")).format(FORMAT).cull().depth(GL_LESS).setExpectedBufferSize(400000);
+	public static RenderLayer FOLIAGE = new RenderLayer(new Shader("foliage")).format(FORMAT).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS).depthMask(false).setExpectedBufferSize(400000);
+	public static RenderLayer WATER = new RenderLayer(new Shader("water")).format(FORMAT).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS).depthMask(false).setExpectedBufferSize(400000);
 
 	private static final Shader BLOCK_OVERLAY_SHADER = new Shader("block_overlay");
 	public static RenderLayer[] BREAK_OVERLAYS = IntStream.range(0, 10).mapToObj(i -> {
@@ -24,7 +26,7 @@ public class RenderLayer {
 		return new RenderLayer(BLOCK_OVERLAY_SHADER).format(VertexFormat.POSITION_UV).cull().depth(GL_LESS).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).setTexture(t).setExpectedBufferSize(5000);
 	}).toArray(RenderLayer[]::new);
 
-	public static Collection<RenderLayer> BLOCK_LAYERS = ImmutableList.of(SOLID, TRANSLUCENT);
+	public static Collection<RenderLayer> BLOCK_LAYERS = ImmutableList.of(SOLID, FOLIAGE, WATER);
 
 	private final Shader shader;
 	private Texture texture;

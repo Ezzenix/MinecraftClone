@@ -21,20 +21,15 @@ uniform vec3 cameraPosition;
 
 const float PI = 3.1415927;
 
-/* FOLIAGE WAVY
-float t = gameTime*0.2f;
-pos.x += snoise(vec2(absPos.x * 10.0, absPos.y * 10.0 + t)) * 0.05;
-pos.y += snoise(vec2(absPos.y * 10.0, absPos.z * 10.0 + t)) * 0.05;
-pos.z += snoise(vec2(absPos.z * 10.0, absPos.y * 10.0 + t)) * 0.05;
-*/
-
 void main() {
     vec3 pos = position;
     vec3 worldPos = (modelMatrix * vec4(position, 1.0)).xyz;
 
     if (shouldWave == 1) {
-        pos.y -= 0.1;
-        pos.y += (sin(worldPos.x * PI / 2 + gameTime) + sin(worldPos.z * PI / 2 + gameTime * 1.5)) * 0.03;
+        float t = gameTime*0.2f;
+        pos.x += snoise(vec2(worldPos.x * 10.0, worldPos.y * 10.0 + t)) * 0.05;
+        pos.y += snoise(vec2(worldPos.y * 10.0, worldPos.z * 10.0 + t)) * 0.05;
+        pos.z += snoise(vec2(worldPos.z * 10.0, worldPos.y * 10.0 + t)) * 0.05;
     }
 
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);

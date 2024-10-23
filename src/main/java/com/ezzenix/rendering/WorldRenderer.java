@@ -29,9 +29,6 @@ import java.util.PriorityQueue;
 import static org.lwjgl.opengl.GL30.*;
 
 public class WorldRenderer {
-	public final Shader worldShader = new Shader("world.vert", "world.frag");
-	public final Shader waterShader = new Shader("water.vert", "water.frag");
-
 	private final Shader blockOverlayShader;
 
 	//private final VertexBuffer blockOverlayBuffer;
@@ -78,7 +75,8 @@ public class WorldRenderer {
 		chunksRenderedCount = chunks.size();
 
 		renderChunkLayer(RenderLayer.SOLID, chunks);
-		renderChunkLayer(RenderLayer.TRANSLUCENT, chunks);
+		renderChunkLayer(RenderLayer.WATER, chunks);
+		renderChunkLayer(RenderLayer.FOLIAGE, chunks);
 
 		if (Client.getInteractionManager().getBreakingPos() != null) {
 			renderDamage(Client.getInteractionManager().getBreakingPos(), Client.getInteractionManager().getBreakingProgress());

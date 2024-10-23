@@ -61,7 +61,6 @@ public class ResourceManager {
 	}
 
 	public static BufferedImage loadImage(String path) {
-		System.out.println(path);
 		InputStream inputStream = ResourceManager.class.getClassLoader().getResourceAsStream(path);
 		if (inputStream == null) {
 			System.err.println("Error loading resource: " + path);

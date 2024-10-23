@@ -1,6 +1,8 @@
 package com.ezzenix.gui;
 
 import com.ezzenix.Client;
+import com.ezzenix.blocks.BlockState;
+import com.ezzenix.blocks.FluidBlock;
 import com.ezzenix.engine.Scheduler;
 import com.ezzenix.entities.player.Player;
 import com.ezzenix.enums.Direction;
@@ -113,6 +115,11 @@ public class DebugHud {
 			lines.add("");
 			lines.add("Target Position: " + result.blockPos.x + " " + result.blockPos.y + " " + result.blockPos.z);
 			lines.add("Target Block: " + result.blockType.getName());
+
+			BlockState stateAbove = Client.getWorld().getBlockState(result.blockPos.add(0, 1, 0));
+			if (stateAbove.getBlock() instanceof FluidBlock) {
+				lines.add("Block above is fluid with level " + stateAbove.get(FluidBlock.LEVEL));
+			}
 		}
 
 		return lines;

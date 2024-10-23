@@ -6,6 +6,7 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 textureCoord;
 layout(location = 2) in float aoFactor;
+layout(location = 3) in int shouldWave;
 
 out vec2 texCoord;
 out float ambientOcclusion;

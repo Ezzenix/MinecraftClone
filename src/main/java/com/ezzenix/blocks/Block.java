@@ -122,8 +122,10 @@ public class Block {
 	}
 
 	public RenderLayer getRenderLayer() {
-		if (this.isTransparent()) {
-			return RenderLayer.TRANSLUCENT;
+		if (this == Blocks.WATER) {
+			return RenderLayer.WATER;
+		} else if (this.isTransparent()) {
+			return RenderLayer.FOLIAGE;
 		} else {
 			return RenderLayer.SOLID;
 		}

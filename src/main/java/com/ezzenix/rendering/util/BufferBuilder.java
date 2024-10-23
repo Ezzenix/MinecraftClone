@@ -70,12 +70,6 @@ public class BufferBuilder {
 		return this;
 	}
 
-	public BufferBuilder putBool(boolean v) {
-		MemoryUtil.memPutByte(pointer, (byte) (v ? 1 : 0));
-		pointer += 1L;
-		return this;
-	}
-
 	public BufferBuilder vertex(float x, float y, float z) {
 		beginVertex();
 		putFloat(x);

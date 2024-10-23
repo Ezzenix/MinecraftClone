@@ -86,7 +86,8 @@ public class VertexBuffer implements AutoCloseable {
 
 		ByteBuffer buffer = builder.getBuffer();
 		if (buffer == null) {
-			Client.LOGGER.warn("Buffer is null");
+			//Client.LOGGER.warn("Buffer is null");
+			this.readyToDraw = false;
 			return;
 		}
 

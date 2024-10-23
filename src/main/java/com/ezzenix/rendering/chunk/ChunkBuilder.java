@@ -22,6 +22,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,8 +32,6 @@ import static org.lwjgl.opengl.GL30.GL_FLOAT;
 
 public class ChunkBuilder {
 	private static final ExecutorService executorService = Executors.newFixedThreadPool(1);
-
-	private static final VertexFormat VERTEX_FORMAT = new VertexFormat(GL_FLOAT, 3, GL_FLOAT, 2, GL_FLOAT, 1); // pos, uv, ao
 
 	private static boolean isBuilding;
 
@@ -104,7 +103,7 @@ public class ChunkBuilder {
 
 			this.buffers = Maps.newHashMap();
 			for (RenderLayer layer : RenderLayer.BLOCK_LAYERS) {
-				buffers.put(layer, new VertexBuffer(VERTEX_FORMAT, VertexBuffer.Usage.DYNAMIC));
+				buffers.put(layer, new VertexBuffer(layer.getVertexFormat(), VertexBuffer.Usage.DYNAMIC));
 			}
 		}
 
@@ -186,14 +185,14 @@ public class ChunkBuilder {
 		};
 	}
 
-	private static void addQuad(BufferBuilder builder, Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3, Vector2f[] uv, float[] ao) {
-		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]);
-		builder.vertex(v1.x, v1.y, v1.z).texture(uv[1]).putFloat(ao[1]);
-		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]);
+	private static void addQuad(BufferBuilder builder, Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3, Vector2f[] uv, float[] ao, boolean[] doWave) {
+		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).putInt(doWave[0] ? 1 : 0);
+		builder.vertex(v1.x, v1.y, v1.z).texture(uv[1]).putFloat(ao[1]).putInt(doWave[1] ? 1 : 0);
+		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).putInt(doWave[2] ? 1 : 0);
 
-		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]);
-		builder.vertex(v3.x, v3.y, v3.z).texture(uv[3]).putFloat(ao[3]);
-		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]);
+		builder.vertex(v2.x, v2.y, v2.z).texture(uv[2]).putFloat(ao[2]).putInt(doWave[2] ? 1 : 0);
+		builder.vertex(v3.x, v3.y, v3.z).texture(uv[3]).putFloat(ao[3]).putInt(doWave[3] ? 1 : 0);
+		builder.vertex(v0.x, v0.y, v0.z).texture(uv[0]).putFloat(ao[0]).putInt(doWave[0] ? 1 : 0);
 	}
 
 	public static boolean rebuildChunk(BuiltChunk builtChunk) {
@@ -225,7 +224,7 @@ public class ChunkBuilder {
 								new Vector3f(midPos).add(-lookVector.x, 0, -lookVector.z),
 								new Vector3f(midPos).add(lookVector.x, 0, lookVector.z),
 								new Vector3f(midPos).add(lookVector.x, flowerSize, lookVector.z),
-								uv, new float[]{0, 0, 0, 0}
+								uv, new float[]{0, 0, 0, 0}, new boolean[]{true, false, false, true}
 							);
 						}
 						continue;
@@ -251,7 +250,19 @@ public class ChunkBuilder {
 						Vector3f v2 = new Vector3f(mid).add(unitCubeFace[2]);
 						Vector3f v3 = new Vector3f(mid).add(unitCubeFace[3]);
 
-						addQuad(builder, v0, v1, v2, v3, uv, ao);
+						boolean onlyTopWave = block != Blocks.OAK_LEAVES;
+
+						addQuad(
+							builder,
+							v0, v1, v2, v3,
+							uv, ao,
+							onlyTopWave ? new boolean[]{
+								unitCubeFace[0].y == 0.5f,
+								unitCubeFace[1].y == 0.5f,
+								unitCubeFace[2].y == 0.5f,
+								unitCubeFace[3].y == 0.5f
+							} : new boolean[]{true, true, true, true}
+						);
 					}
 				}
 			}
