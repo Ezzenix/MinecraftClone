@@ -32,6 +32,9 @@ public class ChatHud {
 		if (linesScrolled != 0) linesScrolled++;
 
 		messages.add(0, message);
+		if (messages.size() > 100) {
+			messages.removeLast();
+		}
 	}
 
 	public float getSmoothAnimationAlpha() {

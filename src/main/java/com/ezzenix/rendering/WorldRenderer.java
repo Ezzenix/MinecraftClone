@@ -101,7 +101,9 @@ public class WorldRenderer {
 	public void renderDamage(BlockPos blockPos, float progress) {
 		Vector3f mid = blockPos.toVector3f();
 
-		BufferBuilder builder = immediate.getBuilder(RenderLayer.BREAK_OVERLAY);
+		int stage = Math.round(progress*9);
+		RenderLayer layer = RenderLayer.BREAK_OVERLAYS[stage];
+		BufferBuilder builder = immediate.getBuilder(layer);
 
 		for (Direction direction : Direction.values()) {
 			Vector3f[] face = UnitCube.getFace(direction);
@@ -119,7 +121,7 @@ public class WorldRenderer {
 			builder.vertex(v0).texture(0, 0).next();
 		}
 
-		immediate.draw(RenderLayer.BREAK_OVERLAY);
+		immediate.draw(layer);
 	}
 
 	public void reloadAllChunks() {

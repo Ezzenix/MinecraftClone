@@ -2,11 +2,14 @@ package com.ezzenix.rendering.util;
 
 import com.ezzenix.Client;
 import com.ezzenix.engine.opengl.Shader;
+import com.ezzenix.engine.opengl.Texture;
 import com.ezzenix.rendering.Renderer;
 import com.ezzenix.util.Identifier;
 import com.google.common.collect.ImmutableList;
+import org.checkerframework.common.value.qual.IntRange;
 
 import java.util.Collection;
+import java.util.stream.IntStream;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -15,16 +18,15 @@ public class RenderLayer {
 	public static RenderLayer TRANSLUCENT = new RenderLayer(Renderer.getWorldRenderer().waterShader).format(VertexFormat.POSITION_UV_AO).cull().blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).depth(GL_LESS).depthMask(false).setExpectedBufferSize(400000);
 
 	private static final Shader BLOCK_OVERLAY_SHADER = new Shader("block_overlay");
-
-	static {
-		BLOCK_OVERLAY_SHADER.setTexture(0, Client.getTextureManager().getTexture(Identifier.of("break_overlay")));
-	}
-
-	public static RenderLayer BREAK_OVERLAY = new RenderLayer(BLOCK_OVERLAY_SHADER).format(VertexFormat.POSITION_UV).cull().depth(GL_LESS).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	public static RenderLayer[] BREAK_OVERLAYS = IntStream.range(0, 10).mapToObj(i -> {
+		Texture t = Client.getTextureManager().getTexture(Identifier.of("break_overlay/stage_"+i));
+		return new RenderLayer(BLOCK_OVERLAY_SHADER).format(VertexFormat.POSITION_UV).cull().depth(GL_LESS).blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA).setTexture(t);
+	}).toArray(RenderLayer[]::new);
 
 	public static Collection<RenderLayer> BLOCK_LAYERS = ImmutableList.of(SOLID, TRANSLUCENT);
 
 	private final Shader shader;
+	private Texture texture;
 	private boolean cull_face = false;
 	private int depth_func = GL_NONE;
 	private boolean depthMask = true;
@@ -69,6 +71,11 @@ public class RenderLayer {
 		return this;
 	}
 
+	public RenderLayer setTexture(Texture texture) {
+		this.texture = texture;
+		return this;
+	}
+
 	public RenderLayer setExpectedBufferSize(int size) {
 		this.expectedBufferSize = size;
 		return this;
@@ -87,6 +94,9 @@ public class RenderLayer {
 	}
 
 	public void apply() {
+		if (this.texture != null) {
+			getShader().setTexture(0, this.texture);
+		}
 		getShader().bind();
 		getShader().setUniforms();
 		if (this.cull_face) {

@@ -145,7 +145,7 @@ public class Shader {
 		if (slot < 0 || slot >= this.samplers.length)
 			throw new RuntimeException("Sampler slot " + slot + " is not a valid slot");
 
-		if (this.samplers[slot] == null) {
+		if (this.samplers[slot] == null && this.samplers[slot] != texture) {
 			this.bind();
 			Uniform uniform = getUniform("sampler" + slot);
 			if (uniform != null) {

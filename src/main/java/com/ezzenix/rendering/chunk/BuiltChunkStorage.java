@@ -13,7 +13,7 @@ public class BuiltChunkStorage {
 	private int viewDistance;
 
 	public BuiltChunkStorage() {
-		this.setViewDistance(50);
+		this.setViewDistance(12);
 
 		this.builtChunks = new Long2ObjectArrayMap<>();
 	}
