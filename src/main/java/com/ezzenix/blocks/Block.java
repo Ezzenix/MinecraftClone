@@ -15,13 +15,16 @@ public class Block {
 	private float breakTime = 1;
 
 	public final StateManager<BlockState> stateManager;
+	private BlockState defaultState;
 
 	private static final BlockTexture FALLBACK_TEXTURE = new BlockTexture().set("stone");
 
 	public Block(String name) {
 		this.name = name;
 		this.texture = FALLBACK_TEXTURE;
+
 		this.stateManager = new StateManager<>(getProperties(), (properties -> new BlockState(this, properties)));
+		this.defaultState = this.stateManager.getDefaultState();
 
 		Blocks.register(this);
 	}
@@ -35,7 +38,13 @@ public class Block {
 	}
 
 	public BlockState getDefaultState() {
-		return this.stateManager.getDefaultState();
+		return this.defaultState;
+	}
+
+	public void setDefaultState(BlockState state) {
+		if (state.getBlock() != this)
+			throw new IllegalArgumentException("Attempt to set default state to different block");
+		this.defaultState = state;
 	}
 
 	public boolean shouldRenderFace(BlockState state, BlockState otherState) {

@@ -18,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Player extends Entity {
 	public boolean isMoving = false;
 
-	private MovementInput movementInput;
+	private final MovementInput movementInput;
 
 	public Inventory inventory;
 	private int handSlot;
@@ -38,7 +38,8 @@ public class Player extends Entity {
 		this.inventory.setSlot(5, new ItemStack(Items.OAK_PLANKS, 16));
 		this.inventory.setSlot(6, new ItemStack(Items.OAK_LEAVES, 16));
 		this.inventory.setSlot(7, new ItemStack(Items.POPPY, 16));
-		this.inventory.setSlot(8, new ItemStack(Items.OAK_LOG, 16));
+		this.inventory.setSlot(8, new ItemStack(Items.WATER, 1));
+		this.inventory.setSlot(9, new ItemStack(Items.OAK_LOG, 16));
 
 		for (int i = 0; i < 9; i++) {
 			int slot = i;

@@ -12,4 +12,5 @@ public class Items {
 	public static final Item OAK_LEAVES = new BlockItem(Blocks.OAK_LEAVES);
 	public static final Item OAK_LOG = new BlockItem(Blocks.OAK_LOG);
 	public static final Item POPPY = new BlockItem(Blocks.POPPY);
+	public static final Item WATER = new BlockItem(Blocks.WATER);
 }

@@ -8,11 +8,8 @@ public class FluidBlock extends Block {
 
 	public FluidBlock(String name) {
 		super(name);
-	}
 
-	@Override
-	public BlockState getDefaultState() {
-		return this.stateManager.getDefaultState().with(LEVEL, 8);
+		this.setDefaultState(this.getDefaultState().with(LEVEL, 8));
 	}
 
 	@Override
